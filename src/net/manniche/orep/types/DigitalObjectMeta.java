@@ -16,9 +16,7 @@
  *  along with RMIObjectRepository.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.manniche.types;
-
-import java.net.URI;
+package net.manniche.orep.types;
 
 
 /**
@@ -31,10 +29,11 @@ import java.net.URI;
 public interface DigitalObjectMeta {
 
     /**
-     * The identifier of any DigitalObject in the Object Repository is a
-     * {@code URI}.
+     * The identifier of any DigitalObject in the Object Repository is a 
+     * (universally) unique value
+     * 
      * @return the identifier of the DigitalObject
      */
-    public URI getIdentifier();
+    public ObjectIdentifier getIdentifier();
 
 }

@@ -17,14 +17,14 @@
  */
 
 
-package net.manniche.server;
+package net.manniche.orep.server;
 
 import java.io.InputStream;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
-import net.manniche.types.DigitalObject;
-import net.manniche.types.DigitalObjectMeta;
-import net.manniche.types.ObjectIdentifier;
+import net.manniche.orep.types.DigitalObject;
+import net.manniche.orep.types.DigitalObjectMeta;
+import net.manniche.orep.types.ObjectIdentifier;
 
 /**
  * Provides the server interface to the object repository connection handler.

@@ -15,23 +15,26 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RMIObjectRepository.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-
-package net.manniche.server;
+package net.manniche.orep.server;
 
 import java.io.InputStream;
 import java.rmi.RemoteException;
-import net.manniche.types.ObjectIdentifier;
-import net.manniche.storage.StorageProvider;
-import net.manniche.types.DigitalObject;
-import net.manniche.types.DigitalObjectMeta;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
+import java.rmi.server.UnicastRemoteObject;
+import net.manniche.orep.types.ObjectIdentifier;
+import net.manniche.orep.storage.StorageProvider;
+import net.manniche.orep.storage.StorageType;
+import net.manniche.orep.types.DigitalObject;
+import net.manniche.orep.types.DigitalObjectMeta;
 
 
 /**
  *
  * @author stm
  */
-public class RMIObjectRepository implements ObjectManagement{
+public class RMIObjectRepository implements ObjectManagement
+{
 
     private StorageProvider storage;
 
@@ -40,11 +43,13 @@ public class RMIObjectRepository implements ObjectManagement{
         this.storage = storage;
     }
 
+
     @Override
     public ObjectIdentifier storeObject( DigitalObject data, DigitalObjectMeta metadata, String message ) throws RemoteException
     {
         throw new UnsupportedOperationException( "Not supported yet." );
     }
+
 
     @Override
     public DigitalObject getObject( ObjectIdentifier identifier ) throws RemoteException
@@ -86,4 +91,32 @@ public class RMIObjectRepository implements ObjectManagement{
     {
         throw new UnsupportedOperationException( "Not supported yet." );
     }
+
+
+    public static void main( String[] args )
+    {
+        if( System.getSecurityManager() == null )
+        {
+            System.setSecurityManager( new SecurityManager() );
+        }
+        try
+        {
+            String name = "OREP-RMI";
+            String storage_path = System.getProperty( "user.dir" ) + System.getProperty( "file.separator" ) + "objectstorage";
+            StorageProvider storage = ServiceLocator.getImplementation( StorageType.FileStorage );
+            ObjectManagement engine = new RMIObjectRepository( storage );
+            ObjectManagement stub = (ObjectManagement) UnicastRemoteObject.exportObject( engine, 0 );
+            Registry registry = LocateRegistry.getRegistry();
+            registry.rebind( name, stub );
+            System.out.println( "ComputeEngine bound" );
+        }
+        catch( Exception e )
+        {
+            System.err.println( "ComputeEngine exception:" );
+            e.printStackTrace();
+        }
+
+    }
+
+
 }

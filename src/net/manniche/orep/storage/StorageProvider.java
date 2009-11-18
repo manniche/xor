@@ -17,22 +17,21 @@
  */
 
 
-package net.manniche.types;
+package net.manniche.orep.storage;
+
+import java.io.IOException;
+import net.manniche.orep.types.ObjectIdentifier;
+
 
 /**
- * Uniquely identifies objects in the object repository and in CargoContainers
+ * Abstraction of the operations supported by the underlying storage 
+ * implementation.
+ *
+ *
+ * @author stm
  */
-public interface ObjectIdentifier {
-
-    /**
-     * Accessor for the string representation of the identifier
-     * @return a String containing the identifier in a String representation
-     */
-    public String getIdentifier();
-
-    /**
-     * Accessor for the namespace (if any) on the object identifier.
-     * @return a String containing the namespace (if the identifier has one)
-     */
-    public String getNamespace();
+public interface StorageProvider{
+    public void save( byte[] object ) throws IOException;
+    public QueryResult query( Query query ) throws IOException;
+    public byte[] get( ObjectIdentifier identifier) throws IOException;
 }

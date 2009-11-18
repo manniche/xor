@@ -17,21 +17,18 @@
  */
 
 
-package net.manniche.storage;
-
-import java.io.IOException;
-import net.manniche.types.ObjectIdentifier;
-
+package net.manniche.orep.storage;
 
 /**
- * Abstraction of the operations supported by the underlying storage 
- * implementation.
- *
- *
+ * ObjectFields defines all the fields it makes sense for the implementors to
+ * describe in the storage implementation objects.
  * @author stm
  */
-public interface StorageProvider{
-    public void save( byte[] object ) throws IOException;
-    public QueryResult query( Query query ) throws IOException;
-    public byte[] get( ObjectIdentifier identifier) throws IOException;
+public interface ObjectFields {
+
+    /**
+     *
+     * @return a String representation of the ObjectField.
+     */
+    public String getField();
 }

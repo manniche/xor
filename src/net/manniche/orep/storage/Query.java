@@ -17,7 +17,7 @@
  */
 
 
-package net.manniche.storage;
+package net.manniche.orep.storage;
 
 import java.util.Map;
 

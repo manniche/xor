@@ -1,34 +1,45 @@
 /*
  *  This file is part of RMIObjectRepository.
  *  Copyright © 2009, Steen Manniche.
- *
+ * 
  *  RMIObjectRepository is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
- *
+ * 
  *  RMIObjectRepositoryis distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
- *
+ * 
  *  You should have received a copy of the GNU General Public License
  *  along with RMIObjectRepository.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-package net.manniche.storage;
+package net.manniche.orep.storage;
 
 /**
- * ObjectFields defines all the fields it makes sense for the implementors to
- * describe in the storage implementation objects.
+ * This type describes the storage implementations available to the
+ * ObjectManagement server system
+ * 
  * @author stm
  */
-public interface ObjectFields {
+public enum StorageType {
 
     /**
-     *
-     * @return a String representation of the ObjectField.
+     * Filesystem backed storage implementation
      */
-    public String getField();
+    FileStorage( FileStorage.class ),
+    
+    /**
+     * Database backed storage implementation
+     */
+    DBStorage( DBStorage.class );
+
+    private Class<? extends Storage> storage_type;
+
+    StorageType( Class<? extends Storage> klass)
+    {
+        this.storage_type = klass;
+    }
 }
