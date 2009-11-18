@@ -10,14 +10,12 @@ handle objects containg either binary or text.
 Primary design goals
 --------------------
 
-It must be simple to use 
-........................
+# It must be simple to use #
 
 This means simple interfaces and thereby simple interaction with the
 system.
 
-It must be modular
-..................
+# It must be modular #
 
 There should be no implementation bindings. The initial implementation
 uses RMI technology to expose the system as a service, but
@@ -27,8 +25,7 @@ system. Alike with the storage strategy of the system: It could be
 file-based, db-backed or some other implementation, freely chosen by
 implementors.
 
-It must be fast
-...............
+# It must be fast #
 
 Implementors should be allowed to cut away all uneccesary operations
 and just have the system perform the actions specified in the
