@@ -95,7 +95,7 @@ public class RMIObjectRepository implements ObjectManagement
 
     public static void main( String[] args )
     {
-        if( System.getSecurityManager() == null )
+        if( null == System.getSecurityManager() )
         {
             System.setSecurityManager( new SecurityManager() );
         }
@@ -103,12 +103,13 @@ public class RMIObjectRepository implements ObjectManagement
         {
             String name = "OREP-RMI";
             String storage_path = System.getProperty( "user.dir" ) + System.getProperty( "file.separator" ) + "objectstorage";
-            StorageProvider storage = ServiceLocator.getImplementation( StorageType.FileStorage );
+            StorageProvider storage = (StorageProvider)ServiceLocator.getImplementation( StorageType.FileStorage );
             ObjectManagement engine = new RMIObjectRepository( storage );
             ObjectManagement stub = (ObjectManagement) UnicastRemoteObject.exportObject( engine, 0 );
             Registry registry = LocateRegistry.getRegistry();
             registry.rebind( name, stub );
-            System.out.println( "ComputeEngine bound" );
+
+            System.out.println( String.format( "OREP-RMI bound to %s", registry.REGISTRY_PORT ) );
         }
         catch( Exception e )
         {
