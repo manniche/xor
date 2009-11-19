@@ -22,9 +22,14 @@ package net.manniche.orep.types;
 /**
  * DigitalObjectMeta defines the metadata for the entire {@link DigitalObject}
  * It is mandatory to provide a {@code DigitalObjectMeta} object whenever a new
- * {@code DigitalObject is {@link net.manniche.server.ObjectManagement#storeObject stored} in the
- * {@link net.manniche.server.ObjectManagement ObjectRepository}
- * @author stm
+ * {@code DigitalObject} is
+ * {@link net.manniche.server.ObjectManagement#storeObject stored} in the
+ * {@link net.manniche.server.ObjectManagement ObjectRepository}.
+ *
+ * Implementors must implement this interface when they define their metadata
+ * types. Example implementations can be found in the
+ * {@link net.manniche.orep.documents.metadata} package.
+ *
  */
 public interface DigitalObjectMeta {
 
