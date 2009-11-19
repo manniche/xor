@@ -22,7 +22,7 @@ import java.util.Iterator;
 
 
 /**
- * Contains the result of a {@link net.manniche.storage.Query} made against the
+ * Contains the result of a {@link net.manniche.orep.storage.Query} made against the
  * Object Repository.
  */
 public class QueryResult implements Iterable<QueryResult>{
