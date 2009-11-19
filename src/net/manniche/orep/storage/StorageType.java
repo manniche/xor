@@ -18,13 +18,22 @@
 
 package net.manniche.orep.storage;
 
+import net.manniche.orep.types.ObjectRepositoryService;
+import net.manniche.orep.types.ObjectRepositoryServiceType;
+
+
 /**
  * This type describes the storage implementations available to the
- * ObjectManagement server system
+ * ObjectManagement server system. It is also defined by the
+ * ObjectRepositoryServiceType that defines the services available to the
+ * object repository
+ *
+ * @see ObjectRepositoryServiceType
  * 
  * @author stm
  */
-public enum StorageType {
+public enum StorageType implements ObjectRepositoryService
+{
 
     /**
      * Filesystem backed storage implementation
@@ -36,10 +45,15 @@ public enum StorageType {
      */
     DBStorage( DBStorage.class );
 
-    private Class<? extends Storage> storage_type;
+    private Class<? extends StorageProvider> storage_type;
 
-    StorageType( Class<? extends Storage> klass)
+    StorageType( Class<? extends StorageProvider> klass)
     {
         this.storage_type = klass;
+    }
+
+    public Class<? extends ObjectRepositoryService > getClassOfService()
+    {
+        return this.storage_type.cast( this ).getClass();
     }
 }

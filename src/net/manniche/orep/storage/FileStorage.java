@@ -27,7 +27,7 @@ import net.manniche.orep.types.ObjectIdentifier;
  *
  * @author stm
  */
-public class FileStorage extends Storage implements StorageProvider{
+public class FileStorage implements StorageProvider{
 
     private final File storage_path;
 
