@@ -15,7 +15,6 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RMIObjectRepository.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package net.manniche.orep.storage;
 
 import net.manniche.orep.types.ObjectRepositoryService;
@@ -35,27 +34,31 @@ import net.manniche.orep.types.ObjectRepositoryServiceType;
 public enum StorageType implements ObjectRepositoryServiceType<ObjectRepositoryService>
 {
 
-        /**
-         * Filesystem backed storage implementation
-         */
-        FileStorage( FileStorage.class ),
+    /**
+     * Filesystem backed storage implementation
+     */
+    FileStorage( FileStorage.class ),
 
-        /**
-         * Database backed storage implementation
-         */
-        DBStorage( DBStorage.class );
+    /**
+     * Database backed storage implementation
+     */
+    DBStorage( DBStorage.class );
+    private Class<StorageProvider> storage_type;
 
-        private Class<StorageProvider> storage_type;
+    @SuppressWarnings( "unchecked" )
+    StorageType( Class<? extends StorageProvider> klass )
+    {
+        //we _know_ this is a ServiceProvider:
+        this.storage_type = (Class<StorageProvider>) klass;
+    }
 
-        @SuppressWarnings( "unchecked" )
-        StorageType( Class<? extends StorageProvider> klass )
-        {
-            this.storage_type = (Class<StorageProvider>) klass;
-        }
+
     @Override
     @SuppressWarnings( "unchecked" )
     public Class<ObjectRepositoryService> getClassofService()
     {
-        return (Class<ObjectRepositoryService>)(Object)this.storage_type;
+        return (Class<ObjectRepositoryService>) (Object) this.storage_type;
     }
+
+
 }

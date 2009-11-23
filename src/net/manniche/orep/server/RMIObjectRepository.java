@@ -104,8 +104,8 @@ public class RMIObjectRepository implements ObjectManagement
         {
             String name = "OREP-RMI";
            
-            @SuppressWarnings( "unchecked" )
             Class<ObjectRepositoryService> storage = ServiceLocator.getImplementation( StorageType.FileStorage );
+
             System.out.println( String.format( "%s", storage ) );
             StorageProvider store = (StorageProvider) storage.newInstance();
             ObjectManagement engine = new RMIObjectRepository( store );
@@ -117,11 +117,8 @@ public class RMIObjectRepository implements ObjectManagement
         }
         catch( Exception e )
         {
-            System.err.println( "ComputeEngine exception:" );
+            System.err.println( "OREP-RMI exception:" );
             e.printStackTrace();
         }
-
     }
-
-
 }

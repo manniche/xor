@@ -23,13 +23,14 @@ package net.manniche.orep.types;
  * An ObjectRepositoryServiceType is the supertype of all objects that can be
  * used as services in the ObjectRepository. All definitions of types must
  * implement this interface. For an example of implementations of this interface
- * see the {@link net.manniche.orep.storage.StorageType} enum.
+ * see the {@link net.manniche.orep.storage.StorageType} enum. Implementations
+ * describe the services that can be handled by the
+ * {@link net.manniche.orep.server.ServiceLocator}
  *
  * @see ObjectRepositoryService
  * @author stm
  */
 public interface ObjectRepositoryServiceType <T >
 {
-
     public Class<T> getClassofService();
 }
