@@ -28,7 +28,7 @@ package net.manniche.orep.types;
  * @see ObjectRepositoryService
  * @author stm
  */
-public interface ObjectRepositoryServiceType <T extends ObjectRepositoryService >
+public interface ObjectRepositoryServiceType <T >
 {
 
     public Class<T> getClassofService();

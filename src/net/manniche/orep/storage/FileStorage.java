@@ -29,12 +29,13 @@ import net.manniche.orep.types.ObjectIdentifier;
  */
 public class FileStorage implements StorageProvider{
 
-    private final File storage_path;
+    private final File storage_file;
 
     public FileStorage( )
     {
-        String path = System.getProperty( "path" );
-        this.storage_path = new File( path );
+        String storage_path = System.getProperty( "user.home" ) + System.getProperty( "file.separator" ) + "objectstorage";
+        System.out.println( String.format( "%s", storage_path ) );
+        this.storage_file = new File( storage_path );
     }
 
     

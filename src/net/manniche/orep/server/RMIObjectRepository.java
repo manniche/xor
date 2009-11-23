@@ -27,6 +27,7 @@ import net.manniche.orep.storage.StorageProvider;
 import net.manniche.orep.storage.StorageType;
 import net.manniche.orep.types.DigitalObject;
 import net.manniche.orep.types.DigitalObjectMeta;
+import net.manniche.orep.types.ObjectRepositoryService;
 
 
 /**
@@ -40,7 +41,7 @@ public class RMIObjectRepository implements ObjectManagement
 
     public RMIObjectRepository( StorageProvider storage )
     {
-        this.storage = storage;
+            this.storage = storage;
     }
 
 
@@ -97,14 +98,17 @@ public class RMIObjectRepository implements ObjectManagement
     {
         if( null == System.getSecurityManager() )
         {
-            System.setSecurityManager( new SecurityManager() );
+            System.setSecurityManager( null );//new SecurityManager() );
         }
         try
         {
             String name = "OREP-RMI";
-            String storage_path = System.getProperty( "user.dir" ) + System.getProperty( "file.separator" ) + "objectstorage";
-            StorageProvider storage = (StorageProvider)ServiceLocator.getImplementation( StorageType.FileStorage );
-            ObjectManagement engine = new RMIObjectRepository( storage );
+           
+            @SuppressWarnings( "unchecked" )
+            Class<ObjectRepositoryService> storage = ServiceLocator.getImplementation( StorageType.FileStorage );
+            System.out.println( String.format( "%s", storage ) );
+            StorageProvider store = (StorageProvider) storage.newInstance();
+            ObjectManagement engine = new RMIObjectRepository( store );
             ObjectManagement stub = (ObjectManagement) UnicastRemoteObject.exportObject( engine, 0 );
             Registry registry = LocateRegistry.getRegistry();
             registry.rebind( name, stub );

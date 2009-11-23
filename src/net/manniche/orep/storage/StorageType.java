@@ -32,28 +32,30 @@ import net.manniche.orep.types.ObjectRepositoryServiceType;
  * 
  * @author stm
  */
-public enum StorageType implements ObjectRepositoryService
+public enum StorageType implements ObjectRepositoryServiceType<ObjectRepositoryService>
 {
 
-    /**
-     * Filesystem backed storage implementation
-     */
-    FileStorage( FileStorage.class ),
-    
-    /**
-     * Database backed storage implementation
-     */
-    DBStorage( DBStorage.class );
+        /**
+         * Filesystem backed storage implementation
+         */
+        FileStorage( FileStorage.class ),
 
-    private Class<? extends StorageProvider> storage_type;
+        /**
+         * Database backed storage implementation
+         */
+        DBStorage( DBStorage.class );
 
-    StorageType( Class<? extends StorageProvider> klass)
+        private Class<StorageProvider> storage_type;
+
+        @SuppressWarnings( "unchecked" )
+        StorageType( Class<? extends StorageProvider> klass )
+        {
+            this.storage_type = (Class<StorageProvider>) klass;
+        }
+    @Override
+    @SuppressWarnings( "unchecked" )
+    public Class<ObjectRepositoryService> getClassofService()
     {
-        this.storage_type = klass;
-    }
-
-    public Class<? extends ObjectRepositoryService > getClassOfService()
-    {
-        return this.storage_type.cast( this ).getClass();
+        return (Class<ObjectRepositoryService>)(Object)this.storage_type;
     }
 }

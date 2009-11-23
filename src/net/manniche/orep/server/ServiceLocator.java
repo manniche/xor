@@ -28,9 +28,10 @@ import net.manniche.orep.types.ObjectRepositoryServiceType;
  */
 class ServiceLocator {
 
-    public Class<ObjectRepositoryService> getImplementation( ObjectRepositoryServiceType service )
+    @SuppressWarnings( "unchecked" )
+    public static Class<ObjectRepositoryService> getImplementation( ObjectRepositoryServiceType<? extends ObjectRepositoryService> service )
     {
-        return null;
+        return (Class<ObjectRepositoryService>) service.getClassofService();
     }
 
 }

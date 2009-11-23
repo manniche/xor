@@ -27,7 +27,7 @@ import net.manniche.orep.types.ObjectIdentifier;
  *
  * @author stm
  */
-public class DBStorage extends Storage implements StorageProvider{
+public class DBStorage implements StorageProvider{
 
     private final String driver;
     private final String url;
