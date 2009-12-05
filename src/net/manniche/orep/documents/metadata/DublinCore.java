@@ -51,8 +51,9 @@ import net.manniche.orep.types.ObjectIdentifier;
  */
 public class DublinCore implements DigitalObjectMeta
 {
-
+    /** DC standard dataformatting: */
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat( "yyyy-MM-dd'T'HH:mm:ss.SSS" );
+    /** The map to keep all our dc values:*/
     private Map<DublinCoreElement, String> dcvalues;
 
     private class DublinCoreIdentifier implements ObjectIdentifier
@@ -64,16 +65,16 @@ public class DublinCore implements DigitalObjectMeta
         }
 
         @Override
-        public URI getIdentifier()
+        public URI getIdentifierAsURI()
         {
-                return DublinCoreNamespace.DC.getURI( this.identifier );
+            return DublinCoreNamespace.DC.getURI( this.identifier );
         }
 
 
         @Override
         public String getPrefix()
         {
-            throw new UnsupportedOperationException( "Not supported yet." );
+            return DublinCoreNamespace.DC.prefix;
         }
 
 
@@ -131,7 +132,7 @@ public class DublinCore implements DigitalObjectMeta
             }
             catch( URISyntaxException ex )
             {
-                /** We've constructed the URI String just above, at compile time,
+                /** We've constructed the URI String just above,
                 * so get out of my face with this exception!
                 */
             }
@@ -326,29 +327,14 @@ public class DublinCore implements DigitalObjectMeta
         return dcvalues.size();
     }
 
-    /* Example of output:
-    <oai_dc:dc xmlns:dc="http://purl.org/dc/elements/1.1/"
-    xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/
-    http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
-    <dc:title>Harry Potter og Fønixordenen</dc:title>
-    <dc:creator>Joanne K. Rowling</dc:creator>
-    <dc:type>Bog</dc:type>
-    <dc:identifier>710100:25082427</dc:identifier>
-    <dc:source>Harry Potter and the Order of the Phoenix</dc:source>
-    <dc:relation/>
-    </oai_dc:dc>
-     */
-
+    @Override
     public void serialize( OutputStream out, String identifier ) throws XMLStreamException
     {
         // Create an output factory
         XMLOutputFactory xmlof = XMLOutputFactory.newInstance();
         XMLStreamWriter xmlw;
 
-        xmlw =
-        xmlof.createXMLStreamWriter( out );
+        xmlw = xmlof.createXMLStreamWriter( out );
 
         String dc_prefix = DublinCoreNamespace.DC.prefix;
         String dc_namesp = DublinCoreNamespace.DC.uri.toString();
@@ -360,17 +346,30 @@ public class DublinCore implements DigitalObjectMeta
 
         for( Entry<DublinCoreElement, String> set : dcvalues.entrySet() )
         {
+            /**
+             * We'll write all the valid elements in the dc namespace, but
+             * we'll only fill chars in there if there is actually something
+             * in our datastructure
+             */
             xmlw.writeStartElement( dc_namesp, set.getKey().localName() );
-            if( set.getValue() != null )
+
+            /**
+             * ...and if an identifier was supplied, we'll fill it in here:
+             */
+            if( set.getKey() == DublinCoreElement.ELEMENT_IDENTIFIER &&
+                    null == set.getValue() )
+            {
+                xmlw.writeCharacters( identifier );
+            }
+            else if( set.getValue() != null )
             {
                 xmlw.writeCharacters( set.getValue() );
             }
-
-            xmlw.writeEndElement();
+                xmlw.writeEndElement();
         }
 
-        xmlw.writeEndElement();//closes "oai_dc:dc" element
-        xmlw.writeEndDocument();//closes document
+        xmlw.writeEndElement();
+        xmlw.writeEndDocument();
         xmlw.flush();
     }
 }

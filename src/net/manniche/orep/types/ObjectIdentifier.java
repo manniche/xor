@@ -31,7 +31,7 @@ public interface ObjectIdentifier {
      * Accessor for the representation of the identifier
      * @return an URI representing the identifier
      */
-    public URI getIdentifier();
+    public URI getIdentifierAsURI();
 
     /**
      * Accessor for the prefix (if any) on the object identifier.
