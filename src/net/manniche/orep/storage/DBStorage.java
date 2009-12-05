@@ -18,6 +18,8 @@
 
 package net.manniche.orep.storage;
 
+import net.manniche.orep.search.QueryResult;
+import net.manniche.orep.search.Query;
 import java.io.IOException;
 import javax.naming.ConfigurationException;
 import net.manniche.orep.types.ObjectIdentifier;
@@ -61,7 +63,7 @@ public class DBStorage implements StorageProvider{
 
 
     @Override
-    public void save( byte[] object ) throws IOException
+    public void save( byte[] object, byte[] metadata ) throws IOException
     {
         throw new UnsupportedOperationException( "Not supported yet." );
     }
@@ -76,6 +78,12 @@ public class DBStorage implements StorageProvider{
 
     @Override
     public byte[] get( ObjectIdentifier identifier ) throws IOException
+    {
+        throw new UnsupportedOperationException( "Not supported yet." );
+    }
+
+    @Override
+    public void close()
     {
         throw new UnsupportedOperationException( "Not supported yet." );
     }
