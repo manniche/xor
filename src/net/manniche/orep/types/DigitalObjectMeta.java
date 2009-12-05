@@ -18,6 +18,10 @@
 
 package net.manniche.orep.types;
 
+import java.io.OutputStream;
+import javax.xml.stream.XMLStreamException;
+
+
 
 /**
  * DigitalObjectMeta defines the metadata for the entire {@link DigitalObject}
@@ -41,4 +45,13 @@ public interface DigitalObjectMeta {
      */
     public ObjectIdentifier getIdentifier();
 
+
+    /**
+     * Serializes the metadata into outputstream, using the identifier or using
+     * the identifier given with the constructor if {@code identifier} is null
+     * @param out
+     * @param identifier can be null if an identifier already is present or a
+     *        valid String representation of one if none has been given.
+     */
+    public void serialize( OutputStream out, String identifier ) throws XMLStreamException;
 }

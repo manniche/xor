@@ -11,4 +11,10 @@ package net.manniche.orep.types;
  */
 public interface DigitalObject {
 
+    /**
+     * Writes out the DigitalObject as a byte[]. The binary representation is
+     * determined by the implementors.
+     * @return
+     */
+    public byte[] getBytes();
 }
