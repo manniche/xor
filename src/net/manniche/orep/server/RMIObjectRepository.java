@@ -42,117 +42,28 @@ import net.manniche.orep.types.ObjectRepositoryService;
  *
  * @author stm
  */
-public class RMIObjectRepository implements ObjectManagement
+public final class RMIObjectRepository extends ObjectRepository
 {
 
-    private final StorageProvider storage;
     private final String host;
     private final String loc;
+    private final int port;
 
-    public RMIObjectRepository( StorageProvider storage, String host, String sLocation )
+    public RMIObjectRepository( StorageProvider storage, String host, String sLocation, int port )
     {
-        this.storage = storage;
+        super( storage );
         this.host    = host;
         this.loc     = sLocation;
+        this.port    = port;
     }
 
 
     @Override
     public ObjectIdentifier storeObject( DigitalObject data, DigitalObjectMeta metadata, String message ) throws RemoteException
     {
-        try
-        {
-            ObjectIdentifier objectID = null;
-            URI id = null;
-            if( null == metadata.getIdentifier() )
-            {
-                String fragment = new Long( System.currentTimeMillis() ).toString() + new Integer( data.hashCode() );
-                id = new URI( "uri", this.host, this.loc, fragment );
-                objectID = new DefaultIdentifier( id );
-            }
-            else
-            {
-                id = metadata.getIdentifier().getIdentifierAsURI();
-                objectID = metadata.getIdentifier();
-            }
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            metadata.serialize( baos, id.toString() );
-            storage.save( data.getBytes(), baos.toByteArray() );
-            return objectID;
-        }
-        catch( URISyntaxException ex )
-        {
-            String error = String.format( "Could not construct storage location: %s", ex.getMessage() );
-            Logger.getLogger( RMIObjectRepository.class.getName() ).log( Level.SEVERE, error, ex );
-            //wrap and send to RMI client
-            throw new RemoteException( error, ex );
-        }
-        catch( XMLStreamException ex )
-        {
-            String error = String.format( "Could not construct metadata: %s", ex.getMessage() );
-            Logger.getLogger( RMIObjectRepository.class.getName() ).log( Level.SEVERE, error, ex );
-            //wrap and send to RMI client
-            throw new RemoteException( error, ex );
-        }
-        catch( IOException ex )
-        {
-            String error = String.format( "Failed to store object: %s", ex.getMessage() );
-            Logger.getLogger( RMIObjectRepository.class.getName() ).log( Level.SEVERE, error, ex );
-            //wrap and send to RMI client
-            throw new RemoteException( error, ex );
-        }
-        finally
-        {
-            /**
-             * If there should be any cleanup todo, we'll let the storage
-             * implementation do it.
-             */
-            this.storage.close();
-        }
+        ObjectIdentifier id = super.storeObject( data, metadata, message );
+        return new DefaultIdentifier(id.getIdentifierAsURI());
     }
-
-
-    @Override
-    public DigitalObject getObject( ObjectIdentifier identifier ) throws RemoteException
-    {
-        throw new UnsupportedOperationException( "Not supported yet." );
-    }
-
-
-    @Override
-    public DigitalObjectMeta getObjectMetadata( ObjectIdentifier identifier ) throws RemoteException
-    {
-        throw new UnsupportedOperationException( "Not supported yet." );
-    }
-
-
-    @Override
-    public boolean deleteObject( ObjectIdentifier identifier ) throws RemoteException
-    {
-        throw new UnsupportedOperationException( "Not supported yet." );
-    }
-
-
-    @Override
-    public boolean addDataToObject( ObjectIdentifier identifier, InputStream data, String message ) throws RemoteException
-    {
-        throw new UnsupportedOperationException( "Not supported yet." );
-    }
-
-
-    @Override
-    public InputStream getDataFromObject( ObjectIdentifier objectIdentifier, ObjectIdentifier dataIdentifier ) throws RemoteException
-    {
-        throw new UnsupportedOperationException( "Not supported yet." );
-    }
-
-
-    @Override
-    public boolean deleteDataFromObject( ObjectIdentifier objectIdentifier, ObjectIdentifier dataIdentifier ) throws RemoteException
-    {
-        throw new UnsupportedOperationException( "Not supported yet." );
-    }
-
 
     public static void main( String[] args )
     {
@@ -175,7 +86,7 @@ public class RMIObjectRepository implements ObjectManagement
         try
         {
             store = (StorageProvider) storage.newInstance();
-            ObjectManagement engine = new RMIObjectRepository( store, host, location );
+            ObjectManagement engine = new RMIObjectRepository( store, host, location, port );
             ObjectManagement stub = (ObjectManagement) UnicastRemoteObject.exportObject( engine, 0 );
             Registry registry = LocateRegistry.getRegistry();
             registry.rebind( name, stub );
