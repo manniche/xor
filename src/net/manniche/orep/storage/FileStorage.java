@@ -18,10 +18,14 @@
 
 package net.manniche.orep.storage;
 
+import java.net.URISyntaxException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import net.manniche.orep.search.QueryResult;
 import net.manniche.orep.search.Query;
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import net.manniche.orep.types.ObjectIdentifier;
 
 
@@ -42,7 +46,34 @@ public class FileStorage implements StorageProvider{
 
     
     @Override
-    public void save( byte[] object, byte[] metadata ) throws IOException
+    public URI save( byte[] object, byte[] metadata ) throws IOException
+    {
+        String hash = Integer.toString( object.hashCode() );
+
+        if( hash.startsWith( "-" ) )
+        {
+            hash = hash.substring( 1 );
+        }
+
+        String path = new Long( System.currentTimeMillis() ).toString() + hash;
+
+        URI id = null;
+        try
+        {
+            id = new URI( "file", null, path, null );
+        }
+        catch( URISyntaxException ex )
+        {
+            String error = String.format( "Could not construct storage location: %s", ex.getMessage() );
+            Logger.getLogger( FileStorage.class.getName() ).log( Level.SEVERE, error, ex );
+            throw new IOException( error, ex );
+        }
+
+        return id;
+    }
+
+    @Override
+    public void save( byte[] object, byte[] metadata, URI uri ) throws IOException
     {
         throw new UnsupportedOperationException( "Not supported yet." );
     }

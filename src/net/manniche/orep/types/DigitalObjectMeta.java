@@ -38,20 +38,8 @@ import javax.xml.stream.XMLStreamException;
 public interface DigitalObjectMeta {
 
     /**
-     * The identifier of any DigitalObject in the Object Repository is a 
-     * (universally) unique value
-     * 
-     * @return the identifier of the DigitalObject
-     */
-    public ObjectIdentifier getIdentifier();
-
-
-    /**
-     * Serializes the metadata into outputstream, using the identifier or using
-     * the identifier given with the constructor if {@code identifier} is null
+     * Serializes the metadata into outputstream
      * @param out
-     * @param identifier can be null if an identifier already is present or a
-     *        valid String representation of one if none has been given.
      */
-    public void serialize( OutputStream out, String identifier ) throws XMLStreamException;
+    public void serialize( OutputStream out ) throws XMLStreamException;
 }

@@ -224,13 +224,6 @@ public class DublinCore implements DigitalObjectMeta
     }
 
 
-    @Override
-    public ObjectIdentifier getIdentifier()
-    {
-        return new DublinCoreIdentifier( dcvalues.get( DublinCoreElement.ELEMENT_IDENTIFIER ) );
-    }
-
-
     public void setContributor( String contributor )
     {
         dcvalues.put( DublinCoreElement.ELEMENT_CONTRIBUTOR, contributor );
@@ -328,7 +321,7 @@ public class DublinCore implements DigitalObjectMeta
     }
 
     @Override
-    public void serialize( OutputStream out, String identifier ) throws XMLStreamException
+    public void serialize( OutputStream out ) throws XMLStreamException
     {
         // Create an output factory
         XMLOutputFactory xmlof = XMLOutputFactory.newInstance();
@@ -353,19 +346,12 @@ public class DublinCore implements DigitalObjectMeta
              */
             xmlw.writeStartElement( dc_namesp, set.getKey().localName() );
 
-            /**
-             * ...and if an identifier was supplied, we'll fill it in here:
-             */
-            if( set.getKey() == DublinCoreElement.ELEMENT_IDENTIFIER &&
-                    null == set.getValue() )
-            {
-                xmlw.writeCharacters( identifier );
-            }
-            else if( set.getValue() != null )
+            if( set.getValue() != null )
             {
                 xmlw.writeCharacters( set.getValue() );
             }
-                xmlw.writeEndElement();
+            
+            xmlw.writeEndElement();
         }
 
         xmlw.writeEndElement();

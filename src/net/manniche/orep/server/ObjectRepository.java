@@ -20,9 +20,7 @@ package net.manniche.orep.server;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.rmi.RemoteException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -57,28 +55,7 @@ abstract class ObjectRepository implements ObjectManagement {
 
 
     @Override
-    public boolean addDataToObject( ObjectIdentifier identifier, InputStream data, String message ) throws RemoteException
-    {
-        throw new UnsupportedOperationException( "Not supported yet." );
-    }
-
-
-    @Override
-    public boolean deleteDataFromObject( ObjectIdentifier objectIdentifier, ObjectIdentifier dataIdentifier ) throws RemoteException
-    {
-        throw new UnsupportedOperationException( "Not supported yet." );
-    }
-
-
-    @Override
     public boolean deleteObject( ObjectIdentifier identifier ) throws RemoteException
-    {
-        throw new UnsupportedOperationException( "Not supported yet." );
-    }
-
-
-    @Override
-    public InputStream getDataFromObject( ObjectIdentifier objectIdentifier, ObjectIdentifier dataIdentifier ) throws RemoteException
     {
         throw new UnsupportedOperationException( "Not supported yet." );
     }
@@ -102,50 +79,38 @@ abstract class ObjectRepository implements ObjectManagement {
     }
 
 
-    @Override
-    public DigitalObjectMeta getObjectMetadata( ObjectIdentifier identifier ) throws RemoteException
-    {
-        throw new UnsupportedOperationException( "Not supported yet." );
-    }
 
 
     @Override
     public ObjectIdentifier storeObject( DigitalObject data, DigitalObjectMeta metadata, String message ) throws RemoteException
     {
+        return storeObject( data, metadata, null, message );
+    }
+
+        @Override
+    public ObjectIdentifier storeObject( DigitalObject data, DigitalObjectMeta metadata, ObjectIdentifier identifier, String message ) throws RemoteException
+    {
         try
         {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            metadata.serialize( baos );
+
+            URI uid;
+
             ObjectIdentifier objectID = null;
-            URI id = null;
-            if( null == metadata.getIdentifier() )
+
+            if( null == identifier )
             {
-                String hash = Integer.toString( data.hashCode() );
-
-                if( hash.startsWith( "-" ) )
-                {
-                    hash = hash.substring( 1 );
-                }
-
-                String fragment = new Long( System.currentTimeMillis() ).toString() + hash;
-                // should construct something along the lines of uri://{Long}
-                id = new URI( "uri", "", "", fragment );
-                objectID = new DefaultIdentifier( id );
+                uid = storage.save( data.getBytes(), baos.toByteArray() );
+                objectID = new DefaultIdentifier( uid );
             }
             else
             {
-                id = metadata.getIdentifier().getIdentifierAsURI();
-                objectID = metadata.getIdentifier();
+                storage.save( data.getBytes(), baos.toByteArray(), identifier.getIdentifierAsURI() );
+                objectID = identifier;
             }
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            metadata.serialize( baos, id.toString() );
-            storage.save( data.getBytes(), baos.toByteArray() );
+
             return objectID;
-        }
-        catch( URISyntaxException ex )
-        {
-            String error = String.format( "Could not construct storage location: %s", ex.getMessage() );
-            Logger.getLogger( RMIObjectRepository.class.getName() ).log( Level.SEVERE, error, ex );
-            //wrap and send to RMI client
-            throw new RemoteException( error, ex );
         }
         catch( XMLStreamException ex )
         {
@@ -170,5 +135,31 @@ abstract class ObjectRepository implements ObjectManagement {
             this.storage.close();
         }
     }
+
+    //    @Override
+//    public boolean addDataToObject( ObjectIdentifier identifier, InputStream data, String message ) throws RemoteException
+//    {
+//        throw new UnsupportedOperationException( "Not supported yet." );
+//    }
+//
+//
+//    @Override
+//    public boolean deleteDataFromObject( ObjectIdentifier objectIdentifier, ObjectIdentifier dataIdentifier ) throws RemoteException
+//    {
+//        throw new UnsupportedOperationException( "Not supported yet." );
+//    }
+//
+//    @Override
+//    public InputStream getDataFromObject( ObjectIdentifier objectIdentifier, ObjectIdentifier dataIdentifier ) throws RemoteException
+//    {
+//        throw new UnsupportedOperationException( "Not supported yet." );
+//    }
+//    @Override
+//    public DigitalObjectMeta getObjectMetadata( ObjectIdentifier identifier ) throws RemoteException
+//    {
+//        throw new UnsupportedOperationException( "Not supported yet." );
+//    }
+
+
 
 }

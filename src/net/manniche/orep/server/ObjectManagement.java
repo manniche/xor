@@ -19,7 +19,6 @@
 
 package net.manniche.orep.server;
 
-import java.io.InputStream;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import net.manniche.orep.types.DigitalObject;
@@ -35,15 +34,17 @@ public interface ObjectManagement extends Remote{
 
     ObjectIdentifier storeObject( DigitalObject data, DigitalObjectMeta metadata, String message ) throws RemoteException;
 
-    DigitalObject getObject( ObjectIdentifier identifier ) throws RemoteException;
+    ObjectIdentifier storeObject( DigitalObject data, DigitalObjectMeta metadata, ObjectIdentifier identifier, String message ) throws RemoteException;
 
-    DigitalObjectMeta getObjectMetadata( ObjectIdentifier identifier ) throws RemoteException;
+    DigitalObject getObject( ObjectIdentifier identifier ) throws RemoteException;
 
     boolean deleteObject( ObjectIdentifier identifier ) throws RemoteException;
 
-    boolean addDataToObject( ObjectIdentifier identifier, InputStream data, String message ) throws RemoteException;
+//    DigitalObjectMeta getObjectMetadata( ObjectIdentifier identifier ) throws RemoteException;
 
-    InputStream getDataFromObject( ObjectIdentifier objectIdentifier, ObjectIdentifier dataIdentifier ) throws RemoteException;
-
-    boolean deleteDataFromObject( ObjectIdentifier objectIdentifier, ObjectIdentifier dataIdentifier ) throws RemoteException;
+//    boolean addDataToObject( ObjectIdentifier identifier, InputStream data, String message ) throws RemoteException;
+//
+//    InputStream getDataFromObject( ObjectIdentifier objectIdentifier, ObjectIdentifier dataIdentifier ) throws RemoteException;
+//
+//    boolean deleteDataFromObject( ObjectIdentifier objectIdentifier, ObjectIdentifier dataIdentifier ) throws RemoteException;
 }

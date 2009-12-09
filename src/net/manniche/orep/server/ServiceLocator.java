@@ -33,5 +33,4 @@ class ServiceLocator {
     {
         return (Class<ObjectRepositoryService>) service.getClassofService();
     }
-
 }

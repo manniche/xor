@@ -12,6 +12,15 @@ package net.manniche.orep.types;
 public interface DigitalObject {
 
     /**
+     * The identifier of any DigitalObject in the Object Repository is a
+     * (universally) unique value
+     *
+     * @return the identifier of the DigitalObject
+     */
+//    public ObjectIdentifier getIdentifier();
+
+
+    /**
      * Writes out the DigitalObject as a byte[]. The binary representation is
      * determined by the implementors.
      * @return

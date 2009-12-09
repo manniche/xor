@@ -17,18 +17,12 @@
  */
 package net.manniche.orep.server;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.xml.stream.XMLStreamException;
 import net.manniche.orep.types.ObjectIdentifier;
 import net.manniche.orep.storage.StorageProvider;
 import net.manniche.orep.storage.StorageType;
@@ -59,10 +53,10 @@ public final class RMIObjectRepository extends ObjectRepository
 
 
     @Override
-    public ObjectIdentifier storeObject( DigitalObject data, DigitalObjectMeta metadata, String message ) throws RemoteException
+    public ObjectIdentifier storeObject( DigitalObject data, DigitalObjectMeta metadata, ObjectIdentifier identifier, String message ) throws RemoteException
     {
-        ObjectIdentifier id = super.storeObject( data, metadata, message );
-        return new DefaultIdentifier(id.getIdentifierAsURI());
+        ObjectIdentifier id = super.storeObject( data, metadata, identifier, message );
+        return new DefaultIdentifier( id.getIdentifierAsURI() );
     }
 
     public static void main( String[] args )
@@ -79,12 +73,16 @@ public final class RMIObjectRepository extends ObjectRepository
         }
         String name = "OREP-RMI";
 
-        Class<ObjectRepositoryService> storage = ServiceLocator.getImplementation( StorageType.FileStorage );
+        String storagetype = "FileStorage";
+        StorageType type = StorageType.valueOf( storagetype );
+
+        Class<ObjectRepositoryService> storage = ServiceLocator.getImplementation( type );
 
         System.out.println( String.format( "%s", storage ) );
         StorageProvider store;
         try
         {
+//            StorageProvider provider = (StorageProvider) type.getClassofService().newInstance();
             store = (StorageProvider) storage.newInstance();
             ObjectManagement engine = new RMIObjectRepository( store, host, location, port );
             ObjectManagement stub = (ObjectManagement) UnicastRemoteObject.exportObject( engine, 0 );

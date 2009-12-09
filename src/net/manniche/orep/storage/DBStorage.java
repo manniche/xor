@@ -21,6 +21,7 @@ package net.manniche.orep.storage;
 import net.manniche.orep.search.QueryResult;
 import net.manniche.orep.search.Query;
 import java.io.IOException;
+import java.net.URI;
 import javax.naming.ConfigurationException;
 import net.manniche.orep.types.ObjectIdentifier;
 
@@ -63,7 +64,13 @@ public class DBStorage implements StorageProvider{
 
 
     @Override
-    public void save( byte[] object, byte[] metadata ) throws IOException
+    public URI save( byte[] object, byte[] metadata ) throws IOException
+    {
+        throw new UnsupportedOperationException( "Not supported yet." );
+    }
+
+    @Override
+    public void save( byte[] object, byte[] metadata, URI uri ) throws IOException
     {
         throw new UnsupportedOperationException( "Not supported yet." );
     }
