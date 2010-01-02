@@ -84,7 +84,7 @@ public class DBStorage implements StorageProvider{
 
 
     @Override
-    public byte[] get( ObjectIdentifier identifier ) throws IOException
+    public byte[] get( URI identifier ) throws IOException
     {
         throw new UnsupportedOperationException( "Not supported yet." );
     }

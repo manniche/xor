@@ -23,7 +23,6 @@ import net.manniche.orep.search.QueryResult;
 import net.manniche.orep.search.Query;
 import java.io.IOException;
 import java.net.URI;
-import net.manniche.orep.types.ObjectIdentifier;
 import net.manniche.orep.types.ObjectRepositoryService;
 
 
@@ -38,6 +37,6 @@ public interface StorageProvider extends ObjectRepositoryService{
     public URI save( byte[] object, byte[] metadata ) throws IOException;
     public void save( byte[] object, byte[] metadatam, URI uri ) throws IOException;
     public QueryResult query( Query query ) throws IOException;
-    public byte[] get( ObjectIdentifier identifier) throws IOException;
+    public byte[] get( URI identifier) throws IOException;
     public void close();
 }
