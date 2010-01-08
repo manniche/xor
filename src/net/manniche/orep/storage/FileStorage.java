@@ -1,5 +1,5 @@
 /*
- *  This file is part of RMIObjectRepository.
+ *  This file is part of OREP
  *  Copyright © 2009, Steen Manniche.
  * 
  *  RMIObjectRepository is free software: you can redistribute it and/or modify
@@ -15,7 +15,6 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RMIObjectRepository.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package net.manniche.orep.storage;
 
 import java.net.URISyntaxException;
@@ -26,25 +25,25 @@ import net.manniche.orep.search.Query;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
-import net.manniche.orep.types.ObjectIdentifier;
 
 
 /**
  *
  * @author stm
  */
-public class FileStorage implements StorageProvider{
+public class FileStorage implements StorageProvider
+{
 
     private final File storage_file;
 
-    public FileStorage( )
+    public FileStorage()
     {
         String storage_path = System.getProperty( "user.home" ) + System.getProperty( "file.separator" ) + "objectstorage";
         System.out.println( String.format( "%s", storage_path ) );
         this.storage_file = new File( storage_path );
     }
 
-    
+
     @Override
     public URI save( byte[] object, byte[] metadata ) throws IOException
     {
@@ -72,6 +71,7 @@ public class FileStorage implements StorageProvider{
         return id;
     }
 
+
     @Override
     public void save( byte[] object, byte[] metadata, URI uri ) throws IOException
     {
@@ -92,8 +92,16 @@ public class FileStorage implements StorageProvider{
         throw new UnsupportedOperationException( "Not supported yet." );
     }
 
+
     @Override
     public void close()
+    {
+        throw new UnsupportedOperationException( "Not supported yet." );
+    }
+
+
+    @Override
+    public boolean delete( URI identifier )
     {
         throw new UnsupportedOperationException( "Not supported yet." );
     }

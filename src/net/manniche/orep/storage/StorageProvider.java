@@ -1,5 +1,5 @@
 /*
- *  This file is part of RMIObjectRepository.
+ *  This file is part of OREP
  *  Copyright © 2009, Steen Manniche.
  *
  *  RMIObjectRepository is free software: you can redistribute it and/or modify
@@ -38,5 +38,6 @@ public interface StorageProvider extends ObjectRepositoryService{
     public void save( byte[] object, byte[] metadatam, URI uri ) throws IOException;
     public QueryResult query( Query query ) throws IOException;
     public byte[] get( URI identifier) throws IOException;
+    public boolean delete( URI identifier ) throws IOException;
     public void close();
 }
