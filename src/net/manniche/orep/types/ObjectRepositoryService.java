@@ -1,5 +1,5 @@
 /*
- *  This file is part of RMIObjectRepository.
+ *  This file is part of OREP
  *  Copyright © 2009, Steen Manniche.
  * 
  *  RMIObjectRepository is free software: you can redistribute it and/or modify
