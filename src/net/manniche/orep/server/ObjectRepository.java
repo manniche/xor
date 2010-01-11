@@ -31,12 +31,12 @@ import net.manniche.orep.types.ObjectIdentifier;
  */
 public interface ObjectRepository{
 
-    ObjectIdentifier storeObject( DigitalObject data, String message )throws XMLStreamException, IOException;
+    ObjectIdentifier storeObject( DigitalObject data, String message )throws IOException;
 
-    ObjectIdentifier storeObject( DigitalObject data, ObjectIdentifier identifier, String message )throws XMLStreamException, IOException;
+    ObjectIdentifier storeObject( DigitalObject data, ObjectIdentifier identifier, String message )throws IOException;
 
-    DigitalObject getObject( ObjectIdentifier identifier )throws XMLStreamException, IOException;
+    DigitalObject getObject( ObjectIdentifier identifier )throws IOException;
 
-    boolean deleteObject( ObjectIdentifier identifier, String logmessage )throws XMLStreamException, IOException;
+    boolean deleteObject( ObjectIdentifier identifier, String logmessage )throws IOException;
 
 }

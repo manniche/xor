@@ -31,9 +31,9 @@ public interface LogMessageHandler extends ObjectRepositoryService{
      * Commits a log message from the object repository implementation to an
      * underlying storage implementation or a listener.
      * 
-     * @param className
-     * @param methodName
-     * @param logMessage
+     * @param className name of the class that commits the log message
+     * @param methodName name of the method from which the log commit fired from
+     * @param logMessage the log message itself
      */
     public void commitLogMessage( String className, String methodName, String logMessage );
 }

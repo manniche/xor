@@ -15,21 +15,24 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RMIObjectRepository.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-
 package net.manniche.orep.server;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URI;
+import java.net.UnknownHostException;
+import java.rmi.Naming;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.Hashtable;
+import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
-import javax.xml.stream.XMLStreamException;
+import net.manniche.orep.documents.DefaultDigitalObject;
 import net.manniche.orep.types.ObjectIdentifier;
 import net.manniche.orep.storage.StorageProvider;
 import net.manniche.orep.storage.StorageType;
@@ -39,7 +42,9 @@ import net.manniche.orep.types.ObjectRepositoryService;
 
 
 /**
- *
+ * The connection handler for RMI requests. This class represents the RMI
+ * server implementation.
+ * 
  * @author stm
  */
 public final class RMIObjectRepository extends UnicastRemoteObject implements RMIObjectManagement
@@ -49,12 +54,32 @@ public final class RMIObjectRepository extends UnicastRemoteObject implements RM
     private final StorageProvider repositoryStorageMechanism;
     private final LogMessageHandler logMessageHandler;
 
+    /**
+     * Sets up the RMI server for the object repository.
+     *
+     * @param storage the StorageProvider that handles storage of objects for
+     * this RMI server instance
+     * @param logMessageHandler handles the log message storing/notifications
+     * @throws RemoteException if the server could not be started
+     */
     public RMIObjectRepository( StorageProvider storage, LogMessageHandler logMessageHandler ) throws RemoteException
     {
+        super();
         this.logMessageHandler = logMessageHandler;
         this.repositoryStorageMechanism = storage;
     }
 
+
+    /**
+     * Retrieves a {@link DigitalObject} identified by {@code identifier} from
+     * the object repository. A RemoteException is thrown if no object matches
+     * the identifier given.
+     *
+     * @param identifier identifying the object to be retrieved
+     * @return a DigitalObject if the identifier matches
+     * @throws RemoteException if anything goes wrong in the object retrieval
+     * process
+     */
     @Override
     public DigitalObject getRepositoryObject( ObjectIdentifier identifier ) throws RemoteException
     {
@@ -63,13 +88,6 @@ public final class RMIObjectRepository extends UnicastRemoteObject implements RM
         try
         {
             digitalObject = this.getObject( identifier );
-        }
-        catch( XMLStreamException ex )
-        {
-            String error = String.format( "Failed to retrieve object identified by %s: %s", identifier, ex.getMessage() );
-            Logger.getLogger( RMIObjectRepository.class.getName() ).log( Level.WARNING, error, ex );
-            //wrap and send to RMI client
-            throw new RemoteException( error, ex );
         }
         catch( IOException ex )
         {
@@ -81,6 +99,7 @@ public final class RMIObjectRepository extends UnicastRemoteObject implements RM
 
         return digitalObject;
     }
+
 
     /**
      * Stores a {@link DigitalObject} {@code data} into the object repository,
@@ -97,25 +116,33 @@ public final class RMIObjectRepository extends UnicastRemoteObject implements RM
      * information is available in the wrapped exception.
      */
     @Override
-    public final ObjectIdentifier storeRepositoryObject( DigitalObject data , String logmessage ) throws RemoteException
+    public final ObjectIdentifier storeRepositoryObject( DigitalObject data, String logmessage ) throws RemoteException
     {
         return this.storeRepositoryObject( data, null, logmessage );
     }
 
+
+    /**
+     * Stores a {@link DigitalObject} {@code data} into the object repository,
+     * returning the {@link ObjectIdentifier identifier} uniquely identifying
+     * the object.
+     *
+     * @param data the object to be stored
+     * @param identifier the object, when stored will be identified by this id
+     * @param logmessage a message describing the operation, provided by the user
+     * @return an {@link ObjectIdentifier} that identifies the object within the
+     * object repository
+     * @throws RemoteException if either the metadata could not be retrived or
+     * some lower level operation in the storage implementation failed. Detailed
+     * information is available in the wrapped exception.
+     */
     private ObjectIdentifier storeRepositoryObject( DigitalObject data, ObjectIdentifier identifier, String logmessage ) throws RemoteException
     {
         ObjectIdentifier oIdentifier = null;
         try
         {
-             oIdentifier = this.storeObject(data, identifier, logmessage );
+            oIdentifier = this.storeObject( data, identifier, logmessage );
 
-        }
-        catch( XMLStreamException ex )
-        {
-            String error = String.format( "Could not construct metadata: %s", ex.getMessage() );
-            Logger.getLogger( RMIObjectRepository.class.getName() ).log( Level.WARNING, error, ex );
-            //wrap and send to RMI client
-            throw new RemoteException( error, ex );
         }
         catch( IOException ex )
         {
@@ -134,6 +161,18 @@ public final class RMIObjectRepository extends UnicastRemoteObject implements RM
     }
 
 
+    /**
+     * Deletes a {@link DigitalObject} identified by {@code identifier} from
+     * the object repository. If the object could be found _and_ deleted, this
+     * method returns true, otherwise it returns false. E.g. a RemoteException
+     * will be thrown if the object can be found, but not deleted.
+     *
+     * @param identifier identifying the object to be retrieved
+     * @param logmessage user supplied message describing the context of the action
+     * @return true iff the object can be found _and_ deleted, false otherwise.
+     * @throws RemoteException if anything goes wrong in the object deletion.
+     * process
+     */
     @Override
     public boolean deleteRepositoryObject( ObjectIdentifier identifier, String logmessage ) throws RemoteException
     {
@@ -151,15 +190,27 @@ public final class RMIObjectRepository extends UnicastRemoteObject implements RM
     }
 
 
+    /**
+     * provides the implementation for the {@link #storeRepositoryObject(net.manniche.orep.types.DigitalObject, java.lang.String)} method
+     *
+     * @see #storeRepositoryObject(net.manniche.orep.types.DigitalObject, java.lang.String)
+     * @throws IOException if anything goes wrong in the storage process
+     */
     @Override
-    public ObjectIdentifier storeObject( DigitalObject data, String message ) throws XMLStreamException, IOException
+    public ObjectIdentifier storeObject( DigitalObject data, String message ) throws IOException
     {
         return this.storeObject( data, null, message );
     }
 
 
+    /**
+     * provides the implementation for the {@link #storeRepositoryObject(net.manniche.orep.types.DigitalObject, net.manniche.orep.types.ObjectIdentifier, java.lang.String)} method
+     *
+     * @see #storeRepositoryObject(net.manniche.orep.types.DigitalObject, net.manniche.orep.types.ObjectIdentifier, java.lang.String)
+     * @throws IOException if anything goes wrong in the storage process
+     */
     @Override
-    public ObjectIdentifier storeObject( DigitalObject data, ObjectIdentifier identifier, String message ) throws XMLStreamException, IOException
+    public ObjectIdentifier storeObject( DigitalObject data, ObjectIdentifier identifier, String message ) throws IOException
     {
         URI uid;
 
@@ -180,13 +231,25 @@ public final class RMIObjectRepository extends UnicastRemoteObject implements RM
     }
 
 
+    /**
+     * Provides the implementation for the {@link #getRepositoryObject(net.manniche.orep.types.ObjectIdentifier) } method
+     *
+     * @throws IOException if the object cannot be retrieved from the storage
+     * implementation
+     */
     @Override
-    public DigitalObject getObject( ObjectIdentifier identifier ) throws XMLStreamException, IOException
+    public DigitalObject getObject( ObjectIdentifier identifier ) throws IOException
     {
-        throw new UnsupportedOperationException( "Not supported yet." );
+        byte[] object = this.repositoryStorageMechanism.get( identifier.getIdentifierAsURI() );
+        return new DefaultDigitalObject( object );
     }
 
 
+    /**
+     *  Provides the implementation for the {@link #deleteRepositoryObject(net.manniche.orep.types.ObjectIdentifier, java.lang.String) } method
+     * @throws IOException if the object could not be found and or subsequently
+     * deleted.
+     */
     @Override
     public boolean deleteObject( ObjectIdentifier identifier, String logmessage ) throws IOException
     {
@@ -197,10 +260,11 @@ public final class RMIObjectRepository extends UnicastRemoteObject implements RM
     ////////////////////////////////////////////////////////////////////////////
     // Below follows the RMI server main method.                              //
     ////////////////////////////////////////////////////////////////////////////
-    public static void main( String[] args )
+
+    public static void main( String[] args ) throws UnknownHostException
     {
         String host = "127.0.0.1";
-        int port = 8080;
+        int port = 8181;
         String location = "RMIObjectRepository";
 
 //        if( null == System.getSecurityManager() )
@@ -216,19 +280,38 @@ public final class RMIObjectRepository extends UnicastRemoteObject implements RM
 
         Class<ObjectRepositoryService> storage = ServiceLocator.getImplementation( type );
 
-        System.out.println( String.format( "%s", storage ) );
+//        System.setProperty( "java.rmi.server.hostname", "192.168.1.74" );
+//        Logger.getLogger( RMIObjectRepository.class.getName() ).log( Level.INFO, String.format( "%s", storage ) );
+//        Logger.getLogger( RMIObjectRepository.class.getName() ).log( Level.INFO, String.format( "%s", System.getProperty( "java.rmi.server.hostname" ) ) );
+
         StorageProvider store;
         try
         {
-//            StorageProvider provider = (StorageProvider) type.getClassofService().newInstance();
+
+
+            //            StorageProvider provider = (StorageProvider) type.getClassofService().newInstance();
             store = (StorageProvider) storage.newInstance();
             LogMessageHandler logMessageHandler = new FileBasedLogMessageHandler( store );
-            RMIObjectManagement engine = new RMIObjectRepository( store, logMessageHandler );
-            Context context = new InitialContext();
-            context.bind( "rmi:RMIObjectRepository", engine );
-            System.out.println( String.format( "OREP-RMI bound to %s", context.PROVIDER_URL ) );
+            RMIObjectManagement k = new RMIObjectRepository( store, logMessageHandler );
+            Naming.rebind( "rmi://localhost/orep", k );
+
+
+//            RMIObjectRepository engine = new RMIObjectRepository( store, logMessageHandler );
+//            UnicastRemoteObject.exportObject( engine );
+//            Context context = new InitialContext();
+//            Hashtable<?, ?> environment = context.getEnvironment();
+//            for( Entry<?,?> s: environment.entrySet() )
+//            {
+//                System.out.println( String.format( "%s: %s", s.getKey(), s.getValue() ) );
+//            }
+//            context.rebind( "rmi:RMIObjectRepository", engine );
+//            System.out.println( String.format( "OREP-RMI bound to %s", context.PROVIDER_URL ) );
+
+
+            System.out.println( String.format( "%s", UnicastRemoteObject.getLog() ) );
+
         }
-        catch( NamingException ex )
+        catch( MalformedURLException ex )
         {
             Logger.getLogger( RMIObjectRepository.class.getName() ).log( Level.WARNING, ex.getMessage(), ex );
         }
@@ -245,4 +328,6 @@ public final class RMIObjectRepository extends UnicastRemoteObject implements RM
             Logger.getLogger( RMIObjectRepository.class.getName() ).log( Level.WARNING, ex.getMessage(), ex );
         }
     }
+
+
 }
