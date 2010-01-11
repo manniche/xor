@@ -22,7 +22,8 @@ along with opensearch.  If not, see <http://www.gnu.org/licenses/>.
  */
 package net.manniche.orep.metadata;
 
-import java.io.OutputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
@@ -33,24 +34,24 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.namespace.NamespaceContext;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
-import net.manniche.orep.types.DigitalObjectMeta;
-import net.manniche.orep.types.ObjectIdentifier;
 
+import net.manniche.orep.types.ObjectIdentifier;
+import net.manniche.orep.types.DigitalObject;
 
 /**
  * DublinCore is a class implementation of the Dublin Core Metadata Element Set,
  * Version 1.1 (http://dublincore.org/documents/dces/)
  *
  */
-public class DublinCore implements DigitalObjectMeta
+public class DublinCore implements DigitalObject
 {
+
     /** DC standard dataformatting: */
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat( "yyyy-MM-dd'T'HH:mm:ss.SSS" );
     /** The map to keep all our dc values:*/
@@ -58,11 +59,14 @@ public class DublinCore implements DigitalObjectMeta
 
     private class DublinCoreIdentifier implements ObjectIdentifier
     {
+
         private final String identifier;
+
         DublinCoreIdentifier( String identifier )
         {
             this.identifier = identifier;
         }
+
 
         @Override
         public URI getIdentifierAsURI()
@@ -116,10 +120,10 @@ public class DublinCore implements DigitalObjectMeta
 
     enum DublinCoreNamespace implements NamespaceContext
     {
+
         DC( "dc", "http://purl.org/dc/elements/1.1" ),
         DCMI( "dcmitype", "http://purl.org/dc/dcmitype" ),
         DCTERMS( "dcterms", "http://purl.org/dc/terms" );
-
         private String prefix;
         private URI uri;
 
@@ -133,13 +137,14 @@ public class DublinCore implements DigitalObjectMeta
             catch( URISyntaxException ex )
             {
                 /** We've constructed the URI String just above,
-                * so get out of my face with this exception!
-                */
+                 * so get out of my face with this exception!
+                 */
             }
         }
 
+
         @Override
-        public String getPrefix( String URI)
+        public String getPrefix( String URI )
         {
             String retval = null;
             for( DublinCoreNamespace dc : this.values() )
@@ -151,6 +156,7 @@ public class DublinCore implements DigitalObjectMeta
             }
             return retval;
         }
+
 
         @Override
         public String getNamespaceURI( String prefix )
@@ -166,6 +172,7 @@ public class DublinCore implements DigitalObjectMeta
             return retval;
         }
 
+
         @Override
         public Iterator<String> getPrefixes( String URI )
         {
@@ -180,10 +187,11 @@ public class DublinCore implements DigitalObjectMeta
             return prefixes.iterator();
         }
 
+
         public URI getURI( String fragment )
         {
             String scheme = this.uri.getScheme();
-            String ssp    = this.uri.getSchemeSpecificPart();
+            String ssp = this.uri.getSchemeSpecificPart();
             URI retval = null;
             try
             {
@@ -195,6 +203,8 @@ public class DublinCore implements DigitalObjectMeta
             }
             return retval;
         }
+
+
     }
 
     /**
@@ -320,42 +330,48 @@ public class DublinCore implements DigitalObjectMeta
         return dcvalues.size();
     }
 
+
     @Override
-    public void serialize( OutputStream out ) throws XMLStreamException
+    public byte[] getBytes() throws IOException
     {
-        // Create an output factory
-        XMLOutputFactory xmlof = XMLOutputFactory.newInstance();
-        XMLStreamWriter xmlw;
-
-        xmlw = xmlof.createXMLStreamWriter( out );
-
-        String dc_prefix = DublinCoreNamespace.DC.prefix;
-        String dc_namesp = DublinCoreNamespace.DC.uri.toString();
-        xmlw.setDefaultNamespace( dc_namesp );
-
-        xmlw.writeStartDocument();
-        xmlw.writeStartElement( dc_namesp, dc_prefix );
-        xmlw.writeNamespace( dc_prefix, dc_namesp );
-
-        for( Entry<DublinCoreElement, String> set : dcvalues.entrySet() )
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        try
         {
-            /**
-             * We'll write all the valid elements in the dc namespace, but
-             * we'll only fill chars in there if there is actually something
-             * in our datastructure
-             */
-            xmlw.writeStartElement( dc_namesp, set.getKey().localName() );
-
-            if( set.getValue() != null )
+            // Create an output factory
+            XMLOutputFactory xmlof = XMLOutputFactory.newInstance();
+            XMLStreamWriter xmlw;
+            xmlw = xmlof.createXMLStreamWriter( out );
+            String dc_prefix = DublinCoreNamespace.DC.prefix;
+            String dc_namesp = DublinCoreNamespace.DC.uri.toString();
+            xmlw.setDefaultNamespace( dc_namesp );
+            xmlw.writeStartDocument();
+            xmlw.writeStartElement( dc_namesp, dc_prefix );
+            xmlw.writeNamespace( dc_prefix, dc_namesp );
+            for( Entry<DublinCoreElement, String> set : dcvalues.entrySet() )
             {
-                xmlw.writeCharacters( set.getValue() );
+                /**
+                 * We'll write all the valid elements in the dc namespace, but
+                 * we'll only fill chars in there if there is actually something
+                 * in our datastructure
+                 */
+                xmlw.writeStartElement( dc_namesp, set.getKey().localName() );
+                if( set.getValue() != null )
+                {
+                    xmlw.writeCharacters( set.getValue() );
+                }
+                xmlw.writeEndElement();
             }
-            
             xmlw.writeEndElement();
+            xmlw.writeEndDocument();
+            xmlw.flush();
         }
-
-        xmlw.writeEndElement();
-        xmlw.writeEndDocument();
-        xmlw.flush();
+        catch( XMLStreamException ex )
+        {
+            String error = String.format( "Failed to serialize DublinCore data: %s", ex.getMessage() );
+            Logger.getLogger( DublinCore.class.getName() ).log( Level.SEVERE, error, ex );
+        }
+        return out.toByteArray();
     }
+
+
 }
