@@ -15,6 +15,8 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RMIObjectRepository.  If not, see <http://www.gnu.org/licenses/>.
  */
+
+
 package net.manniche.orep.server;
 
 import java.io.ByteArrayOutputStream;
@@ -33,7 +35,6 @@ import net.manniche.orep.storage.StorageProvider;
 import net.manniche.orep.storage.StorageType;
 import net.manniche.orep.types.DefaultIdentifier;
 import net.manniche.orep.types.DigitalObject;
-import net.manniche.orep.types.DigitalObjectMeta;
 import net.manniche.orep.types.ObjectRepositoryService;
 
 
@@ -96,17 +97,17 @@ public final class RMIObjectRepository extends UnicastRemoteObject implements RM
      * information is available in the wrapped exception.
      */
     @Override
-    public final ObjectIdentifier storeRepositoryObject( DigitalObject data , DigitalObjectMeta metadata, String logmessage ) throws RemoteException
+    public final ObjectIdentifier storeRepositoryObject( DigitalObject data , String logmessage ) throws RemoteException
     {
-        return this.storeRepositoryObject( data, metadata, null, logmessage );
+        return this.storeRepositoryObject( data, null, logmessage );
     }
 
-    private ObjectIdentifier storeRepositoryObject( DigitalObject data, DigitalObjectMeta metadata, ObjectIdentifier identifier, String logmessage ) throws RemoteException
+    private ObjectIdentifier storeRepositoryObject( DigitalObject data, ObjectIdentifier identifier, String logmessage ) throws RemoteException
     {
         ObjectIdentifier oIdentifier = null;
         try
         {
-             oIdentifier = this.storeObject(data, metadata, identifier, logmessage );
+             oIdentifier = this.storeObject(data, identifier, logmessage );
 
         }
         catch( XMLStreamException ex )
@@ -151,30 +152,27 @@ public final class RMIObjectRepository extends UnicastRemoteObject implements RM
 
 
     @Override
-    public ObjectIdentifier storeObject( DigitalObject data, DigitalObjectMeta metadata, String message ) throws XMLStreamException, IOException
+    public ObjectIdentifier storeObject( DigitalObject data, String message ) throws XMLStreamException, IOException
     {
-        return this.storeObject( data, metadata, null, message );
+        return this.storeObject( data, null, message );
     }
 
 
     @Override
-    public ObjectIdentifier storeObject( DigitalObject data, DigitalObjectMeta metadata, ObjectIdentifier identifier, String message ) throws XMLStreamException, IOException
+    public ObjectIdentifier storeObject( DigitalObject data, ObjectIdentifier identifier, String message ) throws XMLStreamException, IOException
     {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        metadata.serialize( baos );
-
         URI uid;
 
         ObjectIdentifier objectID = null;
 
         if( null == identifier )
         {
-            uid = this.repositoryStorageMechanism.save( data.getBytes(), baos.toByteArray() );
+            uid = this.repositoryStorageMechanism.save( data.getBytes() );
             objectID = new DefaultIdentifier( uid );
         }
         else
         {
-            this.repositoryStorageMechanism.save( data.getBytes(), baos.toByteArray(), identifier.getIdentifierAsURI() );
+            this.repositoryStorageMechanism.save( data.getBytes(), identifier.getIdentifierAsURI() );
             objectID = identifier;
         }
 

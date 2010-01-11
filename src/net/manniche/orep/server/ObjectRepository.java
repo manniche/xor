@@ -22,7 +22,6 @@ package net.manniche.orep.server;
 import java.io.IOException;
 import javax.xml.stream.XMLStreamException;
 import net.manniche.orep.types.DigitalObject;
-import net.manniche.orep.types.DigitalObjectMeta;
 import net.manniche.orep.types.ObjectIdentifier;
 
 /**
@@ -32,19 +31,12 @@ import net.manniche.orep.types.ObjectIdentifier;
  */
 public interface ObjectRepository{
 
-    ObjectIdentifier storeObject( DigitalObject data, DigitalObjectMeta metadata, String message )throws XMLStreamException, IOException;
+    ObjectIdentifier storeObject( DigitalObject data, String message )throws XMLStreamException, IOException;
 
-    ObjectIdentifier storeObject( DigitalObject data, DigitalObjectMeta metadata, ObjectIdentifier identifier, String message )throws XMLStreamException, IOException;
+    ObjectIdentifier storeObject( DigitalObject data, ObjectIdentifier identifier, String message )throws XMLStreamException, IOException;
 
     DigitalObject getObject( ObjectIdentifier identifier )throws XMLStreamException, IOException;
 
     boolean deleteObject( ObjectIdentifier identifier, String logmessage )throws XMLStreamException, IOException;
 
-//    DigitalObjectMeta getObjectMetadata( ObjectIdentifier identifier ) throws RemoteException;
-
-//    boolean addDataToObject( ObjectIdentifier identifier, InputStream data, String message ) throws RemoteException;
-//
-//    InputStream getDataFromObject( ObjectIdentifier objectIdentifier, ObjectIdentifier dataIdentifier ) throws RemoteException;
-//
-//    boolean deleteDataFromObject( ObjectIdentifier objectIdentifier, ObjectIdentifier dataIdentifier ) throws RemoteException;
 }
