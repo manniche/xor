@@ -19,24 +19,55 @@
 
 package net.manniche.orep.storage;
 
-import net.manniche.orep.search.QueryResult;
-import net.manniche.orep.search.Query;
 import java.io.IOException;
 import java.net.URI;
+import java.util.List;
 import net.manniche.orep.types.ObjectRepositoryService;
 
 
 /**
- * Abstraction of the operations supported by the underlying storage 
- * implementation.
- *
+ *Interface describing the operations, that must be implemented by the underlying
+ * storage implementation.
  *
  * @author stm
  */
 public interface StorageProvider extends ObjectRepositoryService{
-    public URI save( byte[] object, byte[] metadata ) throws IOException;
-    public void save( byte[] object, byte[] metadatam, URI uri ) throws IOException;
-    public QueryResult query( Query query ) throws IOException;
+
+    /**
+     * Stores an object encoded in a byte array, returning an URI
+     * that uniquely identifies the object in the storage implementation. The
+     * identification encoded in the returned URI should be globally unique, but
+     * the system will not rely on this to be true.
+     *
+     * The underlying storage implementation should not try to interpret the
+     * byte array with respect to converting it into a string or other
+     * representations involving guessing the format (and subsequently the
+     * encoding) of the object given.
+     * 
+     * @param object the object encoded as a byte array
+     * @return an URI uniquely identifying the object
+     * @throws IOException if the object cannot be stored
+     */
+    public URI save( byte[] object ) throws IOException;
+
+    /**
+     * Stores an object encoded in a byte array, using the {@code uri}
+     * as unique identifier for subsequent retrievals of the object. The
+     * identification encoded in the returned URI should be globally unique, but
+     * the system will not rely on this to be true.
+     *
+     * The underlying storage implementation should not try to interpret the
+     * byte array with respect to converting it into a string or other
+     * representations involving guessing the format (and subsequently the
+     * encoding) of the object given.
+     *
+     * @param object the object encoded as a byte array
+     * @param uri the URI that the object should be identified with
+     * @throws IOException if the object cannot be stored
+     */
+    public void save( byte[] object, URI uri ) throws IOException;
+
+    public List<URI> query( String query ) throws IOException;
     public byte[] get( URI identifier) throws IOException;
     public boolean delete( URI identifier ) throws IOException;
     public void close();
