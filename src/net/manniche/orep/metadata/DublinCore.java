@@ -57,6 +57,12 @@ public class DublinCore implements DigitalObject
     /** The map to keep all our dc values:*/
     private Map<DublinCoreElement, String> dcvalues;
 
+    /**
+     * Represents the DublinCore class' own implementation of the ObjectIdentifier
+     * interface. This inner class uses the dc:identifier as a basis for the
+     * identifier. This means that the identifier namespace will be the dc
+     * namespace.
+     */
     private class DublinCoreIdentifier implements ObjectIdentifier
     {
 

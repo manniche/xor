@@ -23,7 +23,12 @@ import java.io.IOException;
 
 
 /**
+ * Represents the basic object type in the object repository. Digital objects
+ * carry no notion of the type of data carried with the DigitalObject type.
  *
+ * DigitalObjects only honour the contract that it must be possible to retrieve
+ * the data in the DigitalObject as a byte[]
+ * 
  * @author stm
  */
 public interface DigitalObject {

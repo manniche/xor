@@ -16,24 +16,28 @@
  *  along with RMIObjectRepository.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.manniche.orep.server;
+package net.manniche.orep.documents;
 
-import net.manniche.orep.types.ObjectRepositoryService;
+import net.manniche.orep.types.DigitalObject;
 
 
 /**
  *
  * @author stm
  */
-public interface LogMessageHandler extends ObjectRepositoryService{
+public class DefaultDigitalObject implements DigitalObject{
 
-    /**
-     * Commits a log message from the object repository implementation to an
-     * underlying storage implementation or a listener.
-     * 
-     * @param className
-     * @param methodName
-     * @param logMessage
-     */
-    public void commitLogMessage( String className, String methodName, String logMessage );
+    private final byte[] internal_input;
+
+    public DefaultDigitalObject( byte[] input )
+    {
+        this.internal_input = input;
+    }
+    @Override
+    public byte[] getBytes()
+    {
+
+        return this.internal_input;
+    }
+
 }
