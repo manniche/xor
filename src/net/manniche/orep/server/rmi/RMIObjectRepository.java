@@ -17,7 +17,7 @@
  */
 
 
-package net.manniche.orep.server;
+package net.manniche.orep.server.rmi;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -30,6 +30,9 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.manniche.orep.documents.DefaultDigitalObject;
+import net.manniche.orep.server.FileBasedLogMessageHandler;
+import net.manniche.orep.server.LogMessageHandler;
+import net.manniche.orep.server.ServiceLocator;
 import net.manniche.orep.types.ObjectIdentifier;
 import net.manniche.orep.storage.StorageProvider;
 import net.manniche.orep.storage.StorageType;
@@ -171,11 +174,11 @@ public final class RMIObjectRepository extends UnicastRemoteObject implements RM
      * process
      */
     @Override
-    public boolean deleteRepositoryObject( ObjectIdentifier identifier, String logmessage ) throws RemoteException
+    public void deleteRepositoryObject( ObjectIdentifier identifier, String logmessage ) throws RemoteException
     {
         try
         {
-            return this.deleteObject( identifier, logmessage );
+            this.deleteObject( identifier, logmessage );
         }
         catch( IOException ex )
         {
@@ -248,10 +251,10 @@ public final class RMIObjectRepository extends UnicastRemoteObject implements RM
      * deleted.
      */
     @Override
-    public boolean deleteObject( ObjectIdentifier identifier, String logmessage ) throws IOException
+    public void deleteObject( ObjectIdentifier identifier, String logmessage ) throws IOException
     {
         this.logMessageHandler.commitLogMessage( RMIObjectRepository.class.getName(), "deleteObject", logmessage );
-        return this.repositoryStorageMechanism.delete( identifier.getIdentifierAsURI() );
+        this.repositoryStorageMechanism.delete( identifier.getIdentifierAsURI() );
     }
 
     ////////////////////////////////////////////////////////////////////////////
