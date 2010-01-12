@@ -18,6 +18,7 @@
 
 package net.manniche.orep.types;
 
+import java.io.Serializable;
 import java.net.URI;
 
 
@@ -26,8 +27,8 @@ import java.net.URI;
  * @author stm
  * @see ObjectIdentifier
  */
-public class DefaultIdentifier implements ObjectIdentifier{
-
+public class DefaultIdentifier implements ObjectIdentifier, Serializable{
+    static final long serialVersionUID = 4760792436042998437L;
     private final URI uri;
 
     /**

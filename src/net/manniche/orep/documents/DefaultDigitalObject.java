@@ -18,6 +18,7 @@
 
 package net.manniche.orep.documents;
 
+import java.io.Serializable;
 import net.manniche.orep.types.DigitalObject;
 
 
@@ -25,7 +26,8 @@ import net.manniche.orep.types.DigitalObject;
  *
  * @author stm
  */
-public class DefaultDigitalObject implements DigitalObject{
+public final class DefaultDigitalObject implements DigitalObject, Serializable{
+    static final long serialVersionUID = 4558861702889722277L;
 
     private final byte[] internal_input;
 
