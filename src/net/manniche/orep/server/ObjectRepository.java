@@ -20,7 +20,6 @@
 package net.manniche.orep.server;
 
 import java.io.IOException;
-import javax.xml.stream.XMLStreamException;
 import net.manniche.orep.types.DigitalObject;
 import net.manniche.orep.types.ObjectIdentifier;
 
