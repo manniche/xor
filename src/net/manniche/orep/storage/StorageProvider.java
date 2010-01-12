@@ -26,7 +26,7 @@ import net.manniche.orep.types.ObjectRepositoryService;
 
 
 /**
- *Interface describing the operations, that must be implemented by the underlying
+ *Interface describing the operations that must be implemented by the underlying
  * storage implementation.
  *
  * @author stm
@@ -68,7 +68,30 @@ public interface StorageProvider extends ObjectRepositoryService{
     public void save( byte[] object, URI uri ) throws IOException;
 
     public List<URI> query( String query ) throws IOException;
+
+
+    /**
+     * Retrieves an object stored in the storage implementation, identified by
+     * {@code identifier}. The object is returned as a byte[]
+     *
+     * @param identifier uniquely identifying the object to be retrieved
+     * @return the object as a byte[]
+     * @throws IOException if the object cannot be retrieved or if the identifier does not identifies an object
+     */
     public byte[] get( URI identifier) throws IOException;
-    public boolean delete( URI identifier ) throws IOException;
+
+
+    /**
+     * Deletes an object in in the storage implementation, identified by 
+     * {@code identifier}. If the object is found and successfully deleted, 
+     * this method will exit silently. If the object is not found or cannot be
+     * deleted, an IOException will be raised.
+     * 
+     * @param identifier uniquely identifying the object to be deleted
+     * @throws IOException if the object does not exist, or cannot be deleted
+     */
+    public void delete( URI identifier ) throws IOException;
+
+    
     public void close();
 }

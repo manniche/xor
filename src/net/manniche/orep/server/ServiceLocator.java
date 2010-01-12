@@ -23,11 +23,21 @@ import net.manniche.orep.types.ObjectRepositoryServiceType;
 
 
 /**
- *
+ * The ServiceLocator class is responsible for returning implementations of
+ * Object repository services. Only services (classes) that are defined as an
+ * {@link ObjectRepositoryServiceType} can be requested from the ServiceLocator.
  * @author stm
  */
-class ServiceLocator {
+public final class ServiceLocator {
 
+    /**
+     * Given the type definition of an Object Repository Service, this method
+     * will return an implementation of the Object Repository Service.
+     * @param service the type of the service
+     * @return the implementation of the service
+     * @see ObjectRepositoryService
+     * @see ObjectRepositoryServiceType
+     */
     @SuppressWarnings( "unchecked" )
     public static Class<ObjectRepositoryService> getImplementation( ObjectRepositoryServiceType<? extends ObjectRepositoryService> service )
     {
