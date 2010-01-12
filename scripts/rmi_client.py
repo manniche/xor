@@ -7,13 +7,11 @@ rmiclass  = 'net.manniche.orep.client.RMIObjectRepositoryClient'
 classes   = '../build/classes'
 classpath = '%s:../'%( classes )
 
-rmic = [ 'rmic' ]
+rmic = 'rmic'+' -classpath %s'%( classpath )+' -d %s'%( os.path.abspath( classes ) )+' '+rmiclass
 
-rmic.append( '-classpath %s'%( classpath ) )
-rmic.append( '-d %s'%( os.path.abspath( classes ) ) )
-rmic.append( rmiclass )
+rmic_proc = subprocess.Popen( rmic, shell=True, stdout=subprocess.PIPE )
 
-rmic_proc = subprocess.Popen( rmic, shell=False, stdout=subprocess.PIPE )
+print rmic_proc.communicate()[0]
 
 findjava = [ 'which' ]
 findjava.append( 'java' )
@@ -24,11 +22,6 @@ java_cmd = java_find.communicate()[0].strip()
 java_cmd = java_cmd+' -cp %s'%( classpath )+' '+rmiclass
 
 java = [ java_cmd ]
-
-# java.append( '-cp %s'%( classpath ) )
-# java.append( rmiclass )
-
-print java
 
 java_proc = subprocess.Popen( java, shell=True, stdout=subprocess.PIPE )
 
