@@ -15,23 +15,20 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RMIObjectRepository.  If not, see <http://www.gnu.org/licenses/>.
  */
+
+
 package net.manniche.orep.server;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.UnknownHostException;
 import java.rmi.Naming;
 import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.Hashtable;
-import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
 import net.manniche.orep.documents.DefaultDigitalObject;
 import net.manniche.orep.types.ObjectIdentifier;
 import net.manniche.orep.storage.StorageProvider;
@@ -294,18 +291,7 @@ public final class RMIObjectRepository extends UnicastRemoteObject implements RM
             LogMessageHandler logMessageHandler = new FileBasedLogMessageHandler( store );
             RMIObjectManagement k = new RMIObjectRepository( store, logMessageHandler );
             Naming.rebind( "rmi://localhost/orep", k );
-
-
-//            RMIObjectRepository engine = new RMIObjectRepository( store, logMessageHandler );
-//            UnicastRemoteObject.exportObject( engine );
-//            Context context = new InitialContext();
-//            Hashtable<?, ?> environment = context.getEnvironment();
-//            for( Entry<?,?> s: environment.entrySet() )
-//            {
-//                System.out.println( String.format( "%s: %s", s.getKey(), s.getValue() ) );
-//            }
-//            context.rebind( "rmi:RMIObjectRepository", engine );
-//            System.out.println( String.format( "OREP-RMI bound to %s", context.PROVIDER_URL ) );
+            //LocateRegistry.createRegistry( 1099 );
 
 
             System.out.println( String.format( "%s", UnicastRemoteObject.getLog() ) );
