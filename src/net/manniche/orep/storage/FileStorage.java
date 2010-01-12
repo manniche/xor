@@ -156,7 +156,7 @@ public class FileStorage implements StorageProvider
 
 
     @Override
-    public boolean delete( URI identifier )
+    public void delete( URI identifier ) throws IOException
     {
         throw new UnsupportedOperationException( "Not supported yet." );
     }

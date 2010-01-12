@@ -15,27 +15,31 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RMIObjectRepository.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-
 package net.manniche.orep.server;
 
 import java.io.IOException;
 import net.manniche.orep.types.DigitalObject;
 import net.manniche.orep.types.ObjectIdentifier;
 
+
 /**
  * Provides the server interface to the object repository connection handler.
  *
  * @author stm
  */
-public interface ObjectRepository{
+public interface ObjectRepository
+{
 
-    ObjectIdentifier storeObject( DigitalObject data, String message )throws IOException;
+    ObjectIdentifier storeObject( DigitalObject data, String message ) throws IOException;
 
-    ObjectIdentifier storeObject( DigitalObject data, ObjectIdentifier identifier, String message )throws IOException;
 
-    DigitalObject getObject( ObjectIdentifier identifier )throws IOException;
+    ObjectIdentifier storeObject( DigitalObject data, ObjectIdentifier identifier, String message ) throws IOException;
 
-    boolean deleteObject( ObjectIdentifier identifier, String logmessage )throws IOException;
+
+    DigitalObject getObject( ObjectIdentifier identifier ) throws IOException;
+
+
+    void deleteObject( ObjectIdentifier identifier, String logmessage ) throws IOException;
+
 
 }
