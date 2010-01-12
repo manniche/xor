@@ -25,7 +25,7 @@ import net.manniche.orep.storage.StorageProvider;
  *
  * @author stm
  */
-class FileBasedLogMessageHandler implements LogMessageHandler{
+public class FileBasedLogMessageHandler implements LogMessageHandler{
 
     private final StorageProvider storageProvider;
     public FileBasedLogMessageHandler( StorageProvider store )
