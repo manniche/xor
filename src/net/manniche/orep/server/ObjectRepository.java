@@ -86,7 +86,7 @@ public interface ObjectRepository
      * through.
      *
      * @param identifier an ObjectIdentifier identifying the data with this server
-     * @param message an optional logmessage describing the action. If null or
+     * @param logmessage an optional logmessage describing the action. If null or
      * the empty string is passed, the implementation can decide what to write
      * in the log system, if any.
      * @throws IOException if the DigitalObject couldn't be deleted
@@ -94,4 +94,13 @@ public interface ObjectRepository
     void deleteObject( ObjectIdentifier identifier, String logmessage ) throws IOException;
 
 
+    /**
+     * Observers who wishes to be notified on repository actions (ie. all the
+     * effects of the methods listed in this interface) can register through
+     * this method.
+     *
+     * @param observer the {@link RepositoryObserver} implementation that
+     * wishes to recieve updates
+     */
+    void addObserver( RepositoryObserver observer );
 }

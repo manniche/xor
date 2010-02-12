@@ -23,10 +23,13 @@ import java.io.IOException;
 import java.net.URI;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.manniche.orep.documents.DefaultDigitalObject;
 import net.manniche.orep.server.LogMessageHandler;
+import net.manniche.orep.server.RepositoryObserver;
 import net.manniche.orep.types.ObjectIdentifier;
 import net.manniche.orep.storage.StorageProvider;
 import net.manniche.orep.types.DefaultIdentifier;
@@ -41,10 +44,10 @@ import net.manniche.orep.types.DigitalObject;
  */
 public final class RMIObjectRepository extends UnicastRemoteObject implements RMIObjectManagement
 {
-
     static final long serialVersionUID = -8975965744773865183L;
     private final StorageProvider repositoryStorageMechanism;
     private final LogMessageHandler logMessageHandler;
+    private List<RepositoryObserver> observers;
 
     /**
      * Sets up the RMI server for the object repository.
@@ -59,6 +62,7 @@ public final class RMIObjectRepository extends UnicastRemoteObject implements RM
         super();
         this.logMessageHandler = logMessageHandler;
         this.repositoryStorageMechanism = storage;
+        this.observers = new ArrayList<RepositoryObserver>();
     }
 
 
@@ -99,7 +103,6 @@ public final class RMIObjectRepository extends UnicastRemoteObject implements RM
      * the object.
      * 
      * @param data the object to be stored
-     * @param metadata any metadata object stored with the object
      * @param logmessage a message describing the operation, provided by the user
      * @return an {@link ObjectIdentifier} that identifies the object within the
      * object repository
@@ -161,7 +164,6 @@ public final class RMIObjectRepository extends UnicastRemoteObject implements RM
      *
      * @param identifier identifying the object to be retrieved
      * @param logmessage user supplied message describing the context of the action
-     * @return true iff the object can be found _and_ deleted, false otherwise.
      * @throws RemoteException if anything goes wrong in the object deletion.
      * process
      */
@@ -248,6 +250,24 @@ public final class RMIObjectRepository extends UnicastRemoteObject implements RM
     {
         this.logMessageHandler.commitLogMessage( RMIObjectRepository.class.getName(), "deleteObject", logmessage );
         this.repositoryStorageMechanism.delete( identifier.getIdentifierAsURI() );
+    }
+
+    /**
+     * Observers who wishes to be notified on repository actions (ie. all the
+     * effects of the methods listed in this interface) can register through
+     * this method.
+     *
+     * Is is possible for observers to register more than one time with this
+     * implementation. Each registered observer will recieve a separate
+     * notification on actions performed that trigger events.
+     *
+     * @param observer the {@link RepositoryObserver} implementation that
+     * wishes to recieve updates
+     */
+    @Override
+    public void addObserver( RepositoryObserver observer )
+    {
+        this.observers.add( observer );
     }
 
 }

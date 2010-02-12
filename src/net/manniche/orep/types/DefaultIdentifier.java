@@ -50,8 +50,7 @@ public class DefaultIdentifier implements ObjectIdentifier, Serializable{
     }
 
     /**
-     * Returns the string "uri" as a prefix for the default identifier.
-     * @return
+     * @return the string "uri" as a prefix for the default identifier.
      */
     @Override
     public String getPrefix()
