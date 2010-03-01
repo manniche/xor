@@ -45,3 +45,33 @@ Requirements and dependencies
 -----------------------------
 
 java 6
+
+Running the example implementations
+-----------------------------------
+
+in the scripts/ directory are python scripts to run the included
+examples scripts ending in _server.py should be started before the
+corresponding _client.py scripts, as clients will need a server to
+communicate with.
+
+Notes on running the RMI example
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+If the rmi_server.py script causes java to generate an error message
+containing something like:
+
+java.rmi.ConnectException: Connection refused to host: localhost; nested exception is:
+    [...]
+
+A likely reason is that the /etc/hosts file is not giving enough
+information on the qualified name of the (localhost) server.
+
+By adding
+
+127.0.0.1               localhost.localdomain   localhost {hostname}
+
+to the top of the /etc/hosts file, where {hostname} is the name
+assined to the server. See
+http://java.sun.com/j2se/1.4.2/docs/guide/rmi/faq.html#nethostname for
+further information on how the JDK allows for passing a hostname to
+the JVM.
