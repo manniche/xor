@@ -94,13 +94,4 @@ public interface ObjectRepository
     void deleteObject( ObjectIdentifier identifier, String logmessage ) throws IOException;
 
 
-    /**
-     * Observers who wishes to be notified on repository actions (ie. all the
-     * effects of the methods listed in this interface) can register through
-     * this method.
-     *
-     * @param observer the {@link RepositoryObserver} implementation that
-     * wishes to recieve updates
-     */
-    void addObserver( RepositoryObserver observer );
 }
