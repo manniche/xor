@@ -38,15 +38,20 @@ import net.manniche.orep.types.ObjectRepositoryService;
  * @author stm
  */
 public class RMIServer {
+
+    final static Logger Log = Logger.getLogger( RMIServer.class.getName() );
+
     ////////////////////////////////////////////////////////////////////////////
     // Below follows the RMI server main method.                              //
     ////////////////////////////////////////////////////////////////////////////
 
     public static void main( String[] args ) throws UnknownHostException
     {
-        String host = "127.0.0.1";
+        //String host = "127.0.0.1";
+        String host = "localhost";
         int port = 8181;
         String location = "RMIObjectRepository";
+        String binder = String.format( "rmi://%s:%s/%s", host, port, location );
 
 //        if( null == System.getSecurityManager() )
 //        {
@@ -68,13 +73,15 @@ public class RMIServer {
         StorageProvider store;
         try
         {
-
+            Log.log( Level.INFO, "trying to bind server" );
 
             //            StorageProvider provider = (StorageProvider) type.getClassofService().newInstance();
             store = (StorageProvider) storage.newInstance();
             LogMessageHandler logMessageHandler = new FileBasedLogMessageHandler( store );
             RMIObjectManagement k = new RMIObjectRepository( store, logMessageHandler );
             Naming.rebind( "rmi://localhost/orep", k );
+            Log.log( Level.INFO, String.format( "binding to %s", binder ) );
+            //Naming.rebind( binder, k );
             //LocateRegistry.createRegistry( 1099 );
 
 
@@ -83,19 +90,19 @@ public class RMIServer {
         }
         catch( MalformedURLException ex )
         {
-            Logger.getLogger( RMIObjectRepository.class.getName() ).log( Level.WARNING, ex.getMessage(), ex );
+            Log.log( Level.WARNING, ex.getMessage(), ex );
         }
         catch( InstantiationException ex )
         {
-            Logger.getLogger( RMIObjectRepository.class.getName() ).log( Level.WARNING, ex.getMessage(), ex );
+            Log.log( Level.WARNING, ex.getMessage(), ex );
         }
         catch( IllegalAccessException ex )
         {
-            Logger.getLogger( RMIObjectRepository.class.getName() ).log( Level.WARNING, ex.getMessage(), ex );
+            Log.log( Level.WARNING, ex.getMessage(), ex );
         }
         catch( RemoteException ex )
         {
-            Logger.getLogger( RMIObjectRepository.class.getName() ).log( Level.WARNING, ex.getMessage(), ex );
+            Log.log( Level.WARNING, ex.getMessage(), ex );
         }
     }
 }

@@ -6,7 +6,7 @@ import sys
 
 classes   = '../build/classes'
 classpath = '%s:../'%( classes )
-rmiclass  = 'net.manniche.orep.server.RMIObjectRepository'
+rmiclass  = 'net.manniche.orep.server.rmi.RMIServer'
 rmibase   = 'java.rmi.server.codebase=file:///%s'%( os.path.abspath( classes )+'/' )
 
 #first check that the rmiregistry is running
@@ -18,6 +18,9 @@ res_list = [ i for i in res_list if len(i)>0 ]
 
 if len( res_list ) > 1:
     sys.exit( 'cannot automatically determine whether rmiregistry is running. Could you please find out for me?' )
+elif len( res_list ) < 1:
+    subprocess.Popen( [ 'rmiregistry' ], shell=True, stdout=subprocess.PIPE )
+    #    sys.exit( 'rmi registry is not running. please start the rmi registry before starting the rmi server' )
 
 java_cmd = 'java -cp %s'%( classpath )+' -D'+rmibase+' '+rmiclass
 
