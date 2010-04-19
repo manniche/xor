@@ -20,6 +20,7 @@ package net.manniche.orep.client;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+import net.manniche.orep.types.ObjectIdentifier;
 
 
 /**
@@ -28,6 +29,6 @@ import java.rmi.RemoteException;
  */
 interface RMIObjectManagementClient extends Remote {
 
-    public void saveObject( byte[] data ) throws RemoteException;
+    public ObjectIdentifier saveObject( byte[] data ) throws RemoteException;
 
 }

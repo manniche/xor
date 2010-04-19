@@ -67,14 +67,23 @@ public class RMIObjectRepositoryClient implements RMIObjectManagementClient
         RMIObjectRepositoryClient client = new RMIObjectRepositoryClient();
 
         client.connect( "localhost", 8181 );
+        ObjectIdentifier id = client.saveObject( "hej".getBytes() );
 
-        client.saveObject( "hej".getBytes() );
+        // will throw an exception from the FileStorage implementation.
+        client.getObject( id );
 
+
+        System.exit( 0 );
     }
 
+    public void getObject( ObjectIdentifier id ) throws RemoteException, IOException
+    {
+        DigitalObject repositoryObject = server.getRepositoryObject( id );
+        System.out.println( String.format( "Object Contents %s", new String( repositoryObject.getBytes() ) ) );
+    }
 
     @Override
-    public void saveObject( byte[] data ) throws RemoteException
+    public ObjectIdentifier saveObject( byte[] data ) throws RemoteException
     {
         DigitalObject digo = new DefaultDigitalObject( data );
         ObjectIdentifier storeObject = null;
@@ -89,7 +98,8 @@ public class RMIObjectRepositoryClient implements RMIObjectManagementClient
         }
 
         System.out.println( String.format( "Data stored at %s", storeObject.getIdentifierAsURI().getPath() ) );
-        System.exit( 0 );
+
+        return storeObject;
     }
 
 
