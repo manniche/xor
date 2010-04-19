@@ -1,5 +1,5 @@
-ORep Object Repository
-======================
+ORep; Object Repository
+=======================
 
 ORep aims at a minimalistic approach to an Object Repository
 implementation. An Object Repository is here understood as a
@@ -37,14 +37,16 @@ operations to be performed in conjunction with the basic operations.
 Technology
 ----------
 
-ORep is implemented primarily in java but is targeting the jvm in
+OREP is implemented primarily in java but is targeting the jvm in
 general.
 
 
 Requirements and dependencies
 -----------------------------
 
-java 6
+java 6 SE
+
+Besides the J6SE, all dependencies are managed through maven
 
 Running the example implementations
 -----------------------------------
