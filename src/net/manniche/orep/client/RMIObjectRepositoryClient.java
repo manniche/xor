@@ -1,5 +1,5 @@
 /*
- *  This file is part of RMIObjectRepository.
+ *  This file is part of RMIRepositoryServer.
  *  Copyright © 2009, Steen Manniche.
  * 
  *  OREP is free software: you can redistribute it and/or modify
@@ -18,12 +18,13 @@
 package net.manniche.orep.client;
 
 import java.io.IOException;
-import java.rmi.Naming;
+import java.rmi.Remote;
 import java.rmi.RemoteException;
-import java.rmi.server.UnicastRemoteObject;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 import net.manniche.orep.documents.DefaultDigitalObject;
 import net.manniche.orep.server.rmi.RMIObjectManagement;
-import net.manniche.orep.server.rmi.RMIObjectRepository;
+import net.manniche.orep.server.rmi.RMIRepositoryServer;
 import net.manniche.orep.types.DigitalObject;
 import net.manniche.orep.types.ObjectIdentifier;
 
@@ -37,21 +38,21 @@ public class RMIObjectRepositoryClient implements RMIObjectManagementClient
 
     private RMIObjectManagement server;
 
-    protected void connect( String sName )
+    protected void connect( String serverName, int port )
     {
         try
         {
-            UnicastRemoteObject.exportObject( this );
-            String serverName = "//" + sName + "/orep";//rmi://localhost/orep
-            server = (RMIObjectManagement) Naming.lookup( serverName );
+            Registry registry = LocateRegistry.getRegistry();
+            Remote remote = registry.lookup( RMIRepositoryServer.class.getName() );
+            server = RMIObjectManagement.class.cast( remote );
         }
         catch( java.rmi.ConnectException ce )
         {
-            System.err.println( "Error: server not started" );
+            System.err.println( String.format( "Error: server not started: %s", ce.getMessage() ) );
         }
         catch( java.rmi.ConnectIOException cioe )
         {
-            System.err.println( "Error: Cannot connect to server at" + sName );
+            System.err.println( String.format( "Error: Cannot connect to server at %s: %s", serverName, cioe.getMessage() ) );
         }
         catch( Exception e )
         {
@@ -65,7 +66,7 @@ public class RMIObjectRepositoryClient implements RMIObjectManagementClient
 
         RMIObjectRepositoryClient client = new RMIObjectRepositoryClient();
 
-        client.connect( "localhost" );
+        client.connect( "localhost", 8181 );
 
         client.saveObject( "hej".getBytes() );
 
@@ -79,7 +80,7 @@ public class RMIObjectRepositoryClient implements RMIObjectManagementClient
         ObjectIdentifier storeObject = null;
         try
         {
-             storeObject = server.storeObject( digo, "saving object" );
+             storeObject = server.storeRepositoryObject( digo, "saving object");
 
         }
         catch( IOException ex )
