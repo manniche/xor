@@ -1,0 +1,62 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+    <head>
+        <title>Package Documentation for ...</title>
+    </head>
+    <body bgcolor="white">
+        <a name="doc.Description"></a>
+        This package provides ...
+        <br>
+        <div align="center">
+            <a href="#doc.Intro">[Introduction]</a>
+            <a href="#doc.Overview">[Overview]</a>
+            <a href="#doc.Resources">[Resources]</a>
+            <a href="#doc.Usage">[Usage Example]</a>
+        </div>
+        
+        <a name="doc.Intro"></a>
+        <h3>Introduction</h3>
+        <a href="#doc.Description">[Description]</a>
+        <p>The OREP server architechture provides a very minimal core support of
+            the central operations needed for all server implementations. No 
+            clients will have direct contact with the core server, but will use
+            one of the server implementations or shells, that are distributed
+            with the server code:
+        <ol>
+            <li><a href="jms/jsm_overview.html">The JMS server</a> implementation
+            provides access to the core server through a Java Message Queue 
+            implementation.</li>
+            <li><a href="rmi/rmi_overview.html">The RMI server</a> implementation
+            provides transparent synchronouos access to the core server through
+            the java Remote Method Invocation protocol. An example client can
+            be found in the <a href="../client/rmi/rmi_overview.html">net.manniche.orep.client.rmi</a>
+            package.</li>
+        </ol>
+        </p>
+        
+        <a name="doc.Overview"></a>
+        <h3>Overview</h3>
+        <a href="#doc.Description">[Description]</a>
+        <p>
+            The core server architecture is composed of an interface
+            <code>ObjectRepository</code>, which defines the core operations that
+            the server supports, and an interface <code>ServiceLocator</code>,
+            that defines the services that can be registered with the server.
+        </p>
+        
+        <a name="doc.Resources"></a>
+        <h3>Resources</h3>
+        <a href="#doc.Description">[Description]</a>
+        <p>
+            ...
+        </p>
+        
+        <a name="doc.Usage"></a>
+        <h3>Usage Example</h3>
+        <a href="#doc.Description">[Description]</a>
+        <p>
+            ...
+        </p>
+        
+    </body>
+</html>
