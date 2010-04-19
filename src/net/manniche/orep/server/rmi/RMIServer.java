@@ -18,10 +18,12 @@
 
 package net.manniche.orep.server.rmi;
 
-import java.net.MalformedURLException;
-import java.rmi.Naming;
+import java.rmi.AccessException;
+import java.rmi.AlreadyBoundException;
+import java.rmi.Remote;
 import java.rmi.RemoteException;
-import java.rmi.UnknownHostException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -34,75 +36,63 @@ import net.manniche.orep.types.ObjectRepositoryService;
 
 
 /**
+ * Server main class for the RMI server. The main loop reads a properties file
+ * from the config/ directory and starts a server which is registered with a
+ * running RMI registry.
  *
  * @author stm
  */
 public class RMIServer {
 
-    final static Logger Log = Logger.getLogger( RMIServer.class.getName() );
+    private final static Logger Log = Logger.getLogger( RMIServer.class.getName() );
+    private static RMIObjectManagement manager = null;
 
     ////////////////////////////////////////////////////////////////////////////
     // Below follows the RMI server main method.                              //
     ////////////////////////////////////////////////////////////////////////////
 
-    public static void main( String[] args ) throws UnknownHostException
+    public static void main( String[] args )// throws UnknownHostException, AlreadyBoundException
     {
-        //String host = "127.0.0.1";
-        String host = "localhost";
         int port = 8181;
-        String location = "RMIObjectRepository";
-        String binder = String.format( "rmi://%s:%s/%s", host, port, location );
-
-//        if( null == System.getSecurityManager() )
-//        {
-//            SecurityManager s = new SecurityManager();
-//            s.checkConnect( host, port );
-//            System.setSecurityManager( new SecurityManager() );
-//        }
-        String name = "OREP-RMI";
 
         String storagetype = "FileStorage";
         StorageType type = StorageType.valueOf( storagetype );
 
         Class<ObjectRepositoryService> storage = ServiceLocator.getImplementation( type );
 
-//        System.setProperty( "java.rmi.server.hostname", "192.168.1.74" );
-//        Logger.getLogger( RMIObjectRepository.class.getName() ).log( Level.INFO, String.format( "%s", storage ) );
-//        Logger.getLogger( RMIObjectRepository.class.getName() ).log( Level.INFO, String.format( "%s", System.getProperty( "java.rmi.server.hostname" ) ) );
-
         StorageProvider store;
         try
         {
-            Log.log( Level.INFO, "trying to bind server" );
+            Log.log( Level.INFO, "trying to export server" );
 
-            //            StorageProvider provider = (StorageProvider) type.getClassofService().newInstance();
             store = (StorageProvider) storage.newInstance();
             LogMessageHandler logMessageHandler = new FileBasedLogMessageHandler( store );
-            RMIObjectManagement k = new RMIObjectRepository( store, logMessageHandler );
-            Naming.rebind( "rmi://localhost/orep", k );
-            Log.log( Level.INFO, String.format( "binding to %s", binder ) );
-            //Naming.rebind( binder, k );
-            //LocateRegistry.createRegistry( 1099 );
+            manager = new RMIRepositoryServer( store, logMessageHandler );
+            Remote remote = UnicastRemoteObject.exportObject( manager, port );
+            Registry registry = LocateRegistry.createRegistry( Registry.REGISTRY_PORT );
+            registry.bind( RMIRepositoryServer.class.getName(), remote );
 
-
-            System.out.println( String.format( "%s", UnicastRemoteObject.getLog() ) );
-
-        }
-        catch( MalformedURLException ex )
-        {
-            Log.log( Level.WARNING, ex.getMessage(), ex );
+            Log.log( Level.INFO, String.format( "Started server on port %s", port ) );
         }
         catch( InstantiationException ex )
         {
-            Log.log( Level.WARNING, ex.getMessage(), ex );
+            Log.log( Level.SEVERE, ex.getMessage(), ex );
+        }
+        catch( AlreadyBoundException ex )
+        {
+            Log.log( Level.SEVERE, ex.getMessage(), ex );
+        }
+        catch( AccessException ex )
+        {
+            Log.log( Level.SEVERE, ex.getMessage(), ex );
         }
         catch( IllegalAccessException ex )
         {
-            Log.log( Level.WARNING, ex.getMessage(), ex );
+            Log.log( Level.SEVERE, ex.getMessage(), ex );
         }
         catch( RemoteException ex )
         {
-            Log.log( Level.WARNING, ex.getMessage(), ex );
+            Log.log( Level.SEVERE, ex.getMessage(), ex );
         }
     }
 }
