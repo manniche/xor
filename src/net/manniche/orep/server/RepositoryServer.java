@@ -1,37 +1,50 @@
 /*
- *  This file is part of OREP
+ *  This file is part of OREP.
  *  Copyright © 2009, Steen Manniche.
- *
+ * 
  *  OREP is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
- *
+ * 
  *  OREP is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
- *
+ * 
  *  You should have received a copy of the GNU General Public License
  *  along with OREP.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package net.manniche.orep.server;
 
 import java.io.IOException;
+import java.net.URI;
+import net.manniche.orep.documents.DefaultDigitalObject;
+import net.manniche.orep.storage.StorageProvider;
+import net.manniche.orep.types.DefaultIdentifier;
 import net.manniche.orep.types.DigitalObject;
 import net.manniche.orep.types.ObjectIdentifier;
 
 
 /**
- * Provides the server interface to the object repository connection handler.
- * Every server implementations must implement this interface and the methods
- * defined herein should reflect the possible functionality and the limitations
- * of the system. 
+ * The RepositoryServer handles the internal and central logic of the repository
+ * Extension classes can expose the functionality of this class indirectly; 
+ * through their own technology specific implementations.
  *
  * @author stm
  */
-public interface ObjectRepository
-{
+public abstract class RepositoryServer{
+
+    private final StorageProvider repositoryStorageMechanism;
+    private final LogMessageHandler logMessageHandler;
+
+    protected RepositoryServer( StorageProvider storage, LogMessageHandler logHandler )
+    {
+        this.repositoryStorageMechanism = storage;
+        this.logMessageHandler = logHandler;
+    }
+
     /**
      * Given data in the form of a DigitalObject and an optional message to the
      * log, this method tries to store the data in the underlying
@@ -45,7 +58,10 @@ public interface ObjectRepository
      * data for later identification
      * @throws IOException if the object cannot be stored for a given reason
      */
-    ObjectIdentifier storeObject( DigitalObject data, String message ) throws IOException;
+    protected ObjectIdentifier storeObject( DigitalObject data, String message ) throws IOException
+    {
+        return this.storeObject( data, null, message );
+    }
 
 
     /**
@@ -54,7 +70,7 @@ public interface ObjectRepository
      * with the object. If the server cannot deliver the exact same identifier
      * as the client, when the data is stored, an IOException must be thrown and
      * the whole operation rolled back.
-     * 
+     *
      * @param data the DigitalObject containing data to be stored
      * @param identifier the ObjectIdentifier that the object should be stored with
      * @param message an optional logmessage describing the action. If null or
@@ -66,7 +82,25 @@ public interface ObjectRepository
      * @throws IOException if the object cannot be stored for a given reason
      * @throws IOException
      */
-    ObjectIdentifier storeObject( DigitalObject data, ObjectIdentifier identifier, String message ) throws IOException;
+    protected ObjectIdentifier storeObject( DigitalObject data, ObjectIdentifier identifier, String message ) throws IOException
+    {
+        URI uid;
+
+        ObjectIdentifier objectID = null;
+
+        if( null == identifier )
+        {
+            uid = this.repositoryStorageMechanism.save( data.getBytes() );
+            objectID = new DefaultIdentifier( uid );
+        }
+        else
+        {
+            this.repositoryStorageMechanism.save( data.getBytes(), identifier.getIdentifierAsURI() );
+            objectID = identifier;
+        }
+
+        return objectID;
+    }
 
 
     /**
@@ -76,7 +110,11 @@ public interface ObjectRepository
      * @return the requested DigitalObject or a IOException if the ObjectIdentifier designates nothing
      * @throws IOException if the DigitalObject can't be retrieved for a given reason
      */
-    DigitalObject getObject( ObjectIdentifier identifier ) throws IOException;
+    protected DigitalObject getObject( ObjectIdentifier identifier ) throws IOException
+    {
+        byte[] object = this.repositoryStorageMechanism.get( identifier.getIdentifierAsURI() );
+        return new DefaultDigitalObject( object );
+    }
 
 
     /**
@@ -90,7 +128,9 @@ public interface ObjectRepository
      * in the log system, if any.
      * @throws IOException if the DigitalObject couldn't be deleted
      */
-    void deleteObject( ObjectIdentifier identifier, String logmessage ) throws IOException;
-
-
+    protected void deleteObject( ObjectIdentifier identifier, String logmessage ) throws IOException
+    {
+        this.logMessageHandler.commitLogMessage( RepositoryServer.class.getName(), "deleteObject", logmessage );
+        this.repositoryStorageMechanism.delete( identifier.getIdentifierAsURI() );
+    }
 }

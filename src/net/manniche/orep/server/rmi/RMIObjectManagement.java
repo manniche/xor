@@ -35,12 +35,14 @@ import net.manniche.orep.types.ObjectIdentifier;
  * {@link RMIObjectRepository} implementation.
  * @author stm
  */
-public interface RMIObjectManagement extends ObjectRepository, Remote{
+public interface RMIObjectManagement extends Remote{
 
 
     /**
      * Retrieves and returns an object identified by {@code identifier} from the
      * object repository.
+     *
+     * @see ObjectRepository
      *
      * @param identifier that uniquely identifies the object within the scope of this server
      * @return a DigitalObject with the identifier {@code identifier}
