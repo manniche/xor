@@ -67,7 +67,7 @@ public class RMIObjectRepositoryClient implements RMIObjectManagementClient
         RMIObjectRepositoryClient client = new RMIObjectRepositoryClient();
 
         client.connect( "localhost", 8181 );
-        ObjectIdentifier id = client.saveObject( "hej".getBytes() );
+        ObjectIdentifier id = client.saveObject( "æøåßüöï".getBytes() );
 
         // will throw an exception from the FileStorage implementation.
         client.getObject( id );
