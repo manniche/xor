@@ -43,7 +43,7 @@ public class XMLDocumentObject implements DigitalObject{
 
     XMLDocumentObject( Document doc )
     {
-
+        this.doc = doc;
     }
 
     @Override
