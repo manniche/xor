@@ -18,7 +18,10 @@
 
 package net.manniche.orep.server.rest;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import net.manniche.orep.server.LogMessageHandler;
 import net.manniche.orep.server.RepositoryObserver;
 import net.manniche.orep.server.RepositoryServer;
@@ -27,6 +30,9 @@ import net.manniche.orep.types.DigitalObject;
 import net.manniche.orep.types.ObjectIdentifier;
 
 import javax.ws.rs.Path;  
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.GET;
 
 /**
  *
@@ -37,6 +43,7 @@ public final class RESTRepositoryRelayer extends RepositoryServer implements RES
 
     private final StorageProvider storage;
     private final LogMessageHandler logHandler;
+    private List<RepositoryObserver> observers;
     
     public RESTRepositoryRelayer( StorageProvider storage, LogMessageHandler logHandler )
     {
@@ -48,16 +55,30 @@ public final class RESTRepositoryRelayer extends RepositoryServer implements RES
     @Override
     public void addObserver( RepositoryObserver observer )
     {
-        throw new UnsupportedOperationException( "Not supported yet." );
+        this.observers.add( observer );
     }
 
+    @GET
     @Override
     public DigitalObject getRepositoryObject( ObjectIdentifier identifier )
     {
-        throw new UnsupportedOperationException( "Not supported yet." );
+        DigitalObject digobj = null;
+        try
+        {
+            digobj = super.getObject( identifier );
+        }
+        catch( IOException ex )
+        {
+            String error = String.format( "Failed to retrieve object identified by %s: %s", identifier, ex.getMessage() );
+            Logger.getLogger( RESTRepositoryRelayer.class.getName() ).log( Level.WARNING, error, ex );
+            /** TODO: review exception type and response */
+            throw new WebApplicationException( ex, Response.Status.NOT_FOUND );
+        }
+
+        return digobj;
     }
 
-
+    @GET
     @Override
     public List<DigitalObject> queryRepositoryObjects( String query )
     {
@@ -68,13 +89,35 @@ public final class RESTRepositoryRelayer extends RepositoryServer implements RES
     @Override
     public synchronized ObjectIdentifier storeRepositoryObject( DigitalObject object, String logmessage )
     {
-        throw new UnsupportedOperationException( "Not supported yet." );
+        ObjectIdentifier objectid = null;
+        try
+        {
+            objectid = super.storeObject( object, logmessage );
+        }
+        catch( IOException ex )
+        {
+            String error = String.format( "Could not store object: %s", ex.getMessage() );
+            Logger.getLogger( RESTRepositoryRelayer.class.getName() ).log( Level.SEVERE, error, ex );
+            /** TODO: review exception type and response */
+            throw new WebApplicationException( ex, Response.Status.INTERNAL_SERVER_ERROR );
+        }
+        return objectid;
     }
 
 
     @Override
     public synchronized void deleteRepositoryObject( ObjectIdentifier identifier, String logmessage )
     {
-        throw new UnsupportedOperationException( "Not supported yet." );
+        try
+        {
+            super.deleteObject( identifier, logmessage );
+        }
+        catch( IOException ex )
+        {
+            String error = String.format( "Failed to delete object identified by '%s': %s", identifier, ex.getMessage() );
+            Logger.getLogger( RESTRepositoryRelayer.class.getName() ).log( Level.WARNING, error, ex );
+            /** TODO: review exception type and response */
+            throw new WebApplicationException( ex, Response.Status.INTERNAL_SERVER_ERROR );
+        }
     }
 }
