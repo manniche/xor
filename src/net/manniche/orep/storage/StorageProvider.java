@@ -67,6 +67,18 @@ public interface StorageProvider extends ObjectRepositoryService{
      */
     public void save( byte[] object, URI uri ) throws IOException;
 
+
+    /**
+     * Queries the object repository through a query string. Implementors are
+     * free to define allowed query formats, as long as they can be represented
+     * as a {@code String}. The result is returned as a {@link List} of
+     * {@link URI}s representing retrievable objects in the queried repository
+     *
+     * @param query The query expressed as a {@link String}
+     * @return a list of {@link URI}s that represents the objects matching the
+     * {@code query}
+     * @throws IOException if the query cannot be excuted
+     */
     public List<URI> query( String query ) throws IOException;
 
 
@@ -93,5 +105,12 @@ public interface StorageProvider extends ObjectRepositoryService{
     public void delete( URI identifier ) throws IOException;
 
     
+    /**
+     * Closes the StorageProvider implementation. This gives the implementors
+     * the opportunity to define actions that defines a properly shutdown of the
+     * storage. The {@link net.manniche.orep.server.RepositoryServer server}
+     * shall call this method once upon encountering a fatal exception or during
+     * normal server shutdown.
+     */
     public void close();
 }

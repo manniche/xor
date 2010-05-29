@@ -20,8 +20,6 @@ package net.manniche.orep.server.rmi;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
-import net.manniche.orep.server.ObjectRepository;
-import net.manniche.orep.server.RepositoryObserver;
 import net.manniche.orep.types.DigitalObject;
 import net.manniche.orep.types.ObjectIdentifier;
 
@@ -71,14 +69,4 @@ public interface RMIObjectManagement extends Remote{
      * @throws RemoteException
      */
     public void deleteRepositoryObject( ObjectIdentifier identifier, String logmessage ) throws RemoteException;
-
-    /**
-     * Observers who wishes to be notified on repository actions (ie. all the
-     * effects of the methods listed in this interface) can register through
-     * this method.
-     *
-     * @param observer the {@link RepositoryObserver} implementation that
-     * wishes to recieve updates
-     */
-    void addObserver( RepositoryObserver observer ) throws RemoteException;
 }

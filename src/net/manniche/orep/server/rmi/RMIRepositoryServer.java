@@ -180,18 +180,6 @@ public final class RMIRepositoryServer extends RepositoryServer implements RMIOb
     }
 
 
-    /**
-     * Observers who wishes to be notified on repository actions (ie. all the
-     * effects of the methods listed in this interface) can register through
-     * this method.
-     *
-     * Is is possible for observers to register more than one time with this
-     * implementation. Each registered observer will recieve a separate
-     * notification on actions performed that trigger events.
-     *
-     * @param observer the {@link RepositoryObserver} implementation that
-     * wishes to recieve updates
-     */
     @Override
     public void addObserver( RepositoryObserver observer )
     {

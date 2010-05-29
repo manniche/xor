@@ -1,7 +1,7 @@
-ORep; Object Repository
+OREP; Object Repository
 =======================
 
-ORep aims at a minimalistic approach to an Object Repository
+OREP aims at a minimalistic approach to an Object Repository
 implementation. An Object Repository is here understood as a
 service-based distributable management of objects. It is designed to
 handle objects containg either binary or text.
