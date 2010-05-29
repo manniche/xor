@@ -17,10 +17,13 @@
  */
 package net.manniche.orep.storage;
 
+import java.io.ByteArrayOutputStream;
 import java.net.URISyntaxException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URI;
@@ -63,31 +66,41 @@ public class FileStorage implements StorageProvider
     @Override
     public URI save( byte[] object ) throws IOException
     {
+        return this.saveObject( object, null );
+    }
+
+
+    @Override
+    public void save( byte[] object, URI uri ) throws IOException
+    {
+        URI returnedURI = this.saveObject( object, uri );
+        assert returnedURI.equals( uri );
+    }
+
+    private URI saveObject( byte[] object, URI uri ) throws IOException
+    {
         String hash = Integer.toString( object.hashCode() );
 
-        if( hash.startsWith( "-" ) )
+
+        URI id = null;
+
+        if( null == uri )
         {
-            hash = hash.substring( 1 );
+            id = this.generateURI( this.storage_path, hash );
         }
-
-        String fname = new Long( System.currentTimeMillis() ).toString() + hash;
-        String store = this.storage_path + fname;
-
-        URI id = this.generateURI( store );
-
+        else
+        {
+            id = uri;
+        }
         File f = new File( id );
 
         while( f.exists() )
             // this should never happen, but if it does, we should only need to
-            // this once...
+            // do this one pass.
         {
-            fname = new Long( System.currentTimeMillis() ).toString() + hash;
-            store = this.storage_path + fname;
-            id = this.generateURI( store );
+            id = this.generateURI( this.storage_path, hash );
             f = new File( id );
         }
-
-        log.info( String.format( "Abs filename: %s", store ) );
 
         final FileOutputStream fos = new FileOutputStream( f, false );
         fos.write( object );
@@ -97,29 +110,29 @@ public class FileStorage implements StorageProvider
         if( ! f.exists() )
         {
             /**
-             * todo: This is really just sarcastic. I'm not entirely sure that
-             * end users or clients would appreciate this message from their
-             * low-level storage implementation.
+             * todo: This is really a bad attempt at being humourous. I'm not
+             * entirely sure that end users or clients would appreciate this
+             * message from their low-level storage implementation.
              */
-            String warn = String.format( "The file %s was not written to disk, and I have no further information on it's wereabouts", f.getAbsolutePath() );
+            String warn = String.format( "The file %s was not written to disk, and I have no further information on it's whereabouts", f.getAbsolutePath() );
             log.warning( warn );
-            id = this.generateURI( "/dev/null" );
+            id = this.generateURI( "/dev/null", hash );
         }
 
         return id;
     }
 
-
-    @Override
-    public void save( byte[] object, URI uri ) throws IOException
-    {
-        throw new UnsupportedOperationException( "Not supported yet." );
-    }
-
-
-    private URI generateURI( String abs_path ) throws IOException
+    private URI generateURI( String storage_path, String hash ) throws IOException
     {
         URI id = null;
+        if( hash.startsWith( "-" ) )
+        {
+            hash = hash.substring( 1 );
+        }
+
+        String fname = new Long( System.currentTimeMillis() ).toString() + hash;
+        String abs_path = storage_path + fname;
+
         try
         {
             id = new URI( "file", null, abs_path, null );
@@ -133,18 +146,26 @@ public class FileStorage implements StorageProvider
         return id;
     }
 
-
-    @Override
-    public List<URI> query( String query ) throws IOException
-    {
-        throw new UnsupportedOperationException( "Not supported yet." );
-    }
-
-
     @Override
     public byte[] get( URI identifier ) throws IOException
     {
-        throw new UnsupportedOperationException( "Not supported yet." );
+        File objectFile = new File( identifier );
+        if( ! objectFile.isFile() )
+        {
+            String error = String.format( "Error - '%s' is not a file", identifier );
+            log.log( Level.SEVERE, error );
+            throw new FileNotFoundException( error );
+        }
+
+        FileInputStream data = new FileInputStream( objectFile );
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        int b = data.read();
+        while( -1 != b )
+        {
+            baos.write( b );
+            b = data.read();
+        }
+        return baos.toByteArray();
     }
 
 
@@ -158,8 +179,12 @@ public class FileStorage implements StorageProvider
     @Override
     public void delete( URI identifier ) throws IOException
     {
-        throw new UnsupportedOperationException( "Not supported yet." );
+        File deleteFile = new File( identifier );
+        boolean deleted = deleteFile.delete();
+        if( ! deleted )
+        {
+            String error = String.format( "The file %s could not be deleted", identifier );
+            log.log( Level.SEVERE, error );
+        }
     }
-
-
 }

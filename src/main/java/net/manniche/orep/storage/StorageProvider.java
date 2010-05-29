@@ -21,7 +21,6 @@ package net.manniche.orep.storage;
 
 import java.io.IOException;
 import java.net.URI;
-import java.util.List;
 import net.manniche.orep.types.ObjectRepositoryService;
 
 
@@ -66,20 +65,6 @@ public interface StorageProvider extends ObjectRepositoryService{
      * @throws IOException if the object cannot be stored
      */
     public void save( byte[] object, URI uri ) throws IOException;
-
-
-    /**
-     * Queries the object repository through a query string. Implementors are
-     * free to define allowed query formats, as long as they can be represented
-     * as a {@code String}. The result is returned as a {@link List} of
-     * {@link URI}s representing retrievable objects in the queried repository
-     *
-     * @param query The query expressed as a {@link String}
-     * @return a list of {@link URI}s that represents the objects matching the
-     * {@code query}
-     * @throws IOException if the query cannot be excuted
-     */
-    public List<URI> query( String query ) throws IOException;
 
 
     /**

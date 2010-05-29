@@ -20,15 +20,16 @@ package net.manniche.orep.storage;
 
 import java.io.IOException;
 import java.net.URI;
-import java.util.List;
 import javax.naming.ConfigurationException;
 
 
 /**
- *
+ * Base class for all database storage providers. This class defines the common
+ * behaviour expected from the database storage backends.
+ * 
  * @author stm
  */
-public class DBStorage implements StorageProvider{
+public abstract class DBStorage implements StorageProvider{
 
     private final String driver;
     private final String url;
@@ -62,40 +63,17 @@ public class DBStorage implements StorageProvider{
 
 
     @Override
-    public URI save( byte[] object ) throws IOException
-    {
-        throw new UnsupportedOperationException( "Not supported yet." );
-    }
+    public abstract URI save( byte[] object ) throws IOException;
 
     @Override
-    public void save( byte[] object, URI uri ) throws IOException
-    {
-        throw new UnsupportedOperationException( "Not supported yet." );
-    }
-
+    public abstract void save( byte[] object, URI uri ) throws IOException;
 
     @Override
-    public List<URI> query( String query ) throws IOException
-    {
-        throw new UnsupportedOperationException( "Not supported yet." );
-    }
-
+    public abstract byte[] get( URI identifier ) throws IOException;
 
     @Override
-    public byte[] get( URI identifier ) throws IOException
-    {
-        throw new UnsupportedOperationException( "Not supported yet." );
-    }
+    public abstract void close();
 
     @Override
-    public void close()
-    {
-        throw new UnsupportedOperationException( "Not supported yet." );
-    }
-
-    @Override
-    public void delete( URI identifier ) throws IOException
-    {
-        throw new UnsupportedOperationException( "Not supported yet." );
-    }
+    public abstract void delete( URI identifier ) throws IOException;
 }
