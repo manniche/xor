@@ -42,6 +42,10 @@ import net.manniche.orep.server.RepositoryServer;
 public final class RMIRepositoryServer extends RepositoryServer implements RMIObjectManagement
 {
     static final long serialVersionUID = -8975965744773865183L;
+
+    /**
+     * TODO: this list and all access to it must be threadsafe
+     */
     private List<RepositoryObserver> observers;
     private final static Logger Log = Logger.getLogger( RMIRepositoryServer.class.getName() );
 
