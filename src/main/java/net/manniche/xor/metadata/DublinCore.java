@@ -42,7 +42,7 @@ import javax.xml.stream.XMLStreamWriter;
 
 import net.manniche.xor.types.ObjectIdentifier;
 import net.manniche.xor.types.DigitalObject;
-import net.manniche.xor.types.RepositoryServiceException;
+import net.manniche.xor.exceptions.RepositoryServiceException;
 
 /**
  * DublinCore is a class implementation of the Dublin Core Metadata Element Set,

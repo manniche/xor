@@ -19,6 +19,7 @@
 
 package net.manniche.xor.types;
 
+import net.manniche.xor.exceptions.RepositoryServiceException;
 import java.io.IOException;
 
 

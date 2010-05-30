@@ -17,7 +17,7 @@
  */
 
 
-package net.manniche.xor.types;
+package net.manniche.xor.exceptions;
 
 /**
  *
