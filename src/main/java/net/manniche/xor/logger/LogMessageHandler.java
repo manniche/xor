@@ -1,5 +1,5 @@
 /*
- *  This file is part of RMIObjectRepository.
+ *  This file is part of OREP
  *  Copyright © 2009, Steen Manniche.
  * 
  *  OREP is free software: you can redistribute it and/or modify
@@ -16,27 +16,24 @@
  *  along with OREP.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.manniche.xor.server;
+package net.manniche.xor.logger;
 
-import net.manniche.xor.storage.StorageProvider;
+import net.manniche.xor.types.ObjectRepositoryService;
 
 
 /**
  *
  * @author stm
  */
-public class FileBasedLogMessageHandler implements LogMessageHandler{
+public interface LogMessageHandler extends ObjectRepositoryService{
 
-    private final StorageProvider storageProvider;
-    public FileBasedLogMessageHandler( StorageProvider store )
-    {
-        this.storageProvider = store;
-    }
-
-    @Override
-    public void commitLogMessage( String className, String methodName, String logMessage )
-    {
-        throw new UnsupportedOperationException( "Not supported yet." );
-    }
-
+    /**
+     * Commits a log message from the object repository implementation to an
+     * underlying storage implementation or a listener.
+     * 
+     * @param className name of the class that commits the log message
+     * @param methodName name of the method from which the log commit fired from
+     * @param logMessage the log message itself
+     */
+    public void commitLogMessage( String className, String methodName, String logMessage );
 }
