@@ -24,7 +24,7 @@ import javax.jms.ConnectionFactory;
 import javax.jms.QueueConnectionFactory;
 import javax.naming.InitialContext;
 
-import net.manniche.xor.server.LogMessageHandler;
+import net.manniche.xor.logger.LogMessageHandler;
 import net.manniche.xor.server.RepositoryObserver;
 import net.manniche.xor.server.RepositoryServer;
 import net.manniche.xor.storage.StorageProvider;
