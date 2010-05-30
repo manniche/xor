@@ -16,7 +16,7 @@
  *  along with OREP.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.manniche.xor.documents;
+package net.manniche.xor.types;
 
 import java.io.Serializable;
 import net.manniche.xor.types.DigitalObject;

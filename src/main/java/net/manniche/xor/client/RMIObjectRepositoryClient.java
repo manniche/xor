@@ -22,12 +22,12 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
-import net.manniche.xor.documents.DefaultDigitalObject;
+import net.manniche.xor.types.DefaultDigitalObject;
 import net.manniche.xor.server.rmi.RMIObjectManagement;
 import net.manniche.xor.server.rmi.RMIRepositoryServer;
 import net.manniche.xor.types.DigitalObject;
 import net.manniche.xor.types.ObjectIdentifier;
-import net.manniche.xor.types.RepositoryServiceException;
+import net.manniche.xor.exceptions.RepositoryServiceException;
 
 
 /**

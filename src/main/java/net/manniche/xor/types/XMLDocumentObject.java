@@ -17,14 +17,14 @@
  */
 
 
-package net.manniche.xor.documents;
+package net.manniche.xor.types;
 
 import java.io.UnsupportedEncodingException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.transform.TransformerException;
 import net.manniche.xor.types.DigitalObject;
-import net.manniche.xor.types.RepositoryServiceException;
+import net.manniche.xor.exceptions.RepositoryServiceException;
 import net.manniche.xor.utils.XMLUtils;
 import org.w3c.dom.Document;
 
