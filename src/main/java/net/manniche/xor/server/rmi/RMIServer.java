@@ -27,8 +27,8 @@ import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import net.manniche.xor.server.FileBasedLogMessageHandler;
-import net.manniche.xor.server.LogMessageHandler;
+import net.manniche.xor.logger.EventLoggerType;
+import net.manniche.xor.logger.LogMessageHandler;
 import net.manniche.xor.server.ServiceLocator;
 import net.manniche.xor.storage.StorageProvider;
 import net.manniche.xor.storage.StorageType;
@@ -55,18 +55,22 @@ public class RMIServer {
     {
         int port = 8181;
 
-        String storagetype = "FileStorage";
-        StorageType type = StorageType.valueOf( storagetype );
+        String storageTypeName = "FileStorage";
+        StorageType storageType = StorageType.valueOf( storageTypeName );
 
-        Class<ObjectRepositoryService> storage = ServiceLocator.getImplementation( type );
+        Class<ObjectRepositoryService> storage = ServiceLocator.getImplementation( storageType );
 
-        StorageProvider store;
+        String loggerTypeName = "FileEventLogger";
+        EventLoggerType loggerType = EventLoggerType.valueOf( loggerTypeName );
+
+        Class<ObjectRepositoryService> logHandler = ServiceLocator.getImplementation( loggerType );
+
         try
         {
             Log.log( Level.INFO, "trying to export server" );
 
-            store = (StorageProvider) storage.newInstance();
-            LogMessageHandler logMessageHandler = new FileBasedLogMessageHandler( store );
+            StorageProvider store = (StorageProvider) storage.newInstance();
+            LogMessageHandler logMessageHandler = (LogMessageHandler) logHandler.newInstance();
             manager = new RMIRepositoryServer( store, logMessageHandler );
             Remote remote = UnicastRemoteObject.exportObject( manager, port );
             Registry registry = LocateRegistry.createRegistry( Registry.REGISTRY_PORT );
@@ -93,6 +97,10 @@ public class RMIServer {
         catch( RemoteException ex )
         {
             Log.log( Level.SEVERE, ex.getMessage(), ex );
+        }
+        finally
+        {
+            System.exit( -1 );
         }
     }
 }
