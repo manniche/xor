@@ -18,22 +18,28 @@
 
 package net.manniche.xor.server;
 
+import net.manniche.xor.logger.LogMessageHandler;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Vector;
-import net.manniche.xor.documents.DefaultDigitalObject;
+import net.manniche.xor.types.DefaultDigitalObject;
 import net.manniche.xor.storage.StorageProvider;
 import net.manniche.xor.types.DefaultIdentifier;
 import net.manniche.xor.types.DigitalObject;
 import net.manniche.xor.types.ObjectIdentifier;
 import net.manniche.xor.types.RepositoryAction;
-import net.manniche.xor.types.RepositoryServiceException;
+import net.manniche.xor.exceptions.RepositoryServiceException;
 
 
 /**
  * The RepositoryServer handles the internal and central logic of the repository
  * Extension classes can expose the functionality of this class indirectly; 
- * through their own technology specific implementations.
+ * through their own technology specific implementations. The RepositoryServer
+ * defines the core operations that the object repository must support.
+ *
+ * Extendors to this class are free (and encouraged) to add functionality such
+ * as the ability to index and query the object repository, search-functionality
+ * or more advanced operations on objects passing through the repository.
  *
  * @author stm
  */
