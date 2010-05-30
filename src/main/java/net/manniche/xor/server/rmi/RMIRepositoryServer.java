@@ -23,12 +23,12 @@ import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import net.manniche.xor.server.LogMessageHandler;
+import net.manniche.xor.logger.LogMessageHandler;
 import net.manniche.xor.types.ObjectIdentifier;
 import net.manniche.xor.storage.StorageProvider;
 import net.manniche.xor.types.DigitalObject;
 import net.manniche.xor.server.RepositoryServer;
-import net.manniche.xor.types.RepositoryServiceException;
+import net.manniche.xor.exceptions.RepositoryServiceException;
 
 /**
  * The connection handler for RMI requests. This class represents the RMI
@@ -185,4 +185,11 @@ public final class RMIRepositoryServer extends RepositoryServer implements RMIOb
             throw new RemoteException( error, ex );
         }
     }
+
+    private void registerObservers()
+    {
+        //read a configuration file for implementations of the ObjectRepositoryService
+        // that should be added as observers of actions taken by the RepositoryServer
+    }
+
 }
