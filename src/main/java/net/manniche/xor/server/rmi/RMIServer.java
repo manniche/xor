@@ -20,6 +20,7 @@ package net.manniche.xor.server.rmi;
 
 import java.rmi.AccessException;
 import java.rmi.AlreadyBoundException;
+import java.rmi.NotBoundException;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
@@ -33,6 +34,7 @@ import net.manniche.xor.server.ServiceLocator;
 import net.manniche.xor.storage.StorageProvider;
 import net.manniche.xor.storage.StorageType;
 import net.manniche.xor.types.ObjectRepositoryService;
+import net.manniche.xor.types.ObjectRepositoryServiceType;
 
 
 /**
@@ -47,6 +49,12 @@ public class RMIServer {
     private final static Logger Log = Logger.getLogger( RMIServer.class.getName() );
     private static RMIObjectManagement manager = null;
 
+
+    private static Class<ObjectRepositoryService> getServiceImplementation( ObjectRepositoryServiceType<? extends ObjectRepositoryService> serviceType )
+    {
+        return ServiceLocator.getImplementation( serviceType );
+    }
+
     ////////////////////////////////////////////////////////////////////////////
     // Below follows the RMI server main method.                              //
     ////////////////////////////////////////////////////////////////////////////
@@ -55,16 +63,13 @@ public class RMIServer {
     {
         int port = 8181;
 
-        String storageTypeName = "FileStorage";
-        StorageType storageType = StorageType.valueOf( storageTypeName );
+        StorageType storageType = StorageType.valueOf( "FileStorage" );
+        Class<ObjectRepositoryService> storage = getServiceImplementation( storageType );
 
-        Class<ObjectRepositoryService> storage = ServiceLocator.getImplementation( storageType );
+        EventLoggerType loggerType = EventLoggerType.valueOf( "FileEventLogger" );
+        Class<ObjectRepositoryService> logHandler = getServiceImplementation( loggerType );
 
-        String loggerTypeName = "FileEventLogger";
-        EventLoggerType loggerType = EventLoggerType.valueOf( loggerTypeName );
-
-        Class<ObjectRepositoryService> logHandler = ServiceLocator.getImplementation( loggerType );
-
+        Registry registry = null;
         try
         {
             Log.log( Level.INFO, "trying to export server" );
@@ -73,7 +78,7 @@ public class RMIServer {
             LogMessageHandler logMessageHandler = (LogMessageHandler) logHandler.newInstance();
             manager = new RMIRepositoryServer( store, logMessageHandler );
             Remote remote = UnicastRemoteObject.exportObject( manager, port );
-            Registry registry = LocateRegistry.createRegistry( Registry.REGISTRY_PORT );
+            registry = LocateRegistry.createRegistry( Registry.REGISTRY_PORT );
             registry.bind( RMIRepositoryServer.class.getName(), remote );
 
             Log.log( Level.INFO, String.format( "Started server on port %s", port ) );
@@ -100,7 +105,20 @@ public class RMIServer {
         }
         finally
         {
+            try
+            {
+                registry.unbind( RMIRepositoryServer.class.getName() );
+            }
+            catch( RemoteException ex )
+            {
+                Logger.getLogger( RMIServer.class.getName() ).log( Level.SEVERE, ex.getMessage(), ex );
+            }
+            catch( NotBoundException ex )
+            {
+                Logger.getLogger( RMIServer.class.getName() ).log( Level.SEVERE, ex.getMessage(), ex );
+            }
             System.exit( -1 );
         }
     }
+
 }
