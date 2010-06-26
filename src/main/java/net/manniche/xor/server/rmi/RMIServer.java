@@ -105,19 +105,19 @@ public class RMIServer {
         }
         finally
         {
-            try
-            {
-                registry.unbind( RMIRepositoryServer.class.getName() );
-            }
-            catch( RemoteException ex )
-            {
-                Logger.getLogger( RMIServer.class.getName() ).log( Level.SEVERE, ex.getMessage(), ex );
-            }
-            catch( NotBoundException ex )
-            {
-                Logger.getLogger( RMIServer.class.getName() ).log( Level.SEVERE, ex.getMessage(), ex );
-            }
-            System.exit( -1 );
+//            try
+//            {
+//                registry.unbind( RMIRepositoryServer.class.getName() );
+//            }
+//            catch( RemoteException ex )
+//            {
+//                Logger.getLogger( RMIServer.class.getName() ).log( Level.SEVERE, ex.getMessage(), ex );
+//            }
+//            catch( NotBoundException ex )
+//            {
+//                Logger.getLogger( RMIServer.class.getName() ).log( Level.SEVERE, ex.getMessage(), ex );
+//            }
+//            System.exit( -1 );
         }
     }
 

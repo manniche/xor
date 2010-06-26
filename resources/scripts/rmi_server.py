@@ -5,7 +5,7 @@ import subprocess
 import sys
 
 classes   = '../../target/classes'
-rmiclass  = 'net.manniche.orep.server.rmi.RMIServer'
+rmiclass  = 'net.manniche.xor.server.rmi.RMIServer'
 rmibase   = 'java.rmi.server.codebase=file:///%s'%( os.path.abspath( classes )+'/' )
 
 checkpath = os.path.join( classes, str( "/".join( rmiclass.split( '.' ) ) + '.class' ) )

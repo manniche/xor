@@ -135,7 +135,6 @@ public final class RMIRepositoryServer extends RepositoryServer implements RMIOb
      */
     private ObjectIdentifier storeRepositoryObject( DigitalObject data, ObjectIdentifier identifier, String logmessage ) throws RemoteException, RepositoryServiceException
     {
-        Log.info( String.format( "Storing object with identifier %s", identifier ) );
         ObjectIdentifier oIdentifier = null;
         try
         {
@@ -154,6 +153,7 @@ public final class RMIRepositoryServer extends RepositoryServer implements RMIOb
         {
             identifier = oIdentifier;
         }
+        Log.info( String.format( "Stored object with identifier %s", identifier.getIdentifierAsURI() ) );
 
         return identifier;
     }

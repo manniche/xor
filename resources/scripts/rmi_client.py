@@ -4,7 +4,7 @@ import os
 import subprocess
 
 classes   = '../../target/classes'
-rmiclass  = 'net.manniche.orep.client.RMIObjectRepositoryClient'
+rmiclass  = 'net.manniche.xor.client.rmi.RMIObjectRepositoryClient'
 classpath = '%s:../'%( classes )
 
 rmic = 'rmic'+' -classpath %s'%( classpath )+' -d %s'%( os.path.abspath( classes ) )+' '+rmiclass
