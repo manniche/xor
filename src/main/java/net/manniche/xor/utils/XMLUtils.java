@@ -21,9 +21,9 @@ package net.manniche.xor.utils;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
+import java.util.logging.Logger;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -43,6 +43,7 @@ import org.xml.sax.SAXException;
 
 public class XMLUtils
 {
+    private static final Logger Log = Logger.getLogger( XMLUtils.class.getName() );
 
     public static byte[] serializeDocument( Document root ) throws TransformerException, UnsupportedEncodingException
     {
