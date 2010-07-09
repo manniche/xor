@@ -1,9 +1,0 @@
-If the object repository path is deleted while the server is running,
-ther server will throw an exception at access-time, not doing any
-checks before-hand.
-
-The current behaviour of the server is to die with an
-exception. Perhaps it would be more graceful to try and restore the
-object path, perhaps with some log.error telling that the server has
-lost its storage data?
-
