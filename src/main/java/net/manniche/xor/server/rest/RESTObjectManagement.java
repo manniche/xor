@@ -21,6 +21,7 @@ package net.manniche.xor.server.rest;
 import java.util.List;
 import net.manniche.xor.types.DigitalObject;
 import net.manniche.xor.types.ObjectIdentifier;
+import net.manniche.xor.types.ObjectRepositoryContentType;
 
 
 /**
@@ -31,6 +32,6 @@ interface RESTObjectManagement {
 
     public DigitalObject getRepositoryObject( ObjectIdentifier identifier );
     public List<DigitalObject> queryRepositoryObjects( String query );
-    public ObjectIdentifier storeRepositoryObject( DigitalObject object, String logmessage );
+    public ObjectIdentifier storeRepositoryObject( DigitalObject object, ObjectRepositoryContentType contentType, String logmessage );
     public void deleteRepositoryObject( ObjectIdentifier identifier, String logmessage );
 }

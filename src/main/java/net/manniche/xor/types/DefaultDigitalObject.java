@@ -19,27 +19,45 @@
 package net.manniche.xor.types;
 
 import java.io.Serializable;
-import net.manniche.xor.types.DigitalObject;
 
 
 /**
+ * Default implementation of the {@link net.manniche.xor.types.DigitalObject}
+ * This type only supports the most basic operations, including and limited to
+ * storing the data contents and defining the
+ * {@link net.manniche.xor.types.ObjectRepositoryContentType content type} of
+ * the data.
  *
+ * The DefaultDigitalObject is an immutable type and thereby completely thread-
+ * safe.
+ * 
  * @author stm
  */
 public final class DefaultDigitalObject implements DigitalObject, Serializable{
     static final long serialVersionUID = 4558861702889722277L;
 
     private final byte[] internal_input;
+    private final ObjectRepositoryContentType contentType;
 
-    public DefaultDigitalObject( byte[] input )
+    public DefaultDigitalObject( byte[] input, ObjectRepositoryContentType contentType )
     {
         this.internal_input = input;
+        this.contentType = contentType;
     }
     @Override
     public byte[] getBytes()
     {
-
         return this.internal_input;
     }
 
+    /**
+     * Returns the {@link net.manniche.xor.types.ObjectRepositoryContentType}
+     * defined by the server implementor.
+     *
+     * @return the content type of the DigitalObject
+     */
+    public ObjectRepositoryContentType getContentType()
+    {
+        return this.contentType;
+    }
 }

@@ -30,31 +30,52 @@ import java.net.URI;
 public class DefaultIdentifier implements ObjectIdentifier, Serializable{
     static final long serialVersionUID = 4760792436042998437L;
     private final URI uri;
+    private final String path;
 
     /**
-     * Creates a DefaultIdentifier identified by the {@code uri} 
+     * Creates a DefaultIdentifier identified by the {@code uri}
      * @param uri defining this identifier
      */
     public DefaultIdentifier( URI uri )
     {
         this.uri = uri;
+        this.path = this.uri.getPath();
     }
 
     /**
      * @return the default identifier as an URI
      */
+//    @Override
+//    public URI getIdentifierAsURI() throws URISyntaxException
+//    {
+//        return uri.toURI();
+//    }
+//
     @Override
-    public URI getIdentifierAsURI()
+    public URI getURI()
     {
-        return uri;
+        return this.uri;
     }
+
+    @Override
+    public String getName()
+    {
+        return this.path.substring( this.path.lastIndexOf( "/" ) + 1 );
+    }
+
+    @Override
+    public String getId()
+    {
+        return this.path;
+    }
+
 
     /**
      * @return the string "uri" as a prefix for the default identifier.
      */
-    @Override
-    public String getPrefix()
-    {
-        return "uri";
-    }
+//    @Override
+//    public String getPrefix()
+//    {
+//        return "uri";
+//    }
 }

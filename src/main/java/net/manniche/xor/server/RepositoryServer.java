@@ -21,14 +21,13 @@ package net.manniche.xor.server;
 import net.manniche.xor.logger.LogMessageHandler;
 import java.io.IOException;
 import java.net.URI;
-import java.util.Vector;
-import net.manniche.xor.types.DefaultDigitalObject;
 import net.manniche.xor.storage.StorageProvider;
 import net.manniche.xor.types.DefaultIdentifier;
 import net.manniche.xor.types.DigitalObject;
 import net.manniche.xor.types.ObjectIdentifier;
+import net.manniche.xor.types.InternalDigitalObject;
+import net.manniche.xor.types.ObjectRepositoryContentType;
 import net.manniche.xor.types.RepositoryAction;
-import net.manniche.xor.exceptions.RepositoryServiceException;
 
 
 /**
@@ -47,13 +46,11 @@ public abstract class RepositoryServer{
 
     private final StorageProvider repositoryStorageMechanism;
     private final LogMessageHandler logMessageHandler;
-    private final Vector< RepositoryObserver > observers;
 
     protected RepositoryServer( StorageProvider storage, LogMessageHandler logHandler )
     {
         this.repositoryStorageMechanism = storage;
         this.logMessageHandler = logHandler;
-        this.observers = new Vector<RepositoryObserver>();
     }
 
     /**
@@ -62,6 +59,7 @@ public abstract class RepositoryServer{
      * {@link net.manniche.orep.storage.StorageProvider storage} implementation.
      *
      * @param data the DigitalObject containing data to be stored
+     * @param storagePath path to which data will be stored
      * @param message an optional logmessage describing the action. If null or
      * the empty string is passed, the implementation can decide what to write
      * in the log system, if any.
@@ -69,9 +67,9 @@ public abstract class RepositoryServer{
      * data for later identification
      * @throws IOException if the object cannot be stored for a given reason
      */
-    protected ObjectIdentifier storeObject( DigitalObject data, String message ) throws IOException, RepositoryServiceException
+    protected ObjectIdentifier storeObject( byte[] data, String storagePath, String message ) throws IOException
     {
-        return this.storeObject( data, null, message );
+        return this.storeObject( data, storagePath, null, message);
     }
 
 
@@ -83,6 +81,7 @@ public abstract class RepositoryServer{
      * the whole operation rolled back.
      *
      * @param data the DigitalObject containing data to be stored
+     * @param storagePath path to which data will be stored
      * @param identifier the ObjectIdentifier that the object should be stored with
      * @param message an optional logmessage describing the action. If null or
      * the empty string is passed, the implementation can decide what to write
@@ -91,26 +90,40 @@ public abstract class RepositoryServer{
      * the client
      * data for later identification
      * @throws IOException if the object cannot be stored for a given reason
-     * @throws IOException
      */
-    protected ObjectIdentifier storeObject( DigitalObject data, ObjectIdentifier identifier, String message ) throws RepositoryServiceException, IOException
+    protected ObjectIdentifier storeObject( byte[] data, String storagePath, ObjectIdentifier identifier, String message ) throws IOException
     {
-        URI uid;
+        URI uid = null;
 
         ObjectIdentifier objectID = null;
 
         if( null == identifier )
         {
-            uid = this.repositoryStorageMechanism.save( data.getBytes() );
+            uid = this.repositoryStorageMechanism.save( data, storagePath );
             objectID = new DefaultIdentifier( uid );
         }
         else
         {
-            this.repositoryStorageMechanism.save( data.getBytes(), identifier.getIdentifierAsURI() );
+            this.repositoryStorageMechanism.save( data, identifier.getURI(), storagePath );
             objectID = identifier;
         }
-        this.notifyObservers( identifier, RepositoryAction.ADD );
         return objectID;
+    }
+
+    /**
+     * Stores the content type alongside (logically) the object to which the
+     * content type belongs. The content type is identified with the identifier
+     * of the object, but resolving with a different physical placement.
+     *
+     * @param contentType the content type of the object that is stored
+     * @param identifier the identifier of the object
+     * @param storagePath path to which the content type will be stored
+     * 
+     * @throws IOException if the content type could not be stored
+     */
+    protected ObjectIdentifier storeContentType( ObjectRepositoryContentType contentType, String storagePath, ObjectIdentifier identifier ) throws IOException
+    {
+        return this.storeObject( contentType.toString().getBytes(), storagePath, identifier, "Storing content type" );
     }
 
 
@@ -123,9 +136,8 @@ public abstract class RepositoryServer{
      */
     protected DigitalObject getObject( ObjectIdentifier identifier ) throws IOException
     {
-        byte[] object = this.repositoryStorageMechanism.get( identifier.getIdentifierAsURI() );
-        this.notifyObservers( identifier, RepositoryAction.REQUEST );
-        return new DefaultDigitalObject( object );
+        byte[] object = this.repositoryStorageMechanism.get( identifier.getURI() );
+        return new InternalDigitalObject( object );
     }
 
 
@@ -143,11 +155,11 @@ public abstract class RepositoryServer{
     protected void deleteObject( ObjectIdentifier identifier, String logmessage ) throws IOException
     {
         this.logMessageHandler.commitLogMessage( RepositoryServer.class.getName(), "deleteObject", logmessage );
-        this.repositoryStorageMechanism.delete( identifier.getIdentifierAsURI() );
-        this.notifyObservers( identifier, RepositoryAction.DELETE );
+        this.repositoryStorageMechanism.delete( identifier.getURI() );
     }
 
-   /**
+
+    /**
      * Observers who wishes to be notified on repository actions (ie. all the
      * effects of the methods listed in this interface) can register through
      * this method.
@@ -159,31 +171,28 @@ public abstract class RepositoryServer{
      * @param observer the {@link RepositoryObserver} implementation that
      * wishes to recieve updates
      */
-    public void addObserver( RepositoryObserver observer )
-    {
-        this.observers.add( observer );
-    }
-
+    protected abstract void addObserver( RepositoryObserver observer);
 
     /**
-     * Notifies all registered observers of the action taken by the 
+     * Removes an observer registered with the repository server. If an
+     * observer that is not registered is requested removed, this method will
+     * silently fail to removed the observer.
+     *
+     * @param observer the {@link RepositoryObserver} implementation that
+     * wishes to be removed from the list of observers
+     */
+    protected abstract void removeObserver( RepositoryObserver observer );
+
+    /**
+     * Notifies all registered observers of the action taken by the
      * {@code RepositoryServer}. This method notifies all and only the observers
      * registered at the point of calling the method. Any observer added during
      * the execution of this method will not be called until the method is
      * called again for a subsequent {@link RepositoryAction}
-     * 
+     *
      * @param identifier the identifier of the object on which the action was performed
      * @param action the action taken
      * @see RepositoryAction
      */
-    public void notifyObservers( ObjectIdentifier identifier, RepositoryAction action )
-    {
-        synchronized( this.observers )
-        {
-            for( RepositoryObserver observer : this.observers )
-            {
-                observer.notifyMe( identifier, action );
-            }
-        }
-    }
+    protected abstract void notifyObservers( ObjectIdentifier identifier, RepositoryAction action, ObjectRepositoryContentType contentType );
 }

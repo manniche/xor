@@ -27,6 +27,9 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URI;
+import java.util.HashSet;
+import java.util.Set;
+import net.manniche.xor.utils.RepositoryUtilities;
 
 
 /**
@@ -36,123 +39,151 @@ import java.net.URI;
 public class FileStorage implements StorageProvider
 {
 
-    private static final Logger log = Logger.getLogger( FileStorage.class.getName() );
-    private final String storage_path;
+    private static final Logger Log = Logger.getLogger( FileStorage.class.getName() );
+
+    private final Set<String> storagePaths;
 
     public FileStorage()
     {
-        String sep = System.getProperty( "file.separator" );
-        this.storage_path = System.getProperty( "user.home" ) + sep + "objectstorage" + sep;
+        this.storagePaths = new HashSet<String>( 2 );
+    }
 
-        // ensure that the folder exists:
-        File storage_dir = new File( this.storage_path );
 
-        if( ! storage_dir.exists() )
+    //TODO: this should be wrapped in a private static class instead. Or
+    // something that prohibits the rest of the members in observing this.storagePath
+    private synchronized String setCacheOrCheckStoragePath( String storagePath )
+    {
+        if( !this.storagePaths.contains( storagePath ) )
         {
-            log.info( String.format( "%s does not exist, creating it", this.storage_path ) );
-            boolean could_create_dirs = storage_dir.mkdirs();
-            if( ! could_create_dirs )
+            // ensure that the folder exists:
+            File storage_dir = new File( storagePath );
+
+            if( !storage_dir.exists() )
             {
-                String error = String.format( "Could not create dir: %s, Please check permissions and disk space", this.storage_path );
-                log.severe( error );
-                throw new IllegalStateException( error );
+                Log.info( String.format( "%s does not exist, creating it", storagePath ) );
+                boolean could_create_dirs = storage_dir.mkdirs();
+                if( !could_create_dirs )
+                {
+                    String error = String.format( "Could not create dir: %s, Please check permissions and disk space", storagePath );
+                    Log.severe( error );
+                    throw new IllegalStateException( error );
+                }
             }
+            this.storagePaths.add( storagePath );
+            Log.info( String.format( "Storing files at %s", storagePath ) );
         }
-        log.info( String.format( "Storing files at %s", this.storage_path ) );
+        return storagePath;
     }
 
 
     @Override
-    public URI save( byte[] object ) throws IOException
+    public URI save( byte[] object, String storagePath ) throws IOException
     {
-        return this.saveObject( object, null );
+        String storagePath_cached = this.setCacheOrCheckStoragePath( storagePath );
+        return this.saveObject( object, null, storagePath_cached );
     }
 
 
     @Override
-    public void save( byte[] object, URI uri ) throws IOException
+    public void save(  byte[] object, URI uri, String storagePath) throws IOException
     {
-        URI returnedURI = this.saveObject( object, uri );
-        assert returnedURI.equals( uri );
+        String storagePath_cached = this.setCacheOrCheckStoragePath( storagePath );
+        URI returnedURL = this.saveObject( object, uri, storagePath_cached );
+        assert returnedURL.equals( uri );
     }
 
-    private URI saveObject( byte[] object, URI uri ) throws IOException
+    private URI saveObject( byte[] object, URI url, final String storagePath ) throws IOException
     {
-        String hash = Integer.toString( object.hashCode() );
+        final String hash = Integer.toString( object.hashCode() );
 
 
         URI id = null;
 
-        if( null == uri )
+        if( null == url )
         {
-            id = this.generateURI( this.storage_path, hash );
+            try
+            {
+                id = RepositoryUtilities.generateURI( "file", storagePath, hash );
+                Log.info( String.format( "URI for object was null, generated %s", id ) );
+            }
+            catch( URISyntaxException ex )
+            {
+                String error = String.format( "Could not construct storage location from %s: %s", url, ex.getMessage() );
+                Log.log( Level.SEVERE, error, ex );
+                throw new IOException( error, ex );
+            }
         }
         else
         {
-            id = uri;
-        }
-        File f = new File( id );
-
-        while( f.exists() )
-            // this should never happen, but if it does, we should only need to
-            // do this one pass.
-        {
-            id = this.generateURI( this.storage_path, hash );
-            f = new File( id );
+            id = url;
+            Log.info( String.format( "Using path '%s' for object", id.getPath() ) );
         }
 
-        final FileOutputStream fos = new FileOutputStream( f, false );
+
+        File objectFile = new File( id );
+
+//        if( ! objectFile.createNewFile() )
+//        // this should never happen, but if it does, we should only need to
+//        // do this one pass.
+//        {
+//            Log.warning( String.format( "File identified by %s already exists, creating new id", id.getPath() ) );
+//
+//            //generate new id
+//            try
+//            {
+//                id = RepositoryUtilities.generateURI( "file", storagePath, hash );
+//            }
+//            catch( URISyntaxException ex )
+//            {
+//                String error = String.format( "Could not construct storage location from %s: %s", url, ex.getMessage() );
+//                Log.log( Level.SEVERE, error, ex );
+//                throw new IOException( error, ex );
+//            }
+//
+//        }
+        
+
+        final FileOutputStream fos = new FileOutputStream( objectFile, false );
+        Log.info( String.format( "Storing object at %s", id.getPath() ) );
         fos.write( object );
         fos.flush();
         fos.close();
 
-        if( ! f.exists() )
+        if( ! objectFile.exists() )
         {
             /**
              * todo: This is really a bad attempt at being humourous. I'm not
              * entirely sure that end users or clients would appreciate this
              * message from their low-level storage implementation.
              */
-            String warn = String.format( "The file %s was not written to disk, and I have no further information on it's whereabouts", f.getAbsolutePath() );
-            log.warning( warn );
-            id = this.generateURI( "/dev/null", hash );
+            String warn = String.format( "The file %s was not written to disk, and I have no further information on it's whereabouts", objectFile.getAbsolutePath() );
+            Log.warning( warn );
+            id = url;
         }
 
         return id;
     }
 
-    private URI generateURI( String storage_path, String hash ) throws IOException
-    {
-        URI id = null;
-        if( hash.startsWith( "-" ) )
-        {
-            hash = hash.substring( 1 );
-        }
-
-        String fname = new Long( System.currentTimeMillis() ).toString() + hash;
-        String abs_path = storage_path + fname;
-
-        try
-        {
-            id = new URI( "file", null, abs_path, null );
-        }
-        catch( URISyntaxException ex )
-        {
-            String error = String.format( "Could not construct storage location: %s", ex.getMessage() );
-            log.log( Level.SEVERE, error, ex );
-            throw new IOException( error, ex );
-        }
-        return id;
-    }
 
     @Override
-    public byte[] get( URI identifier ) throws IOException
+    public byte[] get( URI url ) throws IOException
     {
-        File objectFile = new File( identifier );
+        Log.info( String.format( "Getting object identified by %s", url.getPath() ) );
+        File objectFile = null;
+//        try
+//        {
+            objectFile = new File( url );
+//        }
+//        catch( URISyntaxException ex )
+//        {
+//            String error = String.format( "Could not construct storage location from %s: %s", url, ex.getMessage() );
+//            Log.log( Level.SEVERE, error, ex );
+//            throw new IOException( error, ex );
+//        }
         if( ! objectFile.isFile() )
         {
-            String error = String.format( "Error - '%s' is not a file", identifier );
-            log.log( Level.SEVERE, error );
+            String error = String.format( "Error - '%s' is not a file", url );
+            Log.log( Level.SEVERE, error );
             throw new FileNotFoundException( error );
         }
 
@@ -164,6 +195,7 @@ public class FileStorage implements StorageProvider
             baos.write( b );
             b = data.read();
         }
+        Log.info( String.format( "Returning byte array (as output stream) with size %s", baos.size() ) );
         return baos.toByteArray();
     }
 
@@ -176,14 +208,24 @@ public class FileStorage implements StorageProvider
 
 
     @Override
-    public void delete( URI identifier ) throws IOException
+    public void delete( URI identifier) throws IOException
     {
-        File deleteFile = new File( identifier );
+        File deleteFile = null;
+//        try
+//        {
+            deleteFile = new File( identifier );
+//        }
+//        catch( URISyntaxException ex )
+//        {
+//            String error = String.format( "Could not construct storage location from %s: %s", identifier, ex.getMessage() );
+//            Log.log( Level.SEVERE, error, ex );
+//            throw new IOException( error, ex );
+//        }
         boolean deleted = deleteFile.delete();
         if( ! deleted )
         {
             String error = String.format( "The file %s could not be deleted", identifier );
-            log.log( Level.SEVERE, error );
+            Log.log( Level.SEVERE, error );
         }
     }
 }

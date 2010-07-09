@@ -63,17 +63,17 @@ public abstract class DBStorage implements StorageProvider{
 
 
     @Override
-    public abstract URI save( byte[] object ) throws IOException;
+    public abstract URI save( byte[] object, String storagePath ) throws IOException;
 
     @Override
-    public abstract void save( byte[] object, URI uri ) throws IOException;
+    public abstract void save( byte[] object, URI url, String storagePath ) throws IOException;
 
     @Override
-    public abstract byte[] get( URI identifier ) throws IOException;
+    public abstract byte[] get( URI identifier) throws IOException;
 
     @Override
     public abstract void close();
 
     @Override
-    public abstract void delete( URI identifier ) throws IOException;
+    public abstract void delete( URI identifier) throws IOException;
 }

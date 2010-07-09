@@ -28,14 +28,29 @@ import java.net.URI;
 public interface ObjectIdentifier {
 
     /**
-     * Accessor for the representation of the identifier
-     * @return an URI representing the identifier
+     * Accessor for the identification of the objects, expressed as an URI
+     *
+     * @return an URI identifying the location of the object
      */
-    public URI getIdentifierAsURI();
+    public URI getURI();
 
     /**
      * Accessor for the prefix (if any) on the object identifier.
      * @return a String containing the prefix (if the implementors provide one)
      */
-    public String getPrefix();
+    //public String getPrefix();
+
+    public String getId();
+
+    /**
+     * Accessor for the 'name' of the object. Implementors are free to
+     * specify what constitutes a name of an object, but the name of an object
+     * must be consistent with the URL of the identifier. Specifically,
+     * if the scheme is 'file:', the path is '/path', the object name '123',
+     * then the URL of the identifier must be 'file:/path/123' and getName()
+     * should return '123'.
+     *
+     * @return the name of the object
+     */
+    public String getName();
 }

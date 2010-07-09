@@ -24,6 +24,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ws.rs.DELETE;
 import net.manniche.xor.logger.LogMessageHandler;
+import net.manniche.xor.server.RepositoryObserver;
 import net.manniche.xor.server.RepositoryServer;
 import net.manniche.xor.storage.StorageProvider;
 import net.manniche.xor.types.DigitalObject;
@@ -35,6 +36,8 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import net.manniche.xor.exceptions.RepositoryServiceException;
+import net.manniche.xor.types.ObjectRepositoryContentType;
+import net.manniche.xor.types.RepositoryAction;
 
 /**
  *
@@ -45,11 +48,15 @@ public final class RESTRepositoryRelayer extends RepositoryServer implements RES
 
     private final StorageProvider storage;
     private final LogMessageHandler logHandler;
+    private final String storagePath;
+    private final String metadataStoragePath;
     
-    public RESTRepositoryRelayer( StorageProvider storage, LogMessageHandler logHandler )
+    public RESTRepositoryRelayer( StorageProvider storage, String storagePath, String metadataStoragePath, LogMessageHandler logHandler )
     {
         super( storage, logHandler );
         this.storage = storage;
+        this.storagePath = storagePath;
+        this.metadataStoragePath = metadataStoragePath;
         this.logHandler = logHandler;
     }
 
@@ -82,12 +89,12 @@ public final class RESTRepositoryRelayer extends RepositoryServer implements RES
 
     @POST
     @Override
-    public synchronized ObjectIdentifier storeRepositoryObject( DigitalObject object, String logmessage )
+    public synchronized ObjectIdentifier storeRepositoryObject( DigitalObject object, ObjectRepositoryContentType contentType, String logmessage )
     {
         ObjectIdentifier objectid = null;
         try
         {
-            objectid = super.storeObject( object, logmessage );
+            objectid = super.storeObject( object.getBytes(), this.storagePath, logmessage );
         }
         catch( IOException ex )
         {
@@ -103,6 +110,19 @@ public final class RESTRepositoryRelayer extends RepositoryServer implements RES
             /** TODO: review exception type and response */
             throw new WebApplicationException( ex, Response.Status.INTERNAL_SERVER_ERROR );
         }
+        //store the contenttype
+        try
+        {
+            super.storeContentType( contentType, this.metadataStoragePath, null );
+        }
+        catch( IOException ex )
+        {
+            String error = String.format( "Failed to store object content type: %s", ex.getMessage() );
+            Logger.getLogger( RESTRepositoryRelayer.class.getName() ).log( Level.WARNING, error, ex );
+            /** TODO: review exception type and response */
+            throw new WebApplicationException( ex, Response.Status.INTERNAL_SERVER_ERROR );
+        }
+
         return objectid;
     }
 
@@ -121,6 +141,26 @@ public final class RESTRepositoryRelayer extends RepositoryServer implements RES
             /** TODO: review exception type and response */
             throw new WebApplicationException( ex, Response.Status.INTERNAL_SERVER_ERROR );
         }
+    }
+
+    @Override
+    protected void addObserver( RepositoryObserver observer )
+    {
+        throw new UnsupportedOperationException( "Not supported yet." );
+    }
+
+
+    @Override
+    protected void removeObserver( RepositoryObserver observer )
+    {
+        throw new UnsupportedOperationException( "Not supported yet." );
+    }
+
+
+    @Override
+    protected void notifyObservers( ObjectIdentifier identifier, RepositoryAction action, ObjectRepositoryContentType contentType )
+    {
+        throw new UnsupportedOperationException( "Not supported yet." );
     }
 
 }

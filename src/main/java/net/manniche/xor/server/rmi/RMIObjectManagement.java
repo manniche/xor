@@ -22,6 +22,7 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 import net.manniche.xor.types.DigitalObject;
 import net.manniche.xor.types.ObjectIdentifier;
+import net.manniche.xor.types.ObjectRepositoryContentType;
 
 
 /**
@@ -54,18 +55,20 @@ public interface RMIObjectManagement extends Remote{
      * identifying the object within the object repository
      *
      * @param data the DigitalObject to be stored
+     * @param contentType the type of content being stored, as defined by the server
      * @param logmessage a message describing the action
      * @return an ObjectIdentifier that uniquely identifies the object within the scope of this server
      * @throws RemoteException
      */
-    public ObjectIdentifier storeRepositoryObject( DigitalObject data , String logmessage ) throws RemoteException;
+    public ObjectIdentifier storeRepositoryObject( DigitalObject data, ObjectRepositoryContentType contentType, String logmessage ) throws RemoteException;
 
     /**
      * Deletes an object identified by {@code identifier} using {@code logmessage} 
      * to describe the action.
      *
-     * @param identifier
-     * @param logmessage
+     * @param identifier Identifier that uniquely defines the object within the server
+     * @param contentType the type of content being deleted
+     * @param logmessage a String describing the action
      * @throws RemoteException
      */
     public void deleteRepositoryObject( ObjectIdentifier identifier, String logmessage ) throws RemoteException;

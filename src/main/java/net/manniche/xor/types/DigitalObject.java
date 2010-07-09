@@ -42,4 +42,5 @@ public interface DigitalObject {
      * @return the object as a byte array
      */
     public byte[] getBytes() throws RepositoryServiceException;
+
 }

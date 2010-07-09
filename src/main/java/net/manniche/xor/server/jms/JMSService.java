@@ -29,6 +29,7 @@ import net.manniche.xor.server.RepositoryObserver;
 import net.manniche.xor.server.RepositoryServer;
 import net.manniche.xor.storage.StorageProvider;
 import net.manniche.xor.types.ObjectIdentifier;
+import net.manniche.xor.types.ObjectRepositoryContentType;
 import net.manniche.xor.types.RepositoryAction;
 /**
  *
@@ -36,13 +37,24 @@ import net.manniche.xor.types.RepositoryAction;
  */
 public class JMSService extends RepositoryServer {
 
-    JMSService(StorageProvider storage, LogMessageHandler logMessageHandler )
+    private final String storagePath;
+    private final String metadataStoragePath;
+
+    JMSService(StorageProvider storage, String storagePath, String metadataStoragePath, LogMessageHandler logMessageHandler )
     {
         super( storage, logMessageHandler );
+        this.storagePath = storagePath;
+        this.metadataStoragePath = metadataStoragePath;
     }
 
     @Override
     public void addObserver( RepositoryObserver observer )
+    {
+        throw new UnsupportedOperationException( "Not supported yet." );
+    }
+
+    @Override
+    public void removeObserver( RepositoryObserver observer )
     {
         throw new UnsupportedOperationException( "Not supported yet." );
     }
@@ -53,7 +65,7 @@ public class JMSService extends RepositoryServer {
     }
 
     @Override
-    public void notifyObservers( ObjectIdentifier identifier, RepositoryAction action )
+    public void notifyObservers( ObjectIdentifier identifier, RepositoryAction action, ObjectRepositoryContentType contentType )
     {
         throw new UnsupportedOperationException( "Not supported yet." );
     }

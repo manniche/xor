@@ -35,7 +35,7 @@ public interface StorageProvider extends ObjectRepositoryService{
     /**
      * Stores an object encoded in a byte array, returning an URI
      * that uniquely identifies the object in the storage implementation. The
-     * identification encoded in the returned URI should be globally unique, but
+     * identification encoded in the returned URL should be globally unique, but
      * the system will not rely on this to be true.
      *
      * The underlying storage implementation should not try to interpret the
@@ -44,15 +44,16 @@ public interface StorageProvider extends ObjectRepositoryService{
      * encoding) of the object given.
      * 
      * @param object the object encoded as a byte array
-     * @return an URI uniquely identifying the object
+     * @param storagePath the path to store this object at
+     * @return an URI uniquely identifying the object for retrieval
      * @throws IOException if the object cannot be stored
      */
-    public URI save( byte[] object ) throws IOException;
+    public abstract URI save( byte[] object, String storagePath ) throws IOException;
 
     /**
      * Stores an object encoded in a byte array, using the {@code uri}
      * as unique identifier for subsequent retrievals of the object. The
-     * identification encoded in the returned URI should be globally unique, but
+     * identification encoded in the returned URL should be globally unique, but
      * the system will not rely on this to be true.
      *
      * The underlying storage implementation should not try to interpret the
@@ -64,7 +65,7 @@ public interface StorageProvider extends ObjectRepositoryService{
      * @param uri the URI that the object should be identified with
      * @throws IOException if the object cannot be stored
      */
-    public void save( byte[] object, URI uri ) throws IOException;
+    public abstract void save( byte[] object, URI url, String storagePath) throws IOException;
 
 
     /**
@@ -75,7 +76,7 @@ public interface StorageProvider extends ObjectRepositoryService{
      * @return the object as a byte[]
      * @throws IOException if the object cannot be retrieved or if the identifier does not identifies an object
      */
-    public byte[] get( URI identifier) throws IOException;
+    public abstract byte[] get( URI identifier) throws IOException;
 
 
     /**
@@ -87,7 +88,7 @@ public interface StorageProvider extends ObjectRepositoryService{
      * @param identifier uniquely identifying the object to be deleted
      * @throws IOException if the object does not exist, or cannot be deleted
      */
-    public void delete( URI identifier ) throws IOException;
+    public abstract void delete( URI identifier) throws IOException;
 
     
     /**

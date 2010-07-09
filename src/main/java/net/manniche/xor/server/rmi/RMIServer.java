@@ -18,21 +18,22 @@
 
 package net.manniche.xor.server.rmi;
 
+import java.io.IOException;
 import java.rmi.AccessException;
 import java.rmi.AlreadyBoundException;
-import java.rmi.NotBoundException;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.logging.Level;
+import java.util.logging.LogManager;
 import java.util.logging.Logger;
 import net.manniche.xor.logger.EventLoggerType;
 import net.manniche.xor.logger.LogMessageHandler;
 import net.manniche.xor.server.ServiceLocator;
+import net.manniche.xor.storage.FileStorage;
 import net.manniche.xor.storage.StorageProvider;
-import net.manniche.xor.storage.StorageType;
 import net.manniche.xor.types.ObjectRepositoryService;
 import net.manniche.xor.types.ObjectRepositoryServiceType;
 
@@ -46,7 +47,7 @@ import net.manniche.xor.types.ObjectRepositoryServiceType;
  */
 public class RMIServer {
 
-    private final static Logger Log = Logger.getLogger( RMIServer.class.getName() );
+    private final static Logger Log= Logger.getLogger( RMIServer.class.getName() );
     private static RMIObjectManagement manager = null;
 
 
@@ -59,24 +60,26 @@ public class RMIServer {
     // Below follows the RMI server main method.                              //
     ////////////////////////////////////////////////////////////////////////////
 
-    public static void main( String[] args )// throws UnknownHostException, AlreadyBoundException
+    public static void main( String[] args ) throws IOException// throws UnknownHostException, AlreadyBoundException
     {
         int port = 8181;
-
-        StorageType storageType = StorageType.valueOf( "FileStorage" );
-        Class<ObjectRepositoryService> storage = getServiceImplementation( storageType );
+        String sep = System.getProperty( "file.separator" );
+        String storagePath = System.getProperty( "user.home" ) + sep + "objectstorage" + sep;
+        String metadataStoragePath = System.getProperty( "user.home" ) + sep + "objectstorage" + sep + "contenttypes" + sep;
 
         EventLoggerType loggerType = EventLoggerType.valueOf( "FileEventLogger" );
         Class<ObjectRepositoryService> logHandler = getServiceImplementation( loggerType );
+        LogManager logManager = LogManager.getLogManager();
+        logManager.readConfiguration();
 
         Registry registry = null;
         try
         {
             Log.log( Level.INFO, "trying to export server" );
 
-            StorageProvider store = (StorageProvider) storage.newInstance();
+            StorageProvider store = new FileStorage();
             LogMessageHandler logMessageHandler = (LogMessageHandler) logHandler.newInstance();
-            manager = new RMIRepositoryServer( store, logMessageHandler );
+            manager = new RMIRepositoryServer( store, storagePath, metadataStoragePath, logMessageHandler );
             Remote remote = UnicastRemoteObject.exportObject( manager, port );
             registry = LocateRegistry.createRegistry( Registry.REGISTRY_PORT );
             registry.bind( RMIRepositoryServer.class.getName(), remote );
@@ -111,11 +114,11 @@ public class RMIServer {
 //            }
 //            catch( RemoteException ex )
 //            {
-//                Logger.getLogger( RMIServer.class.getName() ).log( Level.SEVERE, ex.getMessage(), ex );
+//                Log.er.getlog.er( RMIServer.class.getName() ).Log( Level.SEVERE, ex.getMessage(), ex );
 //            }
 //            catch( NotBoundException ex )
 //            {
-//                Logger.getLogger( RMIServer.class.getName() ).log( Level.SEVERE, ex.getMessage(), ex );
+//                Log.er.getlog.er( RMIServer.class.getName() ).Log( Level.SEVERE, ex.getMessage(), ex );
 //            }
 //            System.exit( -1 );
         }
