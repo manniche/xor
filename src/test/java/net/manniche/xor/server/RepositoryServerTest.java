@@ -49,7 +49,7 @@ public class RepositoryServerTest {
         String message = "";
         RepositoryServer instance = null;
         ObjectIdentifier expResult = null;
-        ObjectIdentifier result = instance.storeObject( data, message );
+        ObjectIdentifier result = instance.storeObject( data.getBytes(), ".", message );
         assertEquals( expResult, result );
         // TODO review the generated test code and remove the default call to fail.
         fail( "The test case is a prototype." );
@@ -68,7 +68,7 @@ public class RepositoryServerTest {
         String message = "";
         RepositoryServer instance = null;
         ObjectIdentifier expResult = null;
-        ObjectIdentifier result = instance.storeObject( data, identifier, message );
+        ObjectIdentifier result = instance.storeObject( data.getBytes(), null, identifier, message);
         assertEquals( expResult, result );
         // TODO review the generated test code and remove the default call to fail.
         fail( "The test case is a prototype." );
