@@ -1,19 +1,19 @@
 /*
- *  This file is part of OREP.
+ *  This file is part of xor.
  *  Copyright © 2009, Steen Manniche.
  * 
- *  OREP is free software: you can redistribute it and/or modify
+ *  xor is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
  * 
- *  OREP is distributed in the hope that it will be useful,
+ *  xor is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
  * 
  *  You should have received a copy of the GNU General Public License
- *  along with OREP.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with xor.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 package net.manniche.xor.server;
@@ -56,7 +56,7 @@ public abstract class RepositoryServer{
     /**
      * Given data in the form of a DigitalObject and an optional message to the
      * log, this method tries to store the data in the underlying
-     * {@link net.manniche.orep.storage.StorageProvider storage} implementation.
+     * {@link net.manniche.xor.storage.StorageProvider storage} implementation.
      *
      * @param data the DigitalObject containing data to be stored
      * @param storagePath path to which data will be stored
@@ -74,7 +74,7 @@ public abstract class RepositoryServer{
 
 
     /**
-     * Identical to {@link net.manniche.orep.server.ObjectRepository#storeObject(net.manniche.orep.types.DigitalObject, java.lang.String)},
+     * Identical to {@link net.manniche.xor.server.ObjectRepository#storeObject(net.manniche.xor.types.DigitalObject, java.lang.String)},
      * except that this method allows the client to pass an identifier along
      * with the object. If the server cannot deliver the exact same identifier
      * as the client, when the data is stored, an IOException must be thrown and

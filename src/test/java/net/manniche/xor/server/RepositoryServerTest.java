@@ -1,7 +1,7 @@
 /*
- *  This file is part of OREP. Copyright © 2009-, Steen Manniche.
+ *  This file is part of xor. Copyright © 2009-, Steen Manniche.
  *  Distributed under the GPL license, see the copy of the GNU General Public
- *  License along with OREP.  If not, see <http://www.gnu.org/licenses/>.
+ *  License along with xor.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 package net.manniche.xor.server;
