@@ -1,0 +1,17 @@
+creator: Steen Manniche <steen@manniche.net>
+
+
+reporter: Steen Manniche <steen@manniche.net>
+
+
+severity: minor
+
+
+status: open
+
+
+summary: Should FileStorage check for the existance of the objectstorage at each request?
+
+
+time: Fri, 09 Jul 2010 18:29:10 +0000
+
