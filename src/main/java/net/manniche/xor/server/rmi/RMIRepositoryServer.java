@@ -27,7 +27,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import net.manniche.xor.logger.LogMessageHandler;
 import net.manniche.xor.types.ObjectIdentifier;
 import net.manniche.xor.storage.StorageProvider;
 import net.manniche.xor.types.DigitalObject;
@@ -72,9 +71,9 @@ public final class RMIRepositoryServer extends RepositoryServer implements RMIOb
      * @param logMessageHandler handles the log message storing/notifications
      * @throws RemoteException if the server could not be started
      */
-    public RMIRepositoryServer( StorageProvider storage, String storagePath, String metadataStoragePath, LogMessageHandler logMessageHandler ) throws RemoteException
+    public RMIRepositoryServer( StorageProvider storage, String storagePath, String metadataStoragePath ) throws RemoteException
     {
-        super( storage, logMessageHandler );
+        super( storage );
         this.storagePath = storagePath;
         this.metadataStoragePath = metadataStoragePath;
         this.observers = new ArrayList<RepositoryObserver>();
@@ -341,6 +340,7 @@ public final class RMIRepositoryServer extends RepositoryServer implements RMIOb
         try
         {
             super.deleteObject( identifier, logmessage );
+            super.deleteContentType( identifier );
         }
         catch( IOException ex )
         {

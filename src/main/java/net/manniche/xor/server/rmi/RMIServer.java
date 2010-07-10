@@ -21,6 +21,7 @@ package net.manniche.xor.server.rmi;
 import java.io.IOException;
 import java.rmi.AccessException;
 import java.rmi.AlreadyBoundException;
+import java.rmi.NotBoundException;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
@@ -29,13 +30,8 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
-import net.manniche.xor.logger.EventLoggerType;
-import net.manniche.xor.logger.LogMessageHandler;
-import net.manniche.xor.server.ServiceLocator;
 import net.manniche.xor.storage.FileStorage;
 import net.manniche.xor.storage.StorageProvider;
-import net.manniche.xor.types.ObjectRepositoryService;
-import net.manniche.xor.types.ObjectRepositoryServiceType;
 
 
 /**
@@ -48,13 +44,8 @@ import net.manniche.xor.types.ObjectRepositoryServiceType;
 public class RMIServer {
 
     private final static Logger Log= Logger.getLogger( RMIServer.class.getName() );
-    private static RMIObjectManagement manager = null;
-
-
-    private static Class<ObjectRepositoryService> getServiceImplementation( ObjectRepositoryServiceType<? extends ObjectRepositoryService> serviceType )
-    {
-        return ServiceLocator.getImplementation( serviceType );
-    }
+    private static RMIObjectManagement manager;
+    private static Registry registry;
 
     ////////////////////////////////////////////////////////////////////////////
     // Below follows the RMI server main method.                              //
@@ -67,28 +58,28 @@ public class RMIServer {
         String storagePath = System.getProperty( "user.home" ) + sep + "objectstorage" + sep;
         String metadataStoragePath = System.getProperty( "user.home" ) + sep + "objectstorage" + sep + "contenttypes" + sep;
 
-        EventLoggerType loggerType = EventLoggerType.valueOf( "FileEventLogger" );
-        Class<ObjectRepositoryService> logHandler = getServiceImplementation( loggerType );
         LogManager logManager = LogManager.getLogManager();
         logManager.readConfiguration();
 
-        Registry registry = null;
         try
         {
             Log.log( Level.INFO, "trying to export server" );
 
             StorageProvider store = new FileStorage();
-            LogMessageHandler logMessageHandler = (LogMessageHandler) logHandler.newInstance();
-            manager = new RMIRepositoryServer( store, storagePath, metadataStoragePath, logMessageHandler );
+            manager = new RMIRepositoryServer( store, storagePath, metadataStoragePath );
             Remote remote = UnicastRemoteObject.exportObject( manager, port );
             registry = LocateRegistry.createRegistry( Registry.REGISTRY_PORT );
             registry.bind( RMIRepositoryServer.class.getName(), remote );
 
             Log.log( Level.INFO, String.format( "Started server on port %s", port ) );
-        }
-        catch( InstantiationException ex )
-        {
-            Log.log( Level.SEVERE, ex.getMessage(), ex );
+            Runtime.getRuntime().addShutdownHook( new Thread(){
+                @Override
+                public void run()
+                {
+                    shutdown();
+                }
+            } );
+
         }
         catch( AlreadyBoundException ex )
         {
@@ -98,30 +89,25 @@ public class RMIServer {
         {
             Log.log( Level.SEVERE, ex.getMessage(), ex );
         }
-        catch( IllegalAccessException ex )
+        catch( RemoteException ex )
         {
             Log.log( Level.SEVERE, ex.getMessage(), ex );
+        }
+
+    }
+    public static void shutdown()
+    {
+        try
+        {
+            registry.unbind( RMIRepositoryServer.class.getName() );
         }
         catch( RemoteException ex )
         {
             Log.log( Level.SEVERE, ex.getMessage(), ex );
         }
-        finally
+        catch( NotBoundException ex )
         {
-//            try
-//            {
-//                registry.unbind( RMIRepositoryServer.class.getName() );
-//            }
-//            catch( RemoteException ex )
-//            {
-//                Log.er.getlog.er( RMIServer.class.getName() ).Log( Level.SEVERE, ex.getMessage(), ex );
-//            }
-//            catch( NotBoundException ex )
-//            {
-//                Log.er.getlog.er( RMIServer.class.getName() ).Log( Level.SEVERE, ex.getMessage(), ex );
-//            }
-//            System.exit( -1 );
+            Log.log( Level.SEVERE, ex.getMessage(), ex );
         }
     }
-
 }

@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ws.rs.DELETE;
-import net.manniche.xor.logger.LogMessageHandler;
 import net.manniche.xor.server.RepositoryObserver;
 import net.manniche.xor.server.RepositoryServer;
 import net.manniche.xor.storage.StorageProvider;
@@ -47,17 +46,15 @@ import net.manniche.xor.types.RepositoryAction;
 public final class RESTRepositoryRelayer extends RepositoryServer implements RESTObjectManagement{
 
     private final StorageProvider storage;
-    private final LogMessageHandler logHandler;
     private final String storagePath;
     private final String metadataStoragePath;
     
-    public RESTRepositoryRelayer( StorageProvider storage, String storagePath, String metadataStoragePath, LogMessageHandler logHandler )
+    public RESTRepositoryRelayer( StorageProvider storage, String storagePath, String metadataStoragePath )
     {
-        super( storage, logHandler );
+        super( storage );
         this.storage = storage;
         this.storagePath = storagePath;
         this.metadataStoragePath = metadataStoragePath;
-        this.logHandler = logHandler;
     }
 
     @GET

@@ -18,7 +18,6 @@
 
 package net.manniche.xor.server;
 
-import net.manniche.xor.logger.LogMessageHandler;
 import java.io.IOException;
 import java.net.URI;
 import net.manniche.xor.storage.StorageProvider;
@@ -45,12 +44,10 @@ import net.manniche.xor.types.RepositoryAction;
 public abstract class RepositoryServer{
 
     private final StorageProvider repositoryStorageMechanism;
-    private final LogMessageHandler logMessageHandler;
 
-    protected RepositoryServer( StorageProvider storage, LogMessageHandler logHandler )
+    protected RepositoryServer( StorageProvider storage )
     {
         this.repositoryStorageMechanism = storage;
-        this.logMessageHandler = logHandler;
     }
 
     /**
@@ -154,10 +151,13 @@ public abstract class RepositoryServer{
      */
     protected void deleteObject( ObjectIdentifier identifier, String logmessage ) throws IOException
     {
-        this.logMessageHandler.commitLogMessage( RepositoryServer.class.getName(), "deleteObject", logmessage );
         this.repositoryStorageMechanism.delete( identifier.getURI() );
     }
 
+    public void deleteContentType( ObjectIdentifier identifier ) throws IOException
+    {
+        this.repositoryStorageMechanism.delete( identifier.getURI() );
+    }
 
     /**
      * Observers who wishes to be notified on repository actions (ie. all the
@@ -195,4 +195,5 @@ public abstract class RepositoryServer{
      * @see RepositoryAction
      */
     protected abstract void notifyObservers( ObjectIdentifier identifier, RepositoryAction action, ObjectRepositoryContentType contentType );
+
 }

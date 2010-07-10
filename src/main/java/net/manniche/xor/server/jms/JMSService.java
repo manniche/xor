@@ -24,7 +24,6 @@ import javax.jms.ConnectionFactory;
 import javax.jms.QueueConnectionFactory;
 import javax.naming.InitialContext;
 
-import net.manniche.xor.logger.LogMessageHandler;
 import net.manniche.xor.server.RepositoryObserver;
 import net.manniche.xor.server.RepositoryServer;
 import net.manniche.xor.storage.StorageProvider;
@@ -40,9 +39,9 @@ public class JMSService extends RepositoryServer {
     private final String storagePath;
     private final String metadataStoragePath;
 
-    JMSService(StorageProvider storage, String storagePath, String metadataStoragePath, LogMessageHandler logMessageHandler )
+    JMSService(StorageProvider storage, String storagePath, String metadataStoragePath )
     {
-        super( storage, logMessageHandler );
+        super( storage );
         this.storagePath = storagePath;
         this.metadataStoragePath = metadataStoragePath;
     }

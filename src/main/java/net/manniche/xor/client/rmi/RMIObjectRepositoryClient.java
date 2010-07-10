@@ -76,17 +76,25 @@ public class RMIObjectRepositoryClient implements RMIObjectManagementClient
         {
             ObjectIdentifier id = client.saveObject( "æøåßüöï".getBytes() );
 
-            System.out.println( String.format( "Stored object with uri %s", id ) );
+            System.out.println( String.format( "Stored object with uri %s", id.getURI() ) );
 
             client.getObject( id );
 
-            System.out.println( String.format( "Deleting object with uri %s", id ) );
+            System.out.println( String.format( "Deleting object with uri %s", id.getURI() ) );
 
             client.deleteObject( id );
         }
         timer = System.currentTimeMillis() - timer;
 
-        System.out.println( String.format( "Stored and retrived %s objects in %s milliseconds", number_of_objects, timer ) );
+        System.out.println( String.format( "timer: %s", timer ) );
+
+        double time = timer/1000.0;
+
+        System.out.println( String.format( "time: %s", time ) );
+
+        double stat = number_of_objects/time;
+
+        System.out.println( String.format( "Stored, retrived and deleted %s objects in %s seconds (%.4f objects/second)", number_of_objects, time, stat ) );
 
         System.exit( 0 );
     }
