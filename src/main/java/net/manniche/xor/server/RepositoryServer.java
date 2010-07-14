@@ -107,22 +107,6 @@ public abstract class RepositoryServer{
         return objectID;
     }
 
-    /**
-     * Stores the content type alongside (logically) the object to which the
-     * content type belongs. The content type is identified with the identifier
-     * of the object, but resolving with a different physical placement.
-     *
-     * @param contentType the content type of the object that is stored
-     * @param identifier the identifier of the object
-     * @param storagePath path to which the content type will be stored
-     * 
-     * @throws IOException if the content type could not be stored
-     */
-    protected ObjectIdentifier storeContentType( ObjectRepositoryContentType contentType, String storagePath, ObjectIdentifier identifier ) throws IOException
-    {
-        return this.storeObject( contentType.toString().getBytes(), storagePath, identifier, "Storing content type" );
-    }
-
 
     /**
      * Given an ObjectIdentifier this method retrieves the corresponding

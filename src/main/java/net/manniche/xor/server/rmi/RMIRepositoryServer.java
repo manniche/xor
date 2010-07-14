@@ -271,8 +271,7 @@ public final class RMIRepositoryServer extends RepositoryServer implements RMIOb
             String objectName = identifier.getName();
             URI contentURI = RepositoryUtilities.generateURI( "file", this.metadataStoragePath, objectName );
             ObjectIdentifier contentIdentifier = new DefaultIdentifier( contentURI );
-
-            super.storeContentType( contentType, this.metadataStoragePath, contentIdentifier );
+            super.storeObject( contentType.toString().getBytes(), this.metadataStoragePath, contentIdentifier, "Storing content type" );
         }
         catch( IOException ex )
         {

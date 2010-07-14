@@ -110,7 +110,7 @@ public final class RESTRepositoryRelayer extends RepositoryServer implements RES
         //store the contenttype
         try
         {
-            super.storeContentType( contentType, this.metadataStoragePath, null );
+            super.storeObject( contentType.toString().getBytes(), this.metadataStoragePath, null, "Storing content type" );
         }
         catch( IOException ex )
         {
