@@ -339,11 +339,20 @@ public final class RMIRepositoryServer extends RepositoryServer implements RMIOb
         try
         {
             super.deleteObject( identifier, logmessage );
-            super.deleteContentType( identifier );
+            URI cURI = RepositoryUtilities.generateURI( "file", this.metadataStoragePath, identifier.getName() );
+            ObjectIdentifier contentId = new DefaultIdentifier( cURI );
+            super.deleteObject( contentId, "deleting content type" );
         }
         catch( IOException ex )
         {
             String error = String.format( "Failed to delete object identified by '%s': %s", identifier, ex.getMessage() );
+            Logger.getLogger( RMIRepositoryServer.class.getName() ).log( Level.WARNING, error, ex );
+            //wrap and send to RMI client
+            throw new RemoteException( error, ex );
+        }
+        catch( URISyntaxException ex )
+        {
+            String error = String.format( "Failed to contruct content ID for object identified by '%s': %s", identifier, ex.getMessage() );
             Logger.getLogger( RMIRepositoryServer.class.getName() ).log( Level.WARNING, error, ex );
             //wrap and send to RMI client
             throw new RemoteException( error, ex );
