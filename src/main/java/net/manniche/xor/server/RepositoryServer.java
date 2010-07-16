@@ -30,14 +30,19 @@ import net.manniche.xor.types.RepositoryAction;
 
 
 /**
- * The RepositoryServer handles the internal and central logic of the repository
- * Extension classes can expose the functionality of this class indirectly; 
- * through their own technology specific implementations. The RepositoryServer
- * defines the core operations that the object repository must support.
+ * The RepositoryServer handles the internal and central logic of the
+ * repository.
  *
- * Extendors to this class are free (and encouraged) to add functionality such
- * as the ability to index and query the object repository, search-functionality
- * or more advanced operations on objects passing through the repository.
+ * The RepositoryServer defines the core operations that the object
+ * repository must support. Implementing classes are free to expose
+ * additional functionality for clients and even to define additional
+ * 'core' operations that other implementations can build upon.
+ *
+ * Extentions to this class are free (and encouraged) to add
+ * functionality such as the ability to index and query the object
+ * repository, search-functionality or more advanced operations on
+ * objects passing through the repository. Such functionality can be
+ * added using the {@link ObjectRepositoryService} interface.
  *
  * @author stm
  */
@@ -45,17 +50,22 @@ public abstract class RepositoryServer{
 
     private final StorageProvider repositoryStorageMechanism;
 
+    /**
+     * The constructor of the core server should only be used by
+     * implementing classes.
+     */
     protected RepositoryServer( StorageProvider storage )
     {
         this.repositoryStorageMechanism = storage;
     }
 
     /**
-     * Given data in the form of a DigitalObject and an optional message to the
-     * log, this method tries to store the data in the underlying
-     * {@link net.manniche.xor.storage.StorageProvider storage} implementation.
+     * Given data in the form of a byte array, a path to which the
+     * object should be stored, and an optional message to the log,
+     * this method tries to store the data in the underlying 
+     * {@link StorageProvider storage} implementation.
      *
-     * @param data the DigitalObject containing data to be stored
+     * @param data the byte array containing data to be stored
      * @param storagePath path to which data will be stored
      * @param message an optional logmessage describing the action. If null or
      * the empty string is passed, the implementation can decide what to write
@@ -71,13 +81,12 @@ public abstract class RepositoryServer{
 
 
     /**
-     * Identical to {@link net.manniche.xor.server.ObjectRepository#storeObject(net.manniche.xor.types.DigitalObject, java.lang.String)},
+     * Identical to {@link net.manniche.xor.server.ObjectRepository#storeObject(byte[], java.lang.String)},
      * except that this method allows the client to pass an identifier along
      * with the object. If the server cannot deliver the exact same identifier
-     * as the client, when the data is stored, an IOException must be thrown and
-     * the whole operation rolled back.
+     * as the client provided, when the data is stored, an AssertException should be thrown.
      *
-     * @param data the DigitalObject containing data to be stored
+     * @param data the byte array containing data to be stored
      * @param storagePath path to which data will be stored
      * @param identifier the ObjectIdentifier that the object should be stored with
      * @param message an optional logmessage describing the action. If null or
@@ -85,7 +94,6 @@ public abstract class RepositoryServer{
      * in the log system, if any.
      * @return an ObjectIdentifier that is identical to the one delivered by
      * the client
-     * data for later identification
      * @throws IOException if the object cannot be stored for a given reason
      */
     protected ObjectIdentifier storeObject( byte[] data, String storagePath, ObjectIdentifier identifier, String message ) throws IOException
@@ -138,11 +146,7 @@ public abstract class RepositoryServer{
         this.repositoryStorageMechanism.delete( identifier.getURI() );
     }
 
-    public void deleteContentType( ObjectIdentifier identifier ) throws IOException
-    {
-        this.repositoryStorageMechanism.delete( identifier.getURI() );
-    }
-
+    
     /**
      * Observers who wishes to be notified on repository actions (ie. all the
      * effects of the methods listed in this interface) can register through

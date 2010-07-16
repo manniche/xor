@@ -24,7 +24,7 @@ import net.manniche.xor.types.RepositoryAction;
 
 
 /**
- * Standard Observer interface. I choose this over {@link java.util.Observer} so
+ * Standard Observer interface. Choosen over {@link java.util.Observer} so
  * that implementing classes are free to use extension capabilities.
  *
  * Clients should add their RepositoryObserver implementations to the
