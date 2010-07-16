@@ -28,7 +28,7 @@ import net.manniche.xor.server.rmi.RMIRepositoryServer;
 import net.manniche.xor.types.DigitalObject;
 import net.manniche.xor.types.ObjectIdentifier;
 import net.manniche.xor.exceptions.RepositoryServiceException;
-import net.manniche.xor.server.rmi.RMIRepositoryServer.RMIRepositoryServerContentType;
+import net.manniche.xor.types.BasicContentType;
 
 
 /**
@@ -113,7 +113,7 @@ public class RMIObjectRepositoryClient implements RMIObjectManagementClient
     @Override
     public ObjectIdentifier saveObject( byte[] data ) throws RemoteException
     {
-        DefaultDigitalObject digo = new DefaultDigitalObject( data, RMIRepositoryServerContentType.BINARY_CONTENT );
+        DefaultDigitalObject digo = new DefaultDigitalObject( data, BasicContentType.BINARY_CONTENT );
         ObjectIdentifier storeObject = null;
         try
         {

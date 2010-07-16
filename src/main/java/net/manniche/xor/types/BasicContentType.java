@@ -28,7 +28,7 @@ package net.manniche.xor.types;
  * @see MetadataContentType
  *
  */
-public enum BasicContentType {
+public enum BasicContentType implements ObjectRepositoryContentType{
     /**
      * The default/fallback content type.
      */
@@ -39,4 +39,17 @@ public enum BasicContentType {
     {
         this.mimeType = mimeType;
     }
+
+    public static ObjectRepositoryContentType getContentType( String contentType ) throws TypeNotPresentException
+    {
+        for( BasicContentType type : BasicContentType.values() )
+        {
+            if( contentType.toUpperCase().equals( type.toString() ) )
+            {
+                return type;
+            }
+        }
+        throw new TypeNotPresentException( contentType, new IllegalArgumentException( String.format( "No content type exists for %s", contentType ) ) );
+    }
+
 }
