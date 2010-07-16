@@ -34,15 +34,39 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 import net.manniche.xor.exceptions.RepositoryServiceException;
 import net.manniche.xor.types.ObjectRepositoryContentType;
 import net.manniche.xor.types.RepositoryAction;
 
 /**
+ * REST implementation of the ObjectRepository.
+ *
+ * Retrieval operations:
+ * GET: http://localhost/xor/objects/1234567890
+ *
+ * will retrive object with uri name 1234567890
+ *
+ * Mutating operations:
+ * POST: http://localhost/xor/objects/1234567890
+ *
+ * will overwrite object with uri name 1234567890
+ *
+ * Creating operations:
+ * PUT: http://localhost/xor/objects/1234567890
+ *
+ * will put an object that will be identified with uri name 1234567890
+ *
+ * Deleting operations:
+ * DELETE: http://localhost/xor/objects/1234567890
+ *
+ * will delete object identified by uri name 1234567890
  *
  * @author stm
  */
-@Path( "xor" )
+@Path( "/xor" )
 public final class RESTRepositoryRelayer extends RepositoryServer implements RESTObjectManagement{
 
     private final StorageProvider storage;
@@ -57,9 +81,11 @@ public final class RESTRepositoryRelayer extends RepositoryServer implements RES
         this.metadataStoragePath = metadataStoragePath;
     }
 
+    @Path( "{identifier}" )
     @GET
+    @Produces( MediaType.APPLICATION_OCTET_STREAM )
     @Override
-    public DigitalObject getRepositoryObject( ObjectIdentifier identifier )
+    public DigitalObject getRepositoryObject( @PathParam( "identifier" ) ObjectIdentifier identifier )
     {
         DigitalObject digobj = null;
         try
@@ -77,9 +103,9 @@ public final class RESTRepositoryRelayer extends RepositoryServer implements RES
         return digobj;
     }
 
-    @GET
+    @Path( "{query}" )
     @Override
-    public List<DigitalObject> queryRepositoryObjects( String query )
+    public List<DigitalObject> queryRepositoryObjects( @PathParam( "query" ) String query )
     {
         throw new UnsupportedOperationException( "Not supported yet." );
     }
