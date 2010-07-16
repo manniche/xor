@@ -48,14 +48,14 @@ public enum StorageType implements ObjectRepositoryServiceType<ObjectRepositoryS
     @SuppressWarnings( "unchecked" )
     StorageType( Class<? extends StorageProvider> klass )
     {
-        //we _know_ this is a ServiceProvider:
+        //we _know_ this is a StorageProvider:
         this.storage_type = (Class<StorageProvider>) klass;
     }
 
 
     @Override
     @SuppressWarnings( "unchecked" )
-    public Class<ObjectRepositoryService> getClassofService()
+    public final Class<ObjectRepositoryService> getClassofService()
     {
         return (Class<ObjectRepositoryService>) (Object) this.storage_type;
     }
