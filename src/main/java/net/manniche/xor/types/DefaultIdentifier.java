@@ -42,15 +42,6 @@ public class DefaultIdentifier implements ObjectIdentifier, Serializable{
         this.path = this.uri.getPath();
     }
 
-    /**
-     * @return the default identifier as an URI
-     */
-//    @Override
-//    public URI getIdentifierAsURI() throws URISyntaxException
-//    {
-//        return uri.toURI();
-//    }
-//
     @Override
     public URI getURI()
     {
@@ -68,14 +59,4 @@ public class DefaultIdentifier implements ObjectIdentifier, Serializable{
     {
         return this.path;
     }
-
-
-    /**
-     * @return the string "uri" as a prefix for the default identifier.
-     */
-//    @Override
-//    public String getPrefix()
-//    {
-//        return "uri";
-//    }
 }
