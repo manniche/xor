@@ -20,6 +20,7 @@ package net.manniche.xor.server.rmi;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+import java.util.List;
 import net.manniche.xor.types.DigitalObject;
 import net.manniche.xor.types.ObjectIdentifier;
 import net.manniche.xor.types.ObjectRepositoryContentType;
@@ -72,4 +73,13 @@ public interface RMIObjectManagement extends Remote{
      * @throws RemoteException
      */
     public void deleteRepositoryObject( ObjectIdentifier identifier, String logmessage ) throws RemoteException;
+
+    /**
+     * Retrieves a list of {@link ObjectRepositoryContentType content types}
+     * registered with the RMI server
+     *
+     * @return a list of registered ObjectRepositoryContentType
+     * @throws RemoteException
+     */
+    public List<ObjectRepositoryContentType> registeredContentTypes() throws RemoteException;
 }

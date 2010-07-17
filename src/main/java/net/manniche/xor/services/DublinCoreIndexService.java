@@ -20,7 +20,7 @@
 package net.manniche.xor.services;
 
 import net.manniche.xor.server.RepositoryObserver;
-import net.manniche.xor.types.MetadataContentType;
+import net.manniche.xor.types.BasicContentType;
 import net.manniche.xor.types.ObjectIdentifier;
 import net.manniche.xor.types.ObjectRepositoryContentType;
 import net.manniche.xor.types.ObjectRepositoryService;
@@ -42,19 +42,16 @@ public final class DublinCoreIndexService extends MetadataIndexService implement
     @Override
     public void notifyMe( ObjectIdentifier identifier, RepositoryAction action, ObjectRepositoryContentType contentType )
     {
-        if( contentType.equals( MetadataContentType.DUBLIN_CORE ) )
+        if( contentType.equals( BasicContentType.DUBLIN_CORE ) )
         {
             if( action.equals( RepositoryAction.ADD ) )
             {
-
             }
             else if( action.equals( RepositoryAction.MODIFY ) )
             {
-
             }
             else if( action.equals( RepositoryAction.DELETE ) )
             {
-
             }
         }
     }

@@ -24,6 +24,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -33,8 +34,8 @@ import net.manniche.xor.types.DigitalObject;
 import net.manniche.xor.server.RepositoryServer;
 import net.manniche.xor.exceptions.RepositoryServiceException;
 import net.manniche.xor.server.RepositoryObserver;
+import net.manniche.xor.types.BasicContentType;
 import net.manniche.xor.types.DefaultIdentifier;
-import net.manniche.xor.types.MetadataContentType;
 import net.manniche.xor.types.ObjectRepositoryContentType;
 import net.manniche.xor.types.RepositoryAction;
 import net.manniche.xor.utils.RepositoryUtilities;
@@ -58,7 +59,7 @@ public final class RMIRepositoryServer extends RepositoryServer implements RMIOb
     private final static Logger Log = Logger.getLogger( RMIRepositoryServer.class.getName() );
 
     private final List< RepositoryObserver > observers;
-
+    private final List<ObjectRepositoryContentType> registeredContentTypes;
     private final String storagePath;
     private final String metadataStoragePath;
 
@@ -78,51 +79,12 @@ public final class RMIRepositoryServer extends RepositoryServer implements RMIOb
         this.storagePath = storagePath;
         this.metadataStoragePath = metadataStoragePath;
         this.observers = new ArrayList<RepositoryObserver>();
+        this.registeredContentTypes = new ArrayList<ObjectRepositoryContentType>();
+        this.registerContentTypes( BasicContentType.values() );
         Log.info( "Constructed repository server over RMI" );
     }
 
-//    /**
-//     * Content types defined for the RMIServer. The content types will be
-//     * communicated to the registered
-//     * {@link net.manniche.xor.server.RepositoryObserver observers} to
-//     * {@link net.manniche.xor.types.RepositoryAction}. Additional
-//     * {@link net.manniche.xor.types.ObjectRepositoryContentType}s are defined
-//     * in
-//     * {@link net.manniche.xor.server.RepositoryServer.RepositoryServerContentType}
-//     *
-//     */
-//    public enum RMIRepositoryServerContentType implements ObjectRepositoryContentType
-//    {
-//        /**
-//         * The default/fallback content type.
-//         */
-//        BINARY_CONTENT( "application/octet-stream" ),
-//        /**
-//         * Defines the content type DublinCore as specified by the Dublin Core
-//         * Meta Data standard {@link http://dublincore.org}. It is implicit that
-//         * the contenttype has the mimetype text/xml
-//         */
-//        DUBLIN_CORE( "text/xml" );
-//
-//        String mimeType;
-//        RMIRepositoryServerContentType( String mime )
-//        {
-//            this.mimeType = mime;
-//        }
-//
-//        public static ObjectRepositoryContentType getContentType( String contentType ) throws TypeNotPresentException
-//        {
-//            for( RMIRepositoryServerContentType type: RMIRepositoryServerContentType.values() )
-//            {
-//                if( contentType.toUpperCase().equals( type.toString() ) )
-//                {
-//                    return type;
-//                }
-//            }
-//            throw new TypeNotPresentException( contentType, new IllegalArgumentException( String.format( "No content type exists for %s", contentType ) ) );
-//        }
-//    }
-//
+
     /**
      * Retrieves a {@link DigitalObject} identified by {@code identifier} from
      * the object repository. A RemoteException is thrown if no object matches
@@ -375,7 +337,9 @@ public final class RMIRepositoryServer extends RepositoryServer implements RMIOb
         DigitalObject object = super.getObject( metadataIdentifier );
 
         String contentTypeString = new String( object.getBytes() );
-        ObjectRepositoryContentType contentType = MetadataContentType.getContentType( contentTypeString );
+
+        ObjectRepositoryContentType contentType = BasicContentType.getContentType( contentTypeString );
+
         return contentType;
     }
 
@@ -410,6 +374,21 @@ public final class RMIRepositoryServer extends RepositoryServer implements RMIOb
             {
                 observer.notifyMe( identifier, action, contentType );
             }
+        }
+    }
+
+    @Override
+    public List<ObjectRepositoryContentType> registeredContentTypes() throws RemoteException
+    {
+            registeredContentTypes.addAll( Arrays.asList( BasicContentType.values() ) );
+        return registeredContentTypes;
+    }
+
+    private void registerContentTypes( ObjectRepositoryContentType[] contentTypeDefinition )
+    {
+        if( registeredContentTypes.size() < 1 )
+        {
+            this.registeredContentTypes.addAll( Arrays.asList( contentTypeDefinition ) );
         }
     }
 

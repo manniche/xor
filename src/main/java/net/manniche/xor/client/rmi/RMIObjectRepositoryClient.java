@@ -15,6 +15,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with xor.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package net.manniche.xor.client.rmi;
 
 import java.io.IOException;
@@ -22,6 +23,7 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.util.List;
 import net.manniche.xor.types.DefaultDigitalObject;
 import net.manniche.xor.server.rmi.RMIObjectManagement;
 import net.manniche.xor.server.rmi.RMIRepositoryServer;
@@ -29,6 +31,7 @@ import net.manniche.xor.types.DigitalObject;
 import net.manniche.xor.types.ObjectIdentifier;
 import net.manniche.xor.exceptions.RepositoryServiceException;
 import net.manniche.xor.types.BasicContentType;
+import net.manniche.xor.types.ObjectRepositoryContentType;
 
 
 /**
@@ -75,22 +78,12 @@ public class RMIObjectRepositoryClient implements RMIObjectManagementClient
         for( int i = 0; i < number_of_objects; i++ )
         {
             ObjectIdentifier id = client.saveObject( "æøåßüöï".getBytes() );
-
-            System.out.println( String.format( "Stored object with uri %s", id.getURI() ) );
-
             client.getObject( id );
-
-            System.out.println( String.format( "Deleting object with uri %s", id.getURI() ) );
-
             client.deleteObject( id );
         }
         timer = System.currentTimeMillis() - timer;
 
-        System.out.println( String.format( "timer: %s", timer ) );
-
         double time = timer/1000.0;
-
-        System.out.println( String.format( "time: %s", time ) );
 
         double stat = number_of_objects/time;
 
@@ -99,10 +92,9 @@ public class RMIObjectRepositoryClient implements RMIObjectManagementClient
         System.exit( 0 );
     }
 
-    public void getObject( ObjectIdentifier id ) throws RemoteException, RepositoryServiceException
+    public DigitalObject getObject( ObjectIdentifier id ) throws RemoteException, RepositoryServiceException
     {
-        DigitalObject repositoryObject = server.getRepositoryObject( id );
-        System.out.println( String.format( "Object Contents %s", new String( repositoryObject.getBytes() ) ) );
+        return server.getRepositoryObject( id );
     }
 
     public void deleteObject( ObjectIdentifier id ) throws RemoteException, RepositoryServiceException
@@ -113,7 +105,7 @@ public class RMIObjectRepositoryClient implements RMIObjectManagementClient
     @Override
     public ObjectIdentifier saveObject( byte[] data ) throws RemoteException
     {
-        DefaultDigitalObject digo = new DefaultDigitalObject( data, BasicContentType.BINARY_CONTENT );
+        DefaultDigitalObject digo = new DefaultDigitalObject( data, BasicContentType.DUBLIN_CORE );
         ObjectIdentifier storeObject = null;
         try
         {
@@ -128,5 +120,8 @@ public class RMIObjectRepositoryClient implements RMIObjectManagementClient
         return storeObject;
     }
 
-
+    public List<ObjectRepositoryContentType> getContentTypes() throws RemoteException
+    {
+        return server.registeredContentTypes();
+    }
 }
