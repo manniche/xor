@@ -35,6 +35,12 @@
           <target>1.6</target>
         </configuration>
       </plugin>
+      <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <argLine>-javaagent:"${settings.localRepository}"/mockit/jmockit/0.998/jmockit-0.998.jar</argLine>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
 
@@ -44,6 +50,12 @@
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <version>4.5</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>mockit</groupId>
+      <artifactId>jmockit</artifactId>
+      <version>0.998</version>
       <scope>test</scope>
     </dependency>
 

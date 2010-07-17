@@ -6,12 +6,22 @@
 
 package net.manniche.xor.server;
 
+import net.manniche.xor.types.BasicContentType;
+import java.io.IOException;
+import mockit.NonStrictExpectations;
+import net.manniche.xor.storage.StorageProvider;
+import java.net.URI;
+import net.manniche.xor.types.DefaultIdentifier;
 import net.manniche.xor.types.DigitalObject;
 import net.manniche.xor.types.ObjectIdentifier;
+import net.manniche.xor.types.ObjectRepositoryContentType;
+import net.manniche.xor.types.RepositoryAction;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import mockit.Mocked;
+import net.manniche.xor.types.DefaultDigitalObject;
 import static org.junit.Assert.*;
 
 /**
@@ -20,12 +30,25 @@ import static org.junit.Assert.*;
  */
 public class RepositoryServerTest {
 
+    @Mocked StorageProvider mockStorage;
+
+    static byte[] data = "åøæïüßäö".getBytes();
+    static byte[] contentType = BasicContentType.BINARY_CONTENT.toString().getBytes();
+    static String logMessage = "test log message";
+    static URI testURI;
+    static URI testContentURI;
+    static ObjectIdentifier predefinedId;
+    RepositoryServer instance;
+    
     public RepositoryServerTest() {
     }
 
     @BeforeClass
     public static void setUpClass() throws Exception
     {
+        testURI = new URI( "http://localhost/test" );
+        testContentURI = new URI( "http://localhost/contenttypes/test" );
+        predefinedId = new DefaultIdentifier( testURI );
     }
 
 
@@ -36,74 +59,114 @@ public class RepositoryServerTest {
 
     @Before
     public void setUp() {
-    }
-
-    /**
-     * Test of storeObject method, of class RepositoryServer.
-     */
-    @Test
-    public void testStoreObject_DigitalObject_String() throws Exception
-    {
-        System.out.println( "storeObject" );
-        DigitalObject data = null;
-        String message = "";
-        RepositoryServer instance = null;
-        ObjectIdentifier expResult = null;
-        ObjectIdentifier result = instance.storeObject( data.getBytes(), ".", message );
-        assertEquals( expResult, result );
-        // TODO review the generated test code and remove the default call to fail.
-        fail( "The test case is a prototype." );
+        instance = new MockRepositoryImpl( mockStorage );
     }
 
 
-    /**
-     * Test of storeObject method, of class RepositoryServer.
-     */
     @Test
-    public void testStoreObject_3args() throws Exception
+    public void storeObjectReturnsValidURI() throws Exception
     {
-        System.out.println( "storeObject" );
-        DigitalObject data = null;
-        ObjectIdentifier identifier = null;
-        String message = "";
-        RepositoryServer instance = null;
-        ObjectIdentifier expResult = null;
-        ObjectIdentifier result = instance.storeObject( data.getBytes(), null, identifier, message);
-        assertEquals( expResult, result );
-        // TODO review the generated test code and remove the default call to fail.
-        fail( "The test case is a prototype." );
+
+        new NonStrictExpectations(){{
+            mockStorage.save( (byte[]) any, anyString );returns( testURI );
+        }};
+
+        ObjectIdentifier result = instance.storeObject( data, ".", logMessage );
+        assertEquals( predefinedId.getURI(), result.getURI() );
     }
 
 
-    /**
-     * Test of getObject method, of class RepositoryServer.
-     */
     @Test
-    public void testGetObject() throws Exception
+    public void storeObjectReturnsPredefinedURI() throws Exception
     {
-        System.out.println( "getObject" );
-        ObjectIdentifier identifier = null;
-        RepositoryServer instance = null;
-        DigitalObject expResult = null;
-        DigitalObject result = instance.getObject( identifier );
-        assertEquals( expResult, result );
-        // TODO review the generated test code and remove the default call to fail.
-        fail( "The test case is a prototype." );
+        ObjectIdentifier result = instance.storeObject( data, ".", predefinedId, logMessage);
+        assertEquals( predefinedId.getURI(), result.getURI() );
     }
 
 
-    /**
-     * Test of deleteObject method, of class RepositoryServer.
-     */
     @Test
-    public void testDeleteObject() throws Exception
+    public void simpleGetObjectPasses() throws Exception
     {
-        System.out.println( "deleteObject" );
-        ObjectIdentifier identifier = null;
-        String logmessage = "";
-        RepositoryServer instance = null;
-        instance.deleteObject( identifier, logmessage );
-        // TODO review the generated test code and remove the default call to fail.
-        fail( "The test case is a prototype." );
+        final DigitalObject expDigObj = new DefaultDigitalObject( data, BasicContentType.BINARY_CONTENT );
+
+        new NonStrictExpectations(){{
+           mockStorage.get( testURI );returns( data );
+           mockStorage.get( testContentURI );returns( contentType );
+        }};
+
+        DigitalObject result = instance.getObject( predefinedId );
+        assertEquals( expDigObj.getBytes(), result.getBytes() );
+    }
+
+
+    @Test
+    public void naïveDeleteObjectPasses() throws Exception
+    {
+        instance.deleteObject( predefinedId, logMessage );
+    }
+
+    @Test( expected=IOException.class)
+    public void deleteNonExistingObjectFails() throws Exception
+    {
+        RepositoryServer throwingServer = new MockRepositoryImpl( new ThrowingStorageProviderStub() );
+        new NonStrictExpectations(){{
+                mockStorage.delete( testURI );
+        }};
+        throwingServer.deleteObject( predefinedId, logMessage );
+    }
+
+    public static class MockRepositoryImpl extends RepositoryServer
+    {
+        MockRepositoryImpl( StorageProvider storage )
+        {
+            super( storage );
+        }
+
+        @Override
+        protected void addObserver( RepositoryObserver observer )
+        {
+            throw new UnsupportedOperationException( "Not supported yet." );
+        }
+
+
+        @Override
+        protected void removeObserver( RepositoryObserver observer )
+        {
+            throw new UnsupportedOperationException( "Not supported yet." );
+        }
+
+
+        @Override
+        protected void notifyObservers( ObjectIdentifier identifier, RepositoryAction action, ObjectRepositoryContentType contentType )
+        {
+            throw new UnsupportedOperationException( "Not supported yet." );
+        }
+
+    }
+
+    public static class ThrowingStorageProviderStub implements StorageProvider
+    {
+        @Override
+        public URI save( byte[] object, String storagePath ) throws IOException
+        { throw new IOException(); }
+
+
+        @Override
+        public void save( byte[] object, URI url, String storagePath ) throws IOException
+        { throw new IOException(); }
+
+
+        @Override
+        public byte[] get( URI identifier ) throws IOException
+        { throw new IOException(); }
+
+
+        @Override
+        public void delete( URI identifier ) throws IOException
+        { throw new IOException(); }
+
+        @Override
+        public void close()
+        {}
     }
 }
