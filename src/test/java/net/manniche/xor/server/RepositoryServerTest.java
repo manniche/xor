@@ -115,6 +115,10 @@ public class RepositoryServerTest {
         throwingServer.deleteObject( predefinedId, logMessage );
     }
 
+
+    ////////////////////////////////////////////////////////////////////////////
+    //////////// Below follows mocks and stubs for the test suite //////////////
+
     public static class MockRepositoryImpl extends RepositoryServer
     {
         MockRepositoryImpl( StorageProvider storage )
@@ -137,7 +141,7 @@ public class RepositoryServerTest {
 
 
         @Override
-        protected void notifyObservers( ObjectIdentifier identifier, RepositoryAction action, ObjectRepositoryContentType contentType )
+        protected void notifyObservers( ObjectIdentifier identifier, DigitalObject object, RepositoryAction action, ObjectRepositoryContentType contentType )
         {
             throw new UnsupportedOperationException( "Not supported yet." );
         }
