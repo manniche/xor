@@ -1,5 +1,5 @@
 /*
- *  This file is part of RMIRepositoryServer.
+ *  This file is part of xor.
  *  Copyright © 2009, Steen Manniche.
  * 
  *  xor is free software: you can redistribute it and/or modify
@@ -106,10 +106,10 @@ public class RMIObjectRepositoryClient implements RMIObjectManagementClient
     public ObjectIdentifier saveObject( byte[] data ) throws RemoteException
     {
         DefaultDigitalObject digo = new DefaultDigitalObject( data, BasicContentType.DUBLIN_CORE );
-        ObjectIdentifier storeObject = null;
+        ObjectIdentifier objectID = null;
         try
         {
-             storeObject = server.storeRepositoryObject( digo, digo.getContentType(), "saving object");
+             objectID = server.storeRepositoryObject( digo, digo.getContentType(), "saving object");
 
         }
         catch( IOException ex )
@@ -117,7 +117,7 @@ public class RMIObjectRepositoryClient implements RMIObjectManagementClient
             System.out.println( String.format( "Bullocks!: %s", ex.getMessage() ) );
         }
 
-        return storeObject;
+        return objectID;
     }
 
     public List<ObjectRepositoryContentType> getContentTypes() throws RemoteException
