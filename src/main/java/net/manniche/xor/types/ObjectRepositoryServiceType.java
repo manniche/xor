@@ -30,7 +30,7 @@ package net.manniche.xor.types;
  * @see ObjectRepositoryService
  * @author stm
  */
-public interface ObjectRepositoryServiceType <T >
+public interface ObjectRepositoryServiceType<T>
 {
-    public Class<T> getClassofService();
+    public Class<? extends T> getClassofService();
 }
