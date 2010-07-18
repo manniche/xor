@@ -16,18 +16,28 @@
  *  along with xor.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-
-package net.manniche.xor.services;
-
-import net.manniche.xor.types.ObjectRepositoryService;
-import net.manniche.xor.types.ObjectRepositoryServiceType;
-
+package net.manniche.xor.services.search;
 
 /**
+ * Immutable class for validating and representing specification of fields to
+ * search in.
  *
+ * @see {@link Query}
+ * @see {@link SearchProvider}
+ * 
  * @author stm
  */
-public abstract class MetadataIndexService implements ObjectRepositoryServiceType<ObjectRepositoryService>{
+public final class Field {
+    
+    private final String field;
+    public Field( String field )
+    {
+        this.field = validateField( field );
+    }
+
+    private String validateField( String field )
+    {
+        return field;
+    }
 
 }

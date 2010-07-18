@@ -27,11 +27,18 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.Collections;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
+import net.manniche.xor.server.RepositoryObserver;
+import net.manniche.xor.server.ServiceLocator;
+import net.manniche.xor.services.search.DublinCoreIndexService;
+import net.manniche.xor.services.search.SearchProvider;
+import net.manniche.xor.services.search.SearchType;
 import net.manniche.xor.storage.FileStorage;
 import net.manniche.xor.storage.StorageProvider;
+import net.manniche.xor.types.ObjectRepositoryService;
 
 
 /**
@@ -44,7 +51,8 @@ import net.manniche.xor.storage.StorageProvider;
 public class RMIServer {
 
     private final static Logger Log= Logger.getLogger( RMIServer.class.getName() );
-    private static RMIObjectManagement manager;
+//    private static RMIObjectManagement manager;
+    private static RMIRepositoryServer manager;
     private static Registry registry;
 
     ////////////////////////////////////////////////////////////////////////////
@@ -67,6 +75,9 @@ public class RMIServer {
 
             StorageProvider store = new FileStorage();
             manager = new RMIRepositoryServer( store, storagePath, metadataStoragePath );
+            SearchProvider search = getSearchProvider();
+            manager.addObserver( (RepositoryObserver) search);
+
             Remote remote = UnicastRemoteObject.exportObject( manager, port );
             registry = LocateRegistry.createRegistry( Registry.REGISTRY_PORT );
             registry.bind( RMIRepositoryServer.class.getName(), remote );
@@ -94,6 +105,26 @@ public class RMIServer {
             Log.log( Level.SEVERE, ex.getMessage(), ex );
         }
 
+    }
+
+    private static SearchProvider getSearchProvider()
+    {
+        SearchProvider search = null;
+        SearchType service = SearchType.valueOf( "DublinCoreIndexService" );
+        Class<ObjectRepositoryService> searchService = ServiceLocator.getImplementation( service );
+        try
+        {
+            search = (SearchProvider) searchService.newInstance();
+        }
+        catch( InstantiationException ex )
+        {
+            Log.log( Level.SEVERE, ex.getMessage(), ex );
+        }
+        catch( IllegalAccessException ex )
+        {
+            Log.log( Level.SEVERE, ex.getMessage(), ex );
+        }
+        return search;
     }
     public static void shutdown()
     {
