@@ -27,6 +27,7 @@ import javax.naming.InitialContext;
 import net.manniche.xor.server.RepositoryObserver;
 import net.manniche.xor.server.RepositoryServer;
 import net.manniche.xor.storage.StorageProvider;
+import net.manniche.xor.types.DigitalObject;
 import net.manniche.xor.types.ObjectIdentifier;
 import net.manniche.xor.types.ObjectRepositoryContentType;
 import net.manniche.xor.types.RepositoryAction;
@@ -64,7 +65,7 @@ public class JMSService extends RepositoryServer {
     }
 
     @Override
-    public void notifyObservers( ObjectIdentifier identifier, RepositoryAction action, ObjectRepositoryContentType contentType )
+    public void notifyObservers( ObjectIdentifier identifier, DigitalObject object, RepositoryAction action, ObjectRepositoryContentType contentType )
     {
         throw new UnsupportedOperationException( "Not supported yet." );
     }

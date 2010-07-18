@@ -181,7 +181,7 @@ public final class RESTRepositoryRelayer extends RepositoryServer implements RES
 
 
     @Override
-    protected void notifyObservers( ObjectIdentifier identifier, RepositoryAction action, ObjectRepositoryContentType contentType )
+    protected void notifyObservers( ObjectIdentifier identifier, DigitalObject object, RepositoryAction action, ObjectRepositoryContentType contentType )
     {
         throw new UnsupportedOperationException( "Not supported yet." );
     }

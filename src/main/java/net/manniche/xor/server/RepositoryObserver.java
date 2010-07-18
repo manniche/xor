@@ -18,6 +18,7 @@
 
 package net.manniche.xor.server;
 
+import net.manniche.xor.types.DigitalObject;
 import net.manniche.xor.types.ObjectIdentifier;
 import net.manniche.xor.types.ObjectRepositoryContentType;
 import net.manniche.xor.types.RepositoryAction;
@@ -34,5 +35,5 @@ import net.manniche.xor.types.RepositoryAction;
  * @author stm
  */
 public interface RepositoryObserver {
-    public abstract void notifyMe(  ObjectIdentifier identifier, RepositoryAction action, ObjectRepositoryContentType contentType );
+    public void notifyMe(  ObjectIdentifier identifier, DigitalObject object, RepositoryAction action, ObjectRepositoryContentType contentType );
 }

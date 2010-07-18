@@ -20,6 +20,7 @@ package net.manniche.xor.server;
 
 import java.io.IOException;
 import java.net.URI;
+import net.manniche.xor.exceptions.RepositoryServiceException;
 import net.manniche.xor.storage.StorageProvider;
 import net.manniche.xor.types.DefaultIdentifier;
 import net.manniche.xor.types.DigitalObject;
@@ -159,7 +160,7 @@ public abstract class RepositoryServer{
      * @param observer the {@link RepositoryObserver} implementation that
      * wishes to recieve updates
      */
-    protected abstract void addObserver( RepositoryObserver observer);
+    protected abstract void addObserver( RepositoryObserver observer );
 
     /**
      * Removes an observer registered with the repository server. If an
@@ -179,9 +180,15 @@ public abstract class RepositoryServer{
      * called again for a subsequent {@link RepositoryAction}
      *
      * @param identifier the identifier of the object on which the action was performed
+     * @param object the object on which the action was performed (can be null, e.g. if the action is 'deleted')
      * @param action the action taken
+     * @param contentType the content type of the object
+     *
+     * @throws RepositoryServiceException if data cannot be retrieved from the {@link DigitalObject}
+     *
      * @see RepositoryAction
+     * @see ObjectRepositoryContentType
      */
-    protected abstract void notifyObservers( ObjectIdentifier identifier, RepositoryAction action, ObjectRepositoryContentType contentType );
+    protected abstract void notifyObservers( ObjectIdentifier identifier, DigitalObject object, RepositoryAction action, ObjectRepositoryContentType contentType ) throws RepositoryServiceException;
 
 }

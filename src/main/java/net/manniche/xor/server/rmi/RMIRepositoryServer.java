@@ -117,6 +117,7 @@ public final class RMIRepositoryServer extends RepositoryServer implements RMIOb
         try
         {
             contentTypeForObject = this.getContentTypeForObject( identifier );
+            this.notifyObservers( identifier, null, RepositoryAction.REQUEST, contentTypeForObject );
         }
         catch( IOException ex )
         {
@@ -139,8 +140,6 @@ public final class RMIRepositoryServer extends RepositoryServer implements RMIOb
             //wrap and send to RMI client
             throw new RemoteException( error, ex );
         }
-
-        this.notifyObservers( identifier, RepositoryAction.REQUEST, contentTypeForObject );
 
         return digitalObject;
     }
@@ -182,8 +181,6 @@ public final class RMIRepositoryServer extends RepositoryServer implements RMIOb
             Logger.getLogger( RMIRepositoryServer.class.getName() ).log( Level.SEVERE, error, ex );
             throw new RemoteException(error, ex );
         }
-
-        this.notifyObservers( identifier, RepositoryAction.ADD, contentType );
         
         return identifier;
     }
@@ -227,14 +224,13 @@ public final class RMIRepositoryServer extends RepositoryServer implements RMIOb
 
         try
         {
-            //URI metadataURI = XMLUtils.generateURI( this.metadataStoragePath, Integer.toString( contentType.hashCode() ) );
-            //ObjectIdentifier contentIdentifier = new DefaultIdentifier( metadataURI.toURL() );
             Log.info( String.format( "Storing content type at uri %s", identifier.getURI() ) );
 
             String objectName = identifier.getName();
             URI contentURI = RepositoryUtilities.generateURI( "file", this.metadataStoragePath, objectName );
             ObjectIdentifier contentIdentifier = new DefaultIdentifier( contentURI );
             super.storeObject( contentType.toString().getBytes(), this.metadataStoragePath, contentIdentifier, "Storing content type" );
+            this.notifyObservers( identifier, data, RepositoryAction.ADD, contentType );
         }
         catch( IOException ex )
         {
@@ -320,7 +316,17 @@ public final class RMIRepositoryServer extends RepositoryServer implements RMIOb
             //wrap and send to RMI client
             throw new RemoteException( error, ex );
         }
-        this.notifyObservers( identifier, RepositoryAction.DELETE, contentTypeForObject );
+        try
+        {
+            this.notifyObservers( identifier, null, RepositoryAction.DELETE, contentTypeForObject );
+        }
+        catch( RepositoryServiceException ex )
+        {
+            String error = String.format( "Failed to notify on object deletion: %s", ex.getMessage() );
+            Logger.getLogger( RMIRepositoryServer.class.getName() ).log( Level.WARNING, error, ex );
+            //wrap and send to RMI client
+            throw new RemoteException( error, ex );
+        }
 
     }
 
@@ -365,18 +371,19 @@ public final class RMIRepositoryServer extends RepositoryServer implements RMIOb
 
 
     @Override
-    public void notifyObservers( ObjectIdentifier identifier, RepositoryAction action, ObjectRepositoryContentType contentType )
+    public void notifyObservers( ObjectIdentifier identifier, DigitalObject object, RepositoryAction action, ObjectRepositoryContentType contentType ) throws RepositoryServiceException
     {
         Log.info( String.format( "Notifying on %s for object %s with contenttype %s", identifier, action, contentType ) );
         synchronized( this.observers )
         {
             for( RepositoryObserver observer : this.observers )
             {
-                observer.notifyMe( identifier, action, contentType );
+                observer.notifyMe( identifier, object, action, contentType );
             }
         }
     }
 
+    
     @Override
     public List<ObjectRepositoryContentType> registeredContentTypes() throws RemoteException
     {
