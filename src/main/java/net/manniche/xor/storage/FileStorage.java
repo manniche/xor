@@ -122,27 +122,6 @@ public class FileStorage implements StorageProvider
 
         File objectFile = new File( id );
 
-//        if( ! objectFile.createNewFile() )
-//        // this should never happen, but if it does, we should only need to
-//        // do this one pass.
-//        {
-//            Log.warning( String.format( "File identified by %s already exists, creating new id", id.getPath() ) );
-//
-//            //generate new id
-//            try
-//            {
-//                id = RepositoryUtilities.generateURI( "file", storagePath, hash );
-//            }
-//            catch( URISyntaxException ex )
-//            {
-//                String error = String.format( "Could not construct storage location from %s: %s", url, ex.getMessage() );
-//                Log.log( Level.SEVERE, error, ex );
-//                throw new IOException( error, ex );
-//            }
-//
-//        }
-        
-
         final FileOutputStream fos = new FileOutputStream( objectFile, false );
         Log.info( String.format( "Storing object at %s", id.getPath() ) );
         fos.write( object );
@@ -166,23 +145,15 @@ public class FileStorage implements StorageProvider
 
 
     @Override
-    public byte[] get( URI url ) throws IOException
+    public byte[] get( URI uri ) throws IOException
     {
-        Log.info( String.format( "Getting object identified by %s", url.getPath() ) );
+        Log.info( String.format( "Getting object identified by %s", uri.getPath() ) );
         File objectFile = null;
-//        try
-//        {
-            objectFile = new File( url );
-//        }
-//        catch( URISyntaxException ex )
-//        {
-//            String error = String.format( "Could not construct storage location from %s: %s", url, ex.getMessage() );
-//            Log.log( Level.SEVERE, error, ex );
-//            throw new IOException( error, ex );
-//        }
+        objectFile = new File( uri );
+
         if( ! objectFile.isFile() )
         {
-            String error = String.format( "Error - '%s' is not a file", url );
+            String error = String.format( "Error - '%s' is not a file", uri );
             Log.log( Level.SEVERE, error );
             throw new FileNotFoundException( error );
         }
@@ -211,16 +182,8 @@ public class FileStorage implements StorageProvider
     public void delete( URI identifier) throws IOException
     {
         File deleteFile = null;
-//        try
-//        {
-            deleteFile = new File( identifier );
-//        }
-//        catch( URISyntaxException ex )
-//        {
-//            String error = String.format( "Could not construct storage location from %s: %s", identifier, ex.getMessage() );
-//            Log.log( Level.SEVERE, error, ex );
-//            throw new IOException( error, ex );
-//        }
+        deleteFile = new File( identifier );
+
         boolean deleted = deleteFile.delete();
         if( ! deleted )
         {
