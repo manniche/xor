@@ -49,7 +49,7 @@ public class DublinCore implements DigitalObject
 
     /** DC standard dataformatting: */
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat( "yyyy-MM-dd'T'HH:mm:ss.SSS" );
-    /** The map to keep all our dc values:*/
+    /** The map to keep all dc values:*/
     private Map<DublinCoreElement, List<String>> dcvalues;
 
     public enum DublinCoreElement
@@ -104,9 +104,7 @@ public class DublinCore implements DigitalObject
             }
             catch( URISyntaxException ex )
             {
-                /** We've constructed the URI String just above,
-                 * so get out of my face with this exception!
-                 */
+                throw new IllegalStateException( String.format( "%s is not a valid URI for DublinCore", URI ) );
             }
         }
 
