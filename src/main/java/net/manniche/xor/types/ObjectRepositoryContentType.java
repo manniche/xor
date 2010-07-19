@@ -22,7 +22,7 @@ package net.manniche.xor.types;
  * Defines the content types that can be handled by the object repository servers.
  * The basic content type(s) are implemented in
  * {@link net.manniche.xor.types.BasicContentType}
- * @author stm
+ * @author Steen Manniche
  */
 public interface ObjectRepositoryContentType {
 

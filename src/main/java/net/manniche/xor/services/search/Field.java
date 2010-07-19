@@ -25,7 +25,7 @@ package net.manniche.xor.services.search;
  * @see {@link Query}
  * @see {@link SearchProvider}
  * 
- * @author stm
+ * @author Steen Manniche
  */
 public final class Field {
     

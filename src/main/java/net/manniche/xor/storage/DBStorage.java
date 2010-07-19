@@ -27,7 +27,7 @@ import javax.naming.ConfigurationException;
  * Base class for all database storage providers. This class defines the common
  * behaviour expected from the database storage backends.
  * 
- * @author stm
+ * @author Steen Manniche
  */
 public abstract class DBStorage implements StorageProvider{
 

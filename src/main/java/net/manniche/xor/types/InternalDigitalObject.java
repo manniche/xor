@@ -31,7 +31,7 @@ import java.io.Serializable;
  * The DefaultDigitalObject is an immutable type and thereby completely thread-
  * safe.
  *
- * @author stm
+ * @author Steen Manniche
  */
 public final class InternalDigitalObject implements DigitalObject, Serializable{
     static final long serialVersionUID = 4558861702889722277L;

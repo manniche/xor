@@ -50,7 +50,7 @@ import net.manniche.xor.utils.RepositoryUtilities;
  * have an accompanying content type defined by the
  * {@link RMIRepositoryServerContentType} enum.
  * 
- * @author stm
+ * @author Steen Manniche
  */
 public final class RMIRepositoryServer extends RepositoryServer implements RMIObjectManagement
 {

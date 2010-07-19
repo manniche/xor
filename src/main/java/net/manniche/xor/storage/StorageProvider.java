@@ -28,7 +28,7 @@ import net.manniche.xor.types.ObjectRepositoryService;
  *Interface describing the operations that must be implemented by the underlying
  * storage implementation.
  *
- * @author stm
+ * @author Steen Manniche
  */
 public interface StorageProvider extends ObjectRepositoryService{
 

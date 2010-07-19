@@ -45,7 +45,7 @@ import net.manniche.xor.types.RepositoryAction;
  * objects passing through the repository. Such functionality can be
  * added using the {@link ObjectRepositoryService} interface.
  *
- * @author stm
+ * @author Steen Manniche
  */
 public abstract class RepositoryServer{
 

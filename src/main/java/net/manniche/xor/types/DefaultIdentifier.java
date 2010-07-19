@@ -24,7 +24,7 @@ import java.net.URI;
 
 /**
  * Fallback identifier if the clients have not or cannot provide identifiers
- * @author stm
+ * @author Steen Manniche
  * @see ObjectIdentifier
  */
 public class DefaultIdentifier implements ObjectIdentifier, Serializable{

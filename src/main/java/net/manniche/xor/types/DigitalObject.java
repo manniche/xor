@@ -30,7 +30,7 @@ import java.io.IOException;
  * DigitalObjects only honour the contract that it must be possible to retrieve
  * the data in the DigitalObject as a byte[]
  * 
- * @author stm
+ * @author Steen Manniche
  */
 public interface DigitalObject {
 

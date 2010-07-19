@@ -33,7 +33,7 @@ import net.manniche.xor.types.ObjectRepositoryContentType;
 import net.manniche.xor.types.RepositoryAction;
 /**
  *
- * @author stm
+ * @author Steen Manniche
  */
 public class JMSService extends RepositoryServer {
 

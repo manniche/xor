@@ -46,7 +46,7 @@ import net.manniche.xor.types.ObjectRepositoryService;
  * from the config/ directory and starts a server which is registered with a
  * running RMI registry.
  *
- * @author stm
+ * @author Steen Manniche
  */
 public class RMIServer {
 

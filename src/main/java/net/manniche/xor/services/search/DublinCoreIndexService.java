@@ -37,7 +37,7 @@ import net.manniche.xor.types.RepositoryAction;
 
 /**
  *
- * @author stm
+ * @author Steen Manniche
  */
 public final class DublinCoreIndexService implements RepositoryObserver, SearchProvider{
 

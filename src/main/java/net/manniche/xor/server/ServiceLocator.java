@@ -26,7 +26,7 @@ import net.manniche.xor.types.ObjectRepositoryServiceType;
  * The ServiceLocator class is responsible for returning implementations of
  * Object repository services. Only services (classes) that are defined as an
  * {@link ObjectRepositoryServiceType} can be requested from the ServiceLocator.
- * @author stm
+ * @author Steen Manniche
  */
 public final class ServiceLocator {
 

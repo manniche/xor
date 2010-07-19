@@ -34,7 +34,7 @@ import net.manniche.xor.utils.RepositoryUtilities;
 
 /**
  *
- * @author stm
+ * @author Steen Manniche
  */
 public class FileStorage implements StorageProvider
 {

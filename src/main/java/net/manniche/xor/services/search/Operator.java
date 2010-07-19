@@ -9,7 +9,7 @@ package net.manniche.xor.services.search;
  * Defines allowed operators for queries
  *
  * @see {@link Query}
- * @author stm
+ * @author Steen Manniche
  */
 public enum Operator {
 

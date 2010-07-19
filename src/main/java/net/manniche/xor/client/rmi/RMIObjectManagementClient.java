@@ -25,7 +25,7 @@ import net.manniche.xor.types.ObjectIdentifier;
 
 /**
  *
- * @author stm
+ * @author Steen Manniche
  */
 interface RMIObjectManagementClient extends Remote {
 

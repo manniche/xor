@@ -26,7 +26,7 @@ import static org.junit.Assert.*;
 
 /**
  *
- * @author stm
+ * @author Steen Manniche
  */
 public class RepositoryServerTest {
 

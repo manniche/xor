@@ -32,7 +32,7 @@ import net.manniche.xor.types.RepositoryAction;
  * ObjectRepository Server implementation in order to be notified about events,
  * as defined in {@link net.manniche.xor.types.RepositoryAction.Action}
  *
- * @author stm
+ * @author Steen Manniche
  */
 public interface RepositoryObserver {
     public void notifyMe(  ObjectIdentifier identifier, DigitalObject object, RepositoryAction action, ObjectRepositoryContentType contentType );

@@ -27,7 +27,7 @@ import java.util.logging.Logger;
 
 /**
  *
- * @author stm
+ * @author Steen Manniche
  */
 public class RepositoryUtilities {
 

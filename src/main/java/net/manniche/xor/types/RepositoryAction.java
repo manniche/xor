@@ -22,7 +22,7 @@ package net.manniche.xor.types;
  * Types of actions that the {@link net.manniche.xor.server.ObjectRepository}
  * can notify Observers about.
  * 
- * @author stm
+ * @author Steen Manniche
  */
 public enum RepositoryAction
 {

@@ -64,7 +64,7 @@ import net.manniche.xor.types.RepositoryAction;
  *
  * will delete object identified by uri name 1234567890
  *
- * @author stm
+ * @author Steen Manniche
  */
 @Path( "/xor" )
 public final class RESTRepositoryRelayer extends RepositoryServer implements RESTObjectManagement{

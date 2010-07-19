@@ -26,7 +26,7 @@ import net.manniche.xor.types.ObjectRepositoryContentType;
 
 /**
  *
- * @author stm
+ * @author Steen Manniche
  */
 interface RESTObjectManagement {
 

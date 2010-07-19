@@ -28,7 +28,7 @@ package net.manniche.xor.types;
  * {@link net.manniche.xor.server.ServiceLocator}
  *
  * @see ObjectRepositoryService
- * @author stm
+ * @author Steen Manniche
  */
 public interface ObjectRepositoryServiceType<T>
 {

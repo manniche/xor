@@ -33,7 +33,7 @@ import net.manniche.xor.types.ObjectRepositoryContentType;
  * defines the general operations for the object repository.
  * An example implementation of a (naive) RMI client can be found in the
  * {@link RMIObjectRepository} implementation.
- * @author stm
+ * @author Steen Manniche
  */
 public interface RMIObjectManagement extends Remote{
 

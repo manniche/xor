@@ -29,7 +29,7 @@ import net.manniche.xor.types.ObjectRepositoryServiceType;
  *
  * @see ObjectRepositoryServiceType
  *
- * @author stm
+ * @author Steen Manniche
  */
 public enum SearchType implements ObjectRepositoryServiceType<ObjectRepositoryService>
 {

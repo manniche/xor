@@ -26,7 +26,7 @@ import net.manniche.xor.types.ObjectRepositoryService;
  * Interface describing the operations that must be provided by a search
  * service implementation.
  *
- * @author stm
+ * @author Steen Manniche
  */
 public interface SearchProvider extends ObjectRepositoryService{
 

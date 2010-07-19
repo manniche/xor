@@ -21,7 +21,7 @@ package net.manniche.xor.exceptions;
 
 /**
  *
- * @author stm
+ * @author Steen Manniche
  */
 public class RepositoryServiceException extends Exception {
 
