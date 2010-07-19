@@ -24,7 +24,7 @@ import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -38,6 +38,8 @@ import javax.xml.stream.XMLStreamWriter;
 
 import net.manniche.xor.types.DigitalObject;
 import net.manniche.xor.exceptions.RepositoryServiceException;
+import net.manniche.xor.metadata.DublinCore.DublinCoreElement;
+import net.manniche.xor.types.ObjectIdentifier;
 
 /**
  * DublinCore is a class implementation of the Dublin Core Metadata Element Set,
@@ -104,7 +106,9 @@ public class DublinCore implements DigitalObject
             }
             catch( URISyntaxException ex )
             {
-                throw new IllegalStateException( String.format( "%s is not a valid URI for DublinCore", URI ) );
+                //this is highly unlikely, and is probably caused by something
+                //other than the above string being passed
+                throw new IllegalArgumentException( String.format( "%s is not a valid URI for DublinCore", URI ) );
             }
         }
 
@@ -177,12 +181,12 @@ public class DublinCore implements DigitalObject
      * Initializes an empty Dublin Core element, identified by {@code identifier}
      * @param identifier An unambiguous reference to the resource within a given
      * context. Recommended best practice is to use the digital repository object
-     * identifier.
+     * identifier ({@link ObjectIdentifier}).
      */
     public DublinCore( String identifier )
     {
         List<String> valuelist = new ArrayList<String>();
-        dcvalues = new HashMap<DublinCoreElement, List<String>>();
+        dcvalues = new EnumMap<DublinCoreElement, List<String>>( DublinCoreElement.class );
         valuelist.add( identifier );
         dcvalues.put( DublinCoreElement.ELEMENT_IDENTIFIER, valuelist );
     }
@@ -197,7 +201,7 @@ public class DublinCore implements DigitalObject
      */
     public DublinCore( final String identifier, final Map<DublinCoreElement, List<String>> inputValues )
     {
-        dcvalues = new HashMap<DublinCoreElement, List<String>>( inputValues );
+        dcvalues = new EnumMap<DublinCoreElement, List<String>>( inputValues );
         List<String> valuelist = new ArrayList<String>();
         valuelist.add( identifier);
 
