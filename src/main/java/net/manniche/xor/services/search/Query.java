@@ -19,7 +19,11 @@
 package net.manniche.xor.services.search;
 
 /**
+ * Implements a query object for the {@link DublinCoreIndexService}
  *
+ * @see {@link Field}
+ * @see {@link Operator}
+ * 
  * @author stm
  */
 public final class Query {

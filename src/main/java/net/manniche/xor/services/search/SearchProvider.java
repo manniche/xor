@@ -23,11 +23,24 @@ import net.manniche.xor.types.ObjectRepositoryService;
 
 
 /**
+ * Interface describing the operations that must be provided by a search
+ * service implementation.
  *
  * @author stm
  */
-public interface SearchProvider  extends ObjectRepositoryService{
+public interface SearchProvider extends ObjectRepositoryService{
 
+    /**
+     * Performs a search on whatever data has been indexed or in other ways
+     * stored and organized by the implementing service. This search is composed
+     * of a {@link Query} object that represents a complex query expression and
+     * an integer specifying the maximum number of results that should be in the
+     * {@link List} that is returned.
+     *
+     * @param query a query object representing the query
+     * @param maximumResults the maximum number of results returned
+     * @return a {@link List} containing the search results
+     */
     public List<String> search( Query query, int maximumResults );
 
 }
