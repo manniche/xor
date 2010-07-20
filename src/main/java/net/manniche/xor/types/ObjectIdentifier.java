@@ -34,11 +34,6 @@ public interface ObjectIdentifier {
      */
     public URI getURI();
 
-    /**
-     * Accessor for the prefix (if any) on the object identifier.
-     * @return a String containing the prefix (if the implementors provide one)
-     */
-    //public String getPrefix();
 
     public String getId();
 

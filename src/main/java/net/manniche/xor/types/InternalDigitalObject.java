@@ -37,22 +37,14 @@ public final class InternalDigitalObject implements DigitalObject, Serializable{
     static final long serialVersionUID = 4558861702889722277L;
 
     private final byte[] internal_input;
-//    private final ObjectRepositoryContentType contentType;
 
-    public InternalDigitalObject( byte[] input ) //, ObjectRepositoryContentType contentType )
+    public InternalDigitalObject( byte[] input )
     {
         this.internal_input = input;
-//        this.contentType = contentType;
     }
     @Override
     public byte[] getBytes()
     {
         return this.internal_input;
     }
-
-//    @Override
-//    public ObjectRepositoryContentType getContentType()
-//    {
-//        return this.contentType;
-//    }
 }
