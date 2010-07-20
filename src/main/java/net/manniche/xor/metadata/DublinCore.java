@@ -21,6 +21,7 @@ package net.manniche.xor.metadata;
 import java.io.ByteArrayOutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -201,6 +202,26 @@ public class DublinCore implements DigitalObject
      */
     public DublinCore( final String identifier, final Map<DublinCoreElement, List<String>> inputValues )
     {
+        if( inputValues.containsKey( DublinCoreElement.ELEMENT_DATE ) )
+        {
+            List<String> dates = inputValues.get( DublinCoreElement.ELEMENT_DATE );
+            List<String> validatedDates = new ArrayList<String>( dates.size() );
+            for( String date: dates )
+            {
+                try
+                {
+                    Date d = dateFormat.parse( date );
+                    String stringDate = dateFormat.format( d );
+                    validatedDates.add( stringDate );
+                }
+                catch( ParseException ex )
+                {
+                    throw new IllegalArgumentException( String.format( "The string %s could not be parsed as a Date: %s", date, ex.getMessage() ) );
+                }
+            }
+            inputValues.remove( DublinCoreElement.ELEMENT_DATE );
+            inputValues.put( DublinCoreElement.ELEMENT_DATE, validatedDates );
+        }
         dcvalues = new EnumMap<DublinCoreElement, List<String>>( inputValues );
         List<String> valuelist = new ArrayList<String>();
         valuelist.add( identifier);
@@ -211,122 +232,92 @@ public class DublinCore implements DigitalObject
 
     public void putContributor( String contributor )
     {
-        List<String> vals = dcvalues.get( DublinCoreElement.ELEMENT_CONTRIBUTOR );
-        vals.add( contributor );
-        dcvalues.put( DublinCoreElement.ELEMENT_CONTRIBUTOR, vals );
+        putValueForElement( DublinCoreElement.ELEMENT_CONTRIBUTOR, contributor);
     }
 
 
     public void putCoverage( String coverage )
     {
-        List<String> vals = dcvalues.get( DublinCoreElement.ELEMENT_COVERAGE );
-        vals.add( coverage );
-        dcvalues.put( DublinCoreElement.ELEMENT_COVERAGE, vals );
+        putValueForElement( DublinCoreElement.ELEMENT_COVERAGE, coverage);
     }
 
 
     public void putCreator( String creator )
     {
-        List<String> vals = dcvalues.get( DublinCoreElement.ELEMENT_CREATOR );
-        vals.add( creator );
-        dcvalues.put( DublinCoreElement.ELEMENT_CREATOR, vals );
+        putValueForElement( DublinCoreElement.ELEMENT_CREATOR, creator);
     }
 
 
     public void putDate( Date date )
     {
-        List<String> vals = dcvalues.get( DublinCoreElement.ELEMENT_DATE );
-        String stringdate = dateFormat.format( date );
-        vals.add( stringdate );
-        dcvalues.put( DublinCoreElement.ELEMENT_DATE, vals );
+        String stringDate = dateFormat.format( date );
+        putValueForElement( DublinCoreElement.ELEMENT_DATE, stringDate);
     }
 
 
     public void putDescription( String description )
     {
-        List<String> vals = dcvalues.get( DublinCoreElement.ELEMENT_DESCRIPTION );
-        vals.add( description );
-        dcvalues.put( DublinCoreElement.ELEMENT_DESCRIPTION, vals );
+        putValueForElement( DublinCoreElement.ELEMENT_DESCRIPTION, description);
     }
 
 
     public void putFormat( String format )
     {
-        List<String> vals = dcvalues.get( DublinCoreElement.ELEMENT_FORMAT );
-        vals.add( format );
-        dcvalues.put( DublinCoreElement.ELEMENT_FORMAT, vals );
+        putValueForElement( DublinCoreElement.ELEMENT_FORMAT, format);
     }
 
 
     public void putIdentifier( String identifier )
     {
-        List<String> vals = dcvalues.get( DublinCoreElement.ELEMENT_IDENTIFIER );
-        vals.add( identifier );
-        dcvalues.put( DublinCoreElement.ELEMENT_IDENTIFIER, vals );
+        putValueForElement( DublinCoreElement.ELEMENT_IDENTIFIER, identifier);
     }
 
 
     public void putLanguage( String language )
     {
-        List<String> vals = dcvalues.get( DublinCoreElement.ELEMENT_LANGUAGE );
-        vals.add( language );
-        dcvalues.put( DublinCoreElement.ELEMENT_LANGUAGE, vals );
+        putValueForElement( DublinCoreElement.ELEMENT_LANGUAGE, language);
     }
 
 
     public void putPublisher( String publisher )
     {
-        List<String> vals = dcvalues.get( DublinCoreElement.ELEMENT_PUBLISHER );
-        vals.add( publisher );
-        dcvalues.put( DublinCoreElement.ELEMENT_PUBLISHER, vals );
+        putValueForElement( DublinCoreElement.ELEMENT_PUBLISHER, publisher);
     }
 
 
     public void putRelation( String relation )
     {
-        List<String> vals = dcvalues.get( DublinCoreElement.ELEMENT_RELATION );
-        vals.add( relation );
-        dcvalues.put( DublinCoreElement.ELEMENT_RELATION, vals );
+        putValueForElement( DublinCoreElement.ELEMENT_RELATION, relation );
     }
 
 
     public void putRights( String rights )
     {
-        List<String> vals = dcvalues.get( DublinCoreElement.ELEMENT_RIGHTS );
-        vals.add( rights );
-        dcvalues.put( DublinCoreElement.ELEMENT_RIGHTS, vals );
+        putValueForElement( DublinCoreElement.ELEMENT_RIGHTS, rights);
     }
 
 
     public void putSource( String source )
     {
-        List<String> vals = dcvalues.get( DublinCoreElement.ELEMENT_SOURCE );
-        vals.add( source );
-        dcvalues.put( DublinCoreElement.ELEMENT_SOURCE, vals );
+        putValueForElement( DublinCoreElement.ELEMENT_SOURCE, source);
     }
 
 
     public void putSubject( String subject )
     {
-        List<String> vals = dcvalues.get( DublinCoreElement.ELEMENT_SUBJECT );
-        vals.add( subject );
-        dcvalues.put( DublinCoreElement.ELEMENT_SUBJECT, vals );
+        putValueForElement( DublinCoreElement.ELEMENT_SUBJECT, subject);
     }
 
 
     public void putTitle( String title )
     {
-        List<String> vals = dcvalues.get( DublinCoreElement.ELEMENT_TITLE );
-        vals.add( title );
-        dcvalues.put( DublinCoreElement.ELEMENT_TITLE, vals );
+        putValueForElement( DublinCoreElement.ELEMENT_TITLE, title);
     }
 
 
     public void putType( String type )
     {
-        List<String> vals = dcvalues.get( DublinCoreElement.ELEMENT_TYPE );
-        vals.add( type );
-        dcvalues.put( DublinCoreElement.ELEMENT_TYPE, vals );
+        putValueForElement( DublinCoreElement.ELEMENT_TYPE, type);
     }
 
 
@@ -356,12 +347,12 @@ public class DublinCore implements DigitalObject
             {
                 if( set.getValue() != null )
                 {
-                    xmlw.writeStartElement( dc_namesp, set.getKey().localName() );
                     for( String val: set.getValue() )
                     {
+                        xmlw.writeStartElement( dc_namesp, set.getKey().localName() );
                         xmlw.writeCharacters( val );
+                        xmlw.writeEndElement();
                     }
-                    xmlw.writeEndElement();
                 }
             }
             xmlw.writeEndElement();
@@ -376,5 +367,14 @@ public class DublinCore implements DigitalObject
         return out.toByteArray();
     }
 
-
+    private void putValueForElement( DublinCoreElement elem, String elemValue )
+    {
+        List<String> vals = dcvalues.get( elem );
+        if( null == vals )
+        {
+            vals = new ArrayList<String>();
+        }
+        vals.add( elemValue );
+        dcvalues.put( elem, vals );
+    }
 }
