@@ -58,7 +58,10 @@ public final class DublinCoreIndexService implements RepositoryObserver, SearchP
                 try
                 {
                     fos = new FileOutputStream( index, true );
+                    fos.write( identifier.getURI().toString().getBytes() );
+                    fos.write( " : ".getBytes() );
                     fos.write( object.getBytes() );
+                    fos.write( "\n".getBytes() );
                     fos.flush();
                     fos.close();
                 }
