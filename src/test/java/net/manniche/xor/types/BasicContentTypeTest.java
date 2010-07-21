@@ -1,6 +1,7 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ *  This file is part of xor. Copyright © 2009-, Steen Manniche.
+ *  Distributed under the GPL license, see the copy of the GNU General Public
+ *  License along with xor.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 package net.manniche.xor.types;
