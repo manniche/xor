@@ -4,9 +4,9 @@
 
   <parent>
     <groupId>net.manniche.xor</groupId>
-    <artifactId>xor-collection</artifactId>
+    <artifactId>xor</artifactId>
     <version>0.1.0-SNAPSHOT</version>
-    <relativePath>../xor-collection/pom.xml</relativePath>
+    <relativePath>../pom.xml</relativePath>
   </parent>
 
   <artifactId>xor-core</artifactId>
