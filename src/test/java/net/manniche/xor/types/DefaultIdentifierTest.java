@@ -15,7 +15,7 @@ import static org.junit.Assert.*;
 
 /**
  *
- * @author stm
+ * @author Steen Manniche
  */
 public class DefaultIdentifierTest {
     private DefaultIdentifier instance;
