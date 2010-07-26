@@ -37,20 +37,18 @@ public enum SearchType implements ObjectRepositoryServiceType<ObjectRepositorySe
     DublinCoreIndexService( DublinCoreIndexService.class );
 
 
-    private Class<SearchProvider> search_service;
+    private final Class<? extends ObjectRepositoryService> search_service;
 
-    @SuppressWarnings( "unchecked" )
-    SearchType( Class<? extends SearchProvider> klass )
+    SearchType( Class<? extends SearchProvider> classOfService )
     {
-        this.search_service = (Class<SearchProvider>) klass;
+        this.search_service = classOfService;
     }
 
 
     @Override
-    @SuppressWarnings( "unchecked" )
-    public final Class<ObjectRepositoryService> getClassofService()
+    public final Class<? extends ObjectRepositoryService> getClassofService()
     {
-        return (Class<ObjectRepositoryService>) (Object) this.search_service;
+        return this.search_service;
     }
 
 

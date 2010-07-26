@@ -16,7 +16,7 @@ import static org.junit.Assert.*;
  * Test of the ServiceLocator. This test also demonstrates the link between the
  * ObjectRepositoryServiceType and ObjectRepositoryService interfaces.
  *
- * @author stm
+ * @author Steen Manniche
  */
 public class ServiceLocatorTest {
 
@@ -24,23 +24,22 @@ public class ServiceLocatorTest {
      * Test of getImplementation method, of class ServiceLocator.
      */
     @Test
-    public void testGetImplementation()
+    public void testGetImplementation() throws Exception
     {
-        System.out.println( "getImplementation" );
+
         ObjectRepositoryServiceType<? extends ObjectRepositoryService> service = new stubServiceType();
-        Class<ObjectRepositoryService> expResult = (Class<ObjectRepositoryService>) (Object) stubService.class;
-        Class<ObjectRepositoryService> result = ServiceLocator.getImplementation( service );
-        assertEquals( expResult, result );
+        ObjectRepositoryService expResult = new StubService();
+        ObjectRepositoryService result = ServiceLocator.getService( service.getClassofService() );
+        assertEquals( expResult.getClass(), result.getClass() );
     }
 
     public static class stubServiceType implements ObjectRepositoryServiceType<ObjectRepositoryService>
     {
         @Override
-        @SuppressWarnings( "unchecked" )
-        public Class<ObjectRepositoryService> getClassofService()
+        public final Class<? extends ObjectRepositoryService> getClassofService()
         {
-            return (Class<ObjectRepositoryService>) (Object) stubService.class;
+            return StubService.class;
         }
     }
-    public static class stubService implements ObjectRepositoryService{}
+    public static class StubService implements ObjectRepositoryService{}
 }

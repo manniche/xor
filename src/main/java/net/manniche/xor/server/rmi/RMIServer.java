@@ -19,6 +19,7 @@
 package net.manniche.xor.server.rmi;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.rmi.AccessException;
 import java.rmi.AlreadyBoundException;
 import java.rmi.NotBoundException;
@@ -27,18 +28,15 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.Collections;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
 import net.manniche.xor.server.RepositoryObserver;
 import net.manniche.xor.server.ServiceLocator;
-import net.manniche.xor.services.search.DublinCoreIndexService;
 import net.manniche.xor.services.search.SearchProvider;
 import net.manniche.xor.services.search.SearchType;
 import net.manniche.xor.storage.FileStorage;
 import net.manniche.xor.storage.StorageProvider;
-import net.manniche.xor.types.ObjectRepositoryService;
 
 
 /**
@@ -111,16 +109,27 @@ public class RMIServer {
     {
         SearchProvider search = null;
         SearchType service = SearchType.valueOf( "DublinCoreIndexService" );
-        Class<ObjectRepositoryService> searchService = ServiceLocator.getImplementation( service );
         try
         {
-            search = (SearchProvider) searchService.newInstance();
+            search = (SearchProvider) ServiceLocator.getService( service.getClassofService() );
+        }
+        catch( NoSuchMethodException ex )
+        {
+            Log.log( Level.SEVERE, ex.getMessage(), ex );
+        }
+        catch( IllegalArgumentException ex )
+        {
+            Log.log( Level.SEVERE, ex.getMessage(), ex );
         }
         catch( InstantiationException ex )
         {
             Log.log( Level.SEVERE, ex.getMessage(), ex );
         }
         catch( IllegalAccessException ex )
+        {
+            Log.log( Level.SEVERE, ex.getMessage(), ex );
+        }
+        catch(InvocationTargetException ex )
         {
             Log.log( Level.SEVERE, ex.getMessage(), ex );
         }
