@@ -20,10 +20,13 @@
 package net.manniche.xor.exceptions;
 
 /**
- *
+ * The general exception for the object repository, defining all types of
+ * exception states that the repository can throw.
+ * 
  * @author Steen Manniche
  */
 public class RepositoryServiceException extends Exception {
+    static final long serialVersionUID = 3561475179703662050L;
 
     /**
      * Creates a new instance of <code>RepositoryServiceException</code> without detail message.
