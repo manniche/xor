@@ -157,25 +157,6 @@ public class DublinCore implements DigitalObject
             }
             return prefixes.iterator();
         }
-
-
-        public URI getURI( String fragment )
-        {
-            String scheme = this.uri.getScheme();
-            String ssp = this.uri.getSchemeSpecificPart();
-            URI retval = null;
-            try
-            {
-                retval = new URI( scheme, ssp, fragment );
-            }
-            catch( URISyntaxException ex )
-            {
-                Logger.getLogger( DublinCore.class.getName() ).log( Level.SEVERE, String.format( "It looks like fragment contains some invalid characters", fragment ), ex );
-            }
-            return retval;
-        }
-
-
     }
 
     /**
