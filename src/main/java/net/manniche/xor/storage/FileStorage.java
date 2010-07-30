@@ -166,7 +166,8 @@ public class FileStorage implements StorageProvider
             baos.write( b );
             b = data.read();
         }
-        Log.info( String.format( "Returning byte array (as output stream) with size %s", baos.size() ) );
+        data.close();
+        Log.info( String.format( "Returning byte array with size %s", baos.size() ) );
         return baos.toByteArray();
     }
 
