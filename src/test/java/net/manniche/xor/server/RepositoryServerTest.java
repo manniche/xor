@@ -6,6 +6,7 @@
 
 package net.manniche.xor.server;
 
+import net.manniche.xor.exceptions.RepositoryServiceException;
 import net.manniche.xor.types.BasicContentType;
 import java.io.IOException;
 import mockit.NonStrictExpectations;
@@ -19,6 +20,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import mockit.Mocked;
+import net.manniche.xor.exceptions.StorageProviderException;
 import net.manniche.xor.types.DefaultDigitalObject;
 import static org.junit.Assert.*;
 
@@ -103,7 +105,7 @@ public class RepositoryServerTest {
         instance.deleteObject( predefinedId, logMessage );
     }
 
-    @Test( expected=IOException.class)
+    @Test( expected=RepositoryServiceException.class)
     public void deleteNonExistingObjectFails() throws Exception
     {
         RepositoryServer throwingServer = new MockRepositoryImpl( new ThrowingStorageProviderStub() );
@@ -128,23 +130,23 @@ public class RepositoryServerTest {
     public static class ThrowingStorageProviderStub implements StorageProvider
     {
         @Override
-        public URI save( byte[] object ) throws IOException
-        { throw new IOException(); }
+        public URI save( byte[] object ) throws StorageProviderException
+        { throw new StorageProviderException(); }
 
 
         @Override
-        public void save( byte[] object, URI url ) throws IOException
-        { throw new IOException(); }
+        public void save( byte[] object, URI url ) throws StorageProviderException
+        { throw new StorageProviderException(); }
 
 
         @Override
-        public byte[] get( URI identifier ) throws IOException
-        { throw new IOException(); }
+        public byte[] get( URI identifier ) throws StorageProviderException
+        { throw new StorageProviderException(); }
 
 
         @Override
-        public void delete( URI identifier ) throws IOException
-        { throw new IOException(); }
+        public void delete( URI identifier ) throws StorageProviderException
+        { throw new StorageProviderException(); }
 
         @Override
         public void close()

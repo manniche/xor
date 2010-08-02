@@ -61,7 +61,6 @@ public final class RMIRepositoryServer extends RepositoryServer implements RMIOb
 
     private final List< RepositoryObserver > observers;
     private final List<ObjectRepositoryContentType> registeredContentTypes;
-    private final String storagePath;
     private final String metadataStoragePath;
 
     /**
@@ -69,15 +68,13 @@ public final class RMIRepositoryServer extends RepositoryServer implements RMIOb
      *
      * @param storage the StorageProvider that handles storage of objects for
      * this RMI server instance
-     * @param storagePath path to which data will be stored for this server instance
      * @param metadataStoragePath path to which metadata of data will be stored for this server instance
      * @param logMessageHandler handles the log message storing/notifications
      * @throws RemoteException if the server could not be started
      */
-    public RMIRepositoryServer( StorageProvider storage, String storagePath, String metadataStoragePath ) throws RemoteException
+    public RMIRepositoryServer( StorageProvider storage, String metadataStoragePath ) throws RemoteException
     {
         super( storage );
-        this.storagePath = storagePath;
         this.metadataStoragePath = metadataStoragePath;
         this.observers = new ArrayList<RepositoryObserver>();
         this.registeredContentTypes = new ArrayList<ObjectRepositoryContentType>();
@@ -106,7 +103,7 @@ public final class RMIRepositoryServer extends RepositoryServer implements RMIOb
         {
             digitalObject = super.getObject( identifier );
         }
-        catch( IOException ex )
+        catch( RepositoryServiceException ex )
         {
             String error = String.format( "Failed to retrieve object identified by %s: %s", identifier, ex.getMessage() );
             Logger.getLogger( RMIRepositoryServer.class.getName() ).log( Level.WARNING, error, ex );
@@ -303,7 +300,7 @@ public final class RMIRepositoryServer extends RepositoryServer implements RMIOb
             ObjectIdentifier contentId = new DefaultIdentifier( cURI );
             super.deleteObject( contentId, "deleting content type" );
         }
-        catch( IOException ex )
+        catch( RepositoryServiceException ex )
         {
             String error = String.format( "Failed to delete object identified by '%s': %s", identifier, ex.getMessage() );
             Logger.getLogger( RMIRepositoryServer.class.getName() ).log( Level.WARNING, error, ex );
@@ -317,6 +314,14 @@ public final class RMIRepositoryServer extends RepositoryServer implements RMIOb
             //wrap and send to RMI client
             throw new RemoteException( error, ex );
         }
+        catch( IOException ex )
+        {
+            String error = String.format( "Failed to delete object identified by '%s': %s", identifier, ex.getMessage() );
+            Logger.getLogger( RMIRepositoryServer.class.getName() ).log( Level.WARNING, error, ex );
+            //wrap and send to RMI client
+            throw new RemoteException( error, ex );
+        }
+
         try
         {
             this.notifyObservers( identifier, null, RepositoryAction.DELETE, contentTypeForObject );

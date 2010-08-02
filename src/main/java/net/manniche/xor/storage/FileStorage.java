@@ -18,6 +18,7 @@
 package net.manniche.xor.storage;
 
 import java.io.ByteArrayOutputStream;
+import java.io.Closeable;
 import java.net.URISyntaxException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -27,6 +28,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URI;
+import net.manniche.xor.exceptions.StorageProviderException;
 import net.manniche.xor.utils.RepositoryUtilities;
 
 
@@ -48,23 +50,22 @@ public class FileStorage implements StorageProvider
 
 
     @Override
-    public URI save( byte[] object ) throws IOException
+    public URI save( byte[] object ) throws StorageProviderException
     {
         return this.saveObject( object, null );
     }
 
 
     @Override
-    public void save(  byte[] object, URI uri ) throws IOException
+    public void save(  byte[] object, URI uri ) throws StorageProviderException
     {
         URI returnedURL = this.saveObject( object, uri );
         assert returnedURL.equals( uri );
     }
 
-    private URI saveObject( byte[] object, URI uri ) throws IOException
+    private URI saveObject( byte[] object, URI uri ) throws StorageProviderException//, IOException
     {
         final String hash = Integer.toString( object.hashCode() );
-
 
         URI id = null;
 
@@ -79,7 +80,13 @@ public class FileStorage implements StorageProvider
             {
                 String error = String.format( "Could not construct storage location from %s: %s", uri, ex.getMessage() );
                 Log.log( Level.SEVERE, error, ex );
-                throw new IOException( error, ex );
+                throw new StorageProviderException( error, ex );
+            }
+            catch( IOException ex )
+            {
+                String error = String.format( "Could not generate identifer for object: %s", ex.getMessage() );
+                Log.log( Level.SEVERE, error, ex );
+                throw new StorageProviderException( error, ex );
             }
         }
         else
@@ -90,12 +97,27 @@ public class FileStorage implements StorageProvider
 
 
         File objectFile = new File( id );
-
-        final FileOutputStream fos = new FileOutputStream( objectFile, false );
-        Log.info( String.format( "Storing object at %s", id.getPath() ) );
-        fos.write( object );
-        fos.flush();
-        fos.close();
+        
+        try
+        {
+            final FileOutputStream fos = new FileOutputStream( objectFile, false );
+            Log.info( String.format( "Storing object at %s", id.getPath() ) );
+            fos.write( object );
+            fos.flush();
+            fos.close();
+        }
+        catch( FileNotFoundException ex )
+        {
+            String error = String.format( "Could not open file (%s) for reading: %s", id.toString(), ex.getMessage() );
+            Log.log( Level.SEVERE, error, ex );
+            throw new StorageProviderException( error, ex );
+        }
+        catch( IOException ex )
+        {
+            String error = String.format( "Could not write object (%s) to disk: %s", id.toString(), ex.getMessage() );
+            Log.log( Level.SEVERE, error, ex );
+            throw new StorageProviderException( error, ex );
+        }
 
         if( ! objectFile.exists() )
         {
@@ -114,7 +136,7 @@ public class FileStorage implements StorageProvider
 
 
     @Override
-    public byte[] get( URI uri ) throws IOException
+    public byte[] get( URI uri ) throws StorageProviderException
     {
         Log.info( String.format( "Getting object identified by %s", uri.getPath() ) );
         File objectFile = null;
@@ -124,21 +146,44 @@ public class FileStorage implements StorageProvider
         {
             String error = String.format( "Error - '%s' is not a file", uri );
             Log.log( Level.SEVERE, error );
-            throw new FileNotFoundException( error );
+            throw new StorageProviderException( error );
         }
 
-        FileInputStream data = new FileInputStream( objectFile );
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        int b = data.read();
-        while( -1 != b )
+        FileInputStream data = null;
+        ByteArrayOutputStream baos = null;
+        try
         {
-            baos.write( b );
-            b = data.read();
+            data = new FileInputStream( objectFile );
+            baos = new ByteArrayOutputStream();
+            int b = data.read();
+            while( -1 != b )
+            {
+                baos.write( b );
+                b = data.read();
+            }
         }
-        data.close();
+        catch( FileNotFoundException ex )
+        {
+        }
+        catch( IOException ex )
+        {
+        }
+        finally
+        {
+            try
+            {
+                data.close();
+            }
+            catch( IOException ex )
+            {
+
+                closeResource( data );
+            }
+        }
         Log.info( String.format( "Returning byte array with size %s", baos.size() ) );
         return baos.toByteArray();
     }
+
 
 
     @Override
@@ -147,9 +192,8 @@ public class FileStorage implements StorageProvider
         throw new UnsupportedOperationException( "Not supported yet." );
     }
 
-
     @Override
-    public void delete( URI identifier) throws IOException
+    public void delete( URI identifier) throws StorageProviderException
     {
         File deleteFile = null;
         deleteFile = new File( identifier );
@@ -159,6 +203,20 @@ public class FileStorage implements StorageProvider
         {
             String error = String.format( "The file %s could not be deleted", identifier );
             Log.log( Level.SEVERE, error );
+            throw new StorageProviderException( error );
+        }
+    }
+
+    // following the advice in Java Puzzlers
+    private void closeResource( Closeable c )
+    {
+        try
+        {
+            c.close();
+        }
+        catch( IOException e )
+        {
+            //we have lost
         }
     }
 }

@@ -18,9 +18,9 @@
 
 package net.manniche.xor.storage;
 
-import java.io.IOException;
 import java.net.URI;
 import javax.naming.ConfigurationException;
+import net.manniche.xor.exceptions.StorageProviderException;
 
 
 /**
@@ -63,17 +63,17 @@ public abstract class DBStorage implements StorageProvider{
 
 
     @Override
-    public abstract URI save( byte[] object ) throws IOException;
+    public abstract URI save( byte[] object ) throws StorageProviderException;
 
     @Override
-    public abstract void save( byte[] object, URI uri ) throws IOException;
+    public abstract void save( byte[] object, URI uri ) throws StorageProviderException;
 
     @Override
-    public abstract byte[] get( URI identifier) throws IOException;
+    public abstract byte[] get( URI identifier) throws StorageProviderException;
 
     @Override
     public abstract void close();
 
     @Override
-    public abstract void delete( URI identifier) throws IOException;
+    public abstract void delete( URI identifier) throws StorageProviderException;
 }

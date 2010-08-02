@@ -31,6 +31,7 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
+import net.manniche.xor.exceptions.StorageProviderException;
 import net.manniche.xor.server.RepositoryObserver;
 import net.manniche.xor.server.ServiceLocator;
 import net.manniche.xor.services.search.SearchProvider;
@@ -56,7 +57,7 @@ public class RMIServer {
     // Below follows the RMI server main method.                              //
     ////////////////////////////////////////////////////////////////////////////
 
-    public static void main( String[] args ) throws IOException// throws UnknownHostException, AlreadyBoundException
+    public static void main( String[] args ) throws IOException
     {
         int port = 8181;
         String sep = System.getProperty( "file.separator" );
@@ -71,7 +72,7 @@ public class RMIServer {
             Log.log( Level.INFO, "trying to export server" );
 
             StorageProvider store = new FileStorage( storagePath );
-            manager = new RMIRepositoryServer( store, storagePath, metadataStoragePath );
+            manager = new RMIRepositoryServer( store, metadataStoragePath );
 
             SearchProvider search = getSearchProvider();
             manager.addObserver( (RepositoryObserver) search);

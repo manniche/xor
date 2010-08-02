@@ -98,7 +98,7 @@ public final class RESTRepositoryRelayer extends RepositoryServer implements RES
         {
             digobj = super.getObject( identifier );
         }
-        catch( IOException ex )
+        catch( RepositoryServiceException ex )
         {
             String error = String.format( "Failed to retrieve object identified by %s: %s", identifier, ex.getMessage() );
             Logger.getLogger( RESTRepositoryRelayer.class.getName() ).log( Level.WARNING, error, ex );
@@ -125,13 +125,6 @@ public final class RESTRepositoryRelayer extends RepositoryServer implements RES
         {
             objectid = super.storeObject( object.getBytes(), logmessage );
         }
-        catch( IOException ex )
-        {
-            String error = String.format( "Could not store object: %s", ex.getMessage() );
-            Logger.getLogger( RESTRepositoryRelayer.class.getName() ).log( Level.SEVERE, error, ex );
-            /** TODO: review exception type and response */
-            throw new WebApplicationException( ex, Response.Status.INTERNAL_SERVER_ERROR );
-        }
         catch( RepositoryServiceException ex )
         {
             String error = String.format( "Could not store object: %s", ex.getMessage() );
@@ -148,6 +141,13 @@ public final class RESTRepositoryRelayer extends RepositoryServer implements RES
             super.storeObject( contentType.toString().getBytes(), contentIdentifier, "Storing content type" );
         }
         catch( URISyntaxException ex )
+        {
+            String error = String.format( "Failed to store object content type: %s", ex.getMessage() );
+            Logger.getLogger( RESTRepositoryRelayer.class.getName() ).log( Level.WARNING, error, ex );
+            /** TODO: review exception type and response */
+            throw new WebApplicationException( ex, Response.Status.INTERNAL_SERVER_ERROR );
+        }
+        catch( RepositoryServiceException ex )
         {
             String error = String.format( "Failed to store object content type: %s", ex.getMessage() );
             Logger.getLogger( RESTRepositoryRelayer.class.getName() ).log( Level.WARNING, error, ex );
@@ -173,7 +173,7 @@ public final class RESTRepositoryRelayer extends RepositoryServer implements RES
         {
             super.deleteObject( identifier, logmessage );
         }
-        catch( IOException ex )
+        catch( RepositoryServiceException ex )
         {
             String error = String.format( "Failed to delete object identified by '%s': %s", identifier, ex.getMessage() );
             Logger.getLogger( RESTRepositoryRelayer.class.getName() ).log( Level.WARNING, error, ex );

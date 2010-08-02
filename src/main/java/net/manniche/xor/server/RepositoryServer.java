@@ -18,8 +18,9 @@
 
 package net.manniche.xor.server;
 
-import java.io.IOException;
 import java.net.URI;
+import net.manniche.xor.exceptions.RepositoryServiceException;
+import net.manniche.xor.exceptions.StorageProviderException;
 import net.manniche.xor.storage.StorageProvider;
 import net.manniche.xor.types.DefaultIdentifier;
 import net.manniche.xor.types.DigitalObject;
@@ -72,9 +73,9 @@ public class RepositoryServer
      * in the log system, if any.
      * @return an ObjectIdentifier that (globally) uniquely identifies the stored
      * data for later identification
-     * @throws IOException if the object cannot be stored for a given reason
+     * @throws RepositoryServiceException if the object cannot be stored for a given reason
      */
-    protected final ObjectIdentifier storeObject( final byte[] data, final String message ) throws IOException
+    protected final ObjectIdentifier storeObject( final byte[] data, final String message ) throws RepositoryServiceException
     {
         return this.storeObject( data, null, message );
     }
@@ -93,22 +94,30 @@ public class RepositoryServer
      * in the log system, if any.
      * @return an ObjectIdentifier that is identical to the one delivered by
      * the client
-     * @throws IOException if the object cannot be stored for a given reason
+     * @throws RepositoryServiceException if the object cannot be stored for a given reason
      */
-    protected final ObjectIdentifier storeObject( final byte[] data, final ObjectIdentifier identifier, final String message ) throws IOException
+    protected final ObjectIdentifier storeObject( final byte[] data, final ObjectIdentifier identifier, final String message ) throws RepositoryServiceException
     {
         URI uid = null;
 
         ObjectIdentifier objectID = null;
-
-        if ( null == identifier )
+        try
         {
-            uid = this.repositoryStorageMechanism.save( data );
-            objectID = new DefaultIdentifier( uid );
-        } else
+            if( null == identifier )
+            {
+                uid = this.repositoryStorageMechanism.save( data );
+                objectID = new DefaultIdentifier( uid );
+            }
+            else
+            {
+                this.repositoryStorageMechanism.save( data, identifier.getURI() );
+                objectID = identifier;
+            }
+        }
+        catch( StorageProviderException ex )
         {
-            this.repositoryStorageMechanism.save( data, identifier.getURI() );
-            objectID = identifier;
+            String error = String.format( "Could not store object: %s", ex.getMessage() );
+            throw new RepositoryServiceException( error );
         }
         return objectID;
     }
@@ -119,11 +128,19 @@ public class RepositoryServer
      * DigitalObject.
      * @param identifier an ObjectIdentifier identifying the data with this server
      * @return the requested DigitalObject or a IOException if the ObjectIdentifier designates nothing
-     * @throws IOException if the DigitalObject can't be retrieved for a given reason
+     * @throws RepositoryServiceException if the DigitalObject can't be retrieved for a given reason
      */
-    protected final DigitalObject getObject( final ObjectIdentifier identifier ) throws IOException
+    protected final DigitalObject getObject( final ObjectIdentifier identifier ) throws RepositoryServiceException
     {
-        byte[] object = this.repositoryStorageMechanism.get( identifier.getURI() );
+        byte[] object = null;
+        try{
+            object = this.repositoryStorageMechanism.get( identifier.getURI() );
+        }
+        catch( StorageProviderException ex )
+        {
+            String error = String.format( "Could not retrieve object identified by %s: %s", identifier.getURI(), ex.getMessage() );
+            throw new RepositoryServiceException( error );
+        }
         return new InternalDigitalObject( object );
     }
 
@@ -137,10 +154,17 @@ public class RepositoryServer
      * @param logmessage an optional logmessage describing the action. If null or
      * the empty string is passed, the implementation can decide what to write
      * in the log system, if any.
-     * @throws IOException if the DigitalObject couldn't be deleted
+     * @throws RepositoryServiceException if the DigitalObject couldn't be deleted
      */
-    protected final void deleteObject( final ObjectIdentifier identifier, final String logmessage ) throws IOException
+    protected final void deleteObject( final ObjectIdentifier identifier, final String logmessage ) throws RepositoryServiceException
     {
-        this.repositoryStorageMechanism.delete( identifier.getURI() );
+        try{
+            this.repositoryStorageMechanism.delete( identifier.getURI() );
+        }
+        catch( StorageProviderException ex )
+        {
+            String error = String.format( "Could not delete object identified by %s: %s", identifier.getURI(), ex.getMessage() );
+            throw new RepositoryServiceException( error );
+        }
     }
 }

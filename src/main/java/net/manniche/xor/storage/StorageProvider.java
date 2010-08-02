@@ -21,8 +21,9 @@ package net.manniche.xor.storage;
 
 import java.io.IOException;
 import java.net.URI;
-import net.manniche.xor.types.ObjectRepositoryService;
 
+import net.manniche.xor.types.ObjectRepositoryService;
+import net.manniche.xor.exceptions.StorageProviderException;
 
 /**
  *Interface describing the operations that must be implemented by the underlying
@@ -47,7 +48,7 @@ public interface StorageProvider extends ObjectRepositoryService{
      * @return an URI uniquely identifying the object for retrieval
      * @throws IOException if the object cannot be stored
      */
-    public abstract URI save( byte[] object ) throws IOException;
+    public abstract URI save( byte[] object ) throws StorageProviderException;
 
     /**
      * Stores an object encoded in a byte array, using the {@code uri}
@@ -64,7 +65,7 @@ public interface StorageProvider extends ObjectRepositoryService{
      * @param uri the URI that the object should be identified with
      * @throws IOException if the object cannot be stored
      */
-    public abstract void save( byte[] object, URI url ) throws IOException;
+    public abstract void save( byte[] object, URI url ) throws StorageProviderException;
 
 
     /**
@@ -75,7 +76,7 @@ public interface StorageProvider extends ObjectRepositoryService{
      * @return the object as a byte[]
      * @throws IOException if the object cannot be retrieved or if the identifier does not identifies an object
      */
-    public abstract byte[] get( URI identifier) throws IOException;
+    public abstract byte[] get( URI identifier) throws StorageProviderException;
 
 
     /**
@@ -87,7 +88,7 @@ public interface StorageProvider extends ObjectRepositoryService{
      * @param identifier uniquely identifying the object to be deleted
      * @throws IOException if the object does not exist, or cannot be deleted
      */
-    public abstract void delete( URI identifier) throws IOException;
+    public abstract void delete( URI identifier) throws StorageProviderException;
 
     
     /**
