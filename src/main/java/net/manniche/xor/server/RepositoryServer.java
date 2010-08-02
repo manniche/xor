@@ -44,15 +44,18 @@ import net.manniche.xor.types.InternalDigitalObject;
  *
  * @author Steen Manniche
  */
-public class RepositoryServer{
+public class RepositoryServer
+{
 
     private final StorageProvider repositoryStorageMechanism;
 
     /**
      * The constructor of the core server should only be used by
      * implementing classes.
+     *
+     * @param storage The {@link StorageProvider} implementation to use
      */
-    protected RepositoryServer( StorageProvider storage )
+    protected RepositoryServer( final StorageProvider storage )
     {
         this.repositoryStorageMechanism = storage;
     }
@@ -71,9 +74,9 @@ public class RepositoryServer{
      * data for later identification
      * @throws IOException if the object cannot be stored for a given reason
      */
-    protected ObjectIdentifier storeObject( byte[] data, String message ) throws IOException
+    protected final ObjectIdentifier storeObject( final byte[] data, final String message ) throws IOException
     {
-        return this.storeObject( data, null, message);
+        return this.storeObject( data, null, message );
     }
 
 
@@ -92,18 +95,17 @@ public class RepositoryServer{
      * the client
      * @throws IOException if the object cannot be stored for a given reason
      */
-    protected ObjectIdentifier storeObject( byte[] data, ObjectIdentifier identifier, String message ) throws IOException
+    protected final ObjectIdentifier storeObject( final byte[] data, final ObjectIdentifier identifier, final String message ) throws IOException
     {
         URI uid = null;
 
         ObjectIdentifier objectID = null;
 
-        if( null == identifier )
+        if ( null == identifier )
         {
             uid = this.repositoryStorageMechanism.save( data );
             objectID = new DefaultIdentifier( uid );
-        }
-        else
+        } else
         {
             this.repositoryStorageMechanism.save( data, identifier.getURI() );
             objectID = identifier;
@@ -119,7 +121,7 @@ public class RepositoryServer{
      * @return the requested DigitalObject or a IOException if the ObjectIdentifier designates nothing
      * @throws IOException if the DigitalObject can't be retrieved for a given reason
      */
-    protected DigitalObject getObject( ObjectIdentifier identifier ) throws IOException
+    protected final DigitalObject getObject( final ObjectIdentifier identifier ) throws IOException
     {
         byte[] object = this.repositoryStorageMechanism.get( identifier.getURI() );
         return new InternalDigitalObject( object );
@@ -137,7 +139,7 @@ public class RepositoryServer{
      * in the log system, if any.
      * @throws IOException if the DigitalObject couldn't be deleted
      */
-    protected void deleteObject( ObjectIdentifier identifier, String logmessage ) throws IOException
+    protected final void deleteObject( final ObjectIdentifier identifier, final String logmessage ) throws IOException
     {
         this.repositoryStorageMechanism.delete( identifier.getURI() );
     }
