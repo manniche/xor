@@ -24,6 +24,8 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import net.manniche.xor.types.DefaultDigitalObject;
 import net.manniche.xor.server.rmi.RMIObjectManagement;
 import net.manniche.xor.server.rmi.RMIRepositoryServer;
@@ -69,15 +71,32 @@ public class RMIObjectRepositoryClient implements RMIObjectManagementClient
     public static void main( String[] args ) throws RemoteException, RepositoryServiceException
     {
 
-        RMIObjectRepositoryClient client = new RMIObjectRepositoryClient();
+        RMIObjectRepositoryClient client1 = new RMIObjectRepositoryClient();
+        RMIObjectRepositoryClient client2 = new RMIObjectRepositoryClient();
+        RMIObjectRepositoryClient client3 = new RMIObjectRepositoryClient();
 
-        client.connect( "localhost", 8181 );
+        client1.connect( "localhost", 8181 );
+        client2.connect( "localhost", 8181 );
+        client3.connect( "localhost", 8181 );
 
+        RMIWorker t1 = new RMIWorker( client1 );
+        RMIWorker t2 = new RMIWorker( client2 );
+        RMIWorker t3 = new RMIWorker( client3 );
+
+        t1.run();
+        t2.run();
+        t3.run();
+        
+        System.exit( 0 );
+    }
+
+    private static double runBench( int number_of_objects, RMIObjectRepositoryClient client ) throws RemoteException, RepositoryServiceException
+    {
         long timer = System.currentTimeMillis();
-        int number_of_objects = 1000;
+
         for( int i = 0; i < number_of_objects; i++ )
         {
-            ObjectIdentifier id = client.saveObject( "æøåßüöï".getBytes() );
+            ObjectIdentifier id = client.saveObject( "<?xml version=\"1.0\"?><dc xmlns:dc=\"http://purl.org/dc/elements/1.1\"><dc:title>æøåßüöï</dc:title></dc>".getBytes() );
             client.getObject( id );
             client.deleteObject( id );
         }
@@ -87,9 +106,7 @@ public class RMIObjectRepositoryClient implements RMIObjectManagementClient
 
         double stat = number_of_objects/time;
 
-        System.out.println( String.format( "Stored, retrived and deleted %s objects in %s seconds (%.4f objects/second)", number_of_objects, time, stat ) );
-
-        System.exit( 0 );
+        return stat;
     }
 
     public DigitalObject getObject( ObjectIdentifier id ) throws RemoteException, RepositoryServiceException
@@ -124,4 +141,35 @@ public class RMIObjectRepositoryClient implements RMIObjectManagementClient
     {
         return server.registeredContentTypes();
     }
+
+    private static class RMIWorker implements Runnable
+    {
+        private final RMIObjectRepositoryClient client;
+        private final int number_of_objects = 10;
+
+        public RMIWorker( RMIObjectRepositoryClient client )
+        {
+            this.client = client;
+        }
+
+        @Override
+        public void run()
+        {
+            try
+            {
+                double stat = runBench( number_of_objects, client );
+                System.out.println( String.format( "Stored, retrived and deleted %s objects: %.4f objects/second", number_of_objects, stat ) );
+            }
+            catch( RemoteException ex )
+            {
+                Logger.getLogger( RMIObjectRepositoryClient.class.getName() ).log( Level.SEVERE, null, ex );
+            }
+            catch( RepositoryServiceException ex )
+            {
+                Logger.getLogger( RMIObjectRepositoryClient.class.getName() ).log( Level.SEVERE, null, ex );
+            }
+        }
+
+    }
+
 }
