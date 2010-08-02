@@ -49,7 +49,6 @@ import net.manniche.xor.storage.StorageProvider;
 public class RMIServer {
 
     private final static Logger Log= Logger.getLogger( RMIServer.class.getName() );
-//    private static RMIObjectManagement manager;
     private static RMIRepositoryServer manager;
     private static Registry registry;
 
@@ -73,6 +72,7 @@ public class RMIServer {
 
             StorageProvider store = new FileStorage();
             manager = new RMIRepositoryServer( store, storagePath, metadataStoragePath );
+
             SearchProvider search = getSearchProvider();
             manager.addObserver( (RepositoryObserver) search);
 

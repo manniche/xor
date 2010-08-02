@@ -38,6 +38,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import net.manniche.xor.exceptions.RepositoryServiceException;
+import net.manniche.xor.server.RepositoryObservable;
 import net.manniche.xor.types.ObjectRepositoryContentType;
 import net.manniche.xor.types.RepositoryAction;
 
@@ -67,7 +68,8 @@ import net.manniche.xor.types.RepositoryAction;
  * @author Steen Manniche
  */
 @Path( "/xor" )
-public final class RESTRepositoryRelayer extends RepositoryServer implements RESTObjectManagement{
+public final class RESTRepositoryRelayer extends RepositoryServer implements RESTObjectManagement, RepositoryObservable
+{
 
     private final StorageProvider storage;
     private final String storagePath;
@@ -167,21 +169,21 @@ public final class RESTRepositoryRelayer extends RepositoryServer implements RES
     }
 
     @Override
-    protected void addObserver( RepositoryObserver observer )
+    public void addObserver( RepositoryObserver observer )
     {
         throw new UnsupportedOperationException( "Not supported yet." );
     }
 
 
     @Override
-    protected void removeObserver( RepositoryObserver observer )
+    public void removeObserver( RepositoryObserver observer )
     {
         throw new UnsupportedOperationException( "Not supported yet." );
     }
 
 
     @Override
-    protected void notifyObservers( ObjectIdentifier identifier, DigitalObject object, RepositoryAction action, ObjectRepositoryContentType contentType )
+    public void notifyObservers( ObjectIdentifier identifier, DigitalObject object, RepositoryAction action, ObjectRepositoryContentType contentType )
     {
         throw new UnsupportedOperationException( "Not supported yet." );
     }

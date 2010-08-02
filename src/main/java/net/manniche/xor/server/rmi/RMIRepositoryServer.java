@@ -33,6 +33,7 @@ import net.manniche.xor.storage.StorageProvider;
 import net.manniche.xor.types.DigitalObject;
 import net.manniche.xor.server.RepositoryServer;
 import net.manniche.xor.exceptions.RepositoryServiceException;
+import net.manniche.xor.server.RepositoryObservable;
 import net.manniche.xor.server.RepositoryObserver;
 import net.manniche.xor.types.BasicContentType;
 import net.manniche.xor.types.DefaultIdentifier;
@@ -52,7 +53,7 @@ import net.manniche.xor.utils.RepositoryUtilities;
  * 
  * @author Steen Manniche
  */
-public final class RMIRepositoryServer extends RepositoryServer implements RMIObjectManagement
+public final class RMIRepositoryServer extends RepositoryServer implements RMIObjectManagement, RepositoryObservable
 {
     static final long serialVersionUID = -8975965744773865183L;
 

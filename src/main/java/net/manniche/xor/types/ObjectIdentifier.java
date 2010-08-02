@@ -23,7 +23,8 @@ import java.net.URI;
 
 
 /**
- * Uniquely identifies objects in the object repository and in CargoContainers
+ * Uniquely identifies objects in the object repository for a given server
+ * implementation
  */
 public interface ObjectIdentifier {
 

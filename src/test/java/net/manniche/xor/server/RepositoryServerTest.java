@@ -14,8 +14,6 @@ import java.net.URI;
 import net.manniche.xor.types.DefaultIdentifier;
 import net.manniche.xor.types.DigitalObject;
 import net.manniche.xor.types.ObjectIdentifier;
-import net.manniche.xor.types.ObjectRepositoryContentType;
-import net.manniche.xor.types.RepositoryAction;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -125,27 +123,6 @@ public class RepositoryServerTest {
         {
             super( storage );
         }
-
-        @Override
-        protected void addObserver( RepositoryObserver observer )
-        {
-            throw new UnsupportedOperationException( "Not supported yet." );
-        }
-
-
-        @Override
-        protected void removeObserver( RepositoryObserver observer )
-        {
-            throw new UnsupportedOperationException( "Not supported yet." );
-        }
-
-
-        @Override
-        protected void notifyObservers( ObjectIdentifier identifier, DigitalObject object, RepositoryAction action, ObjectRepositoryContentType contentType )
-        {
-            throw new UnsupportedOperationException( "Not supported yet." );
-        }
-
     }
 
     public static class ThrowingStorageProviderStub implements StorageProvider

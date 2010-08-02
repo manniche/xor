@@ -23,6 +23,7 @@ import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
 import javax.jms.QueueConnectionFactory;
 import javax.naming.InitialContext;
+import net.manniche.xor.server.RepositoryObservable;
 
 import net.manniche.xor.server.RepositoryObserver;
 import net.manniche.xor.server.RepositoryServer;
@@ -35,7 +36,7 @@ import net.manniche.xor.types.RepositoryAction;
  *
  * @author Steen Manniche
  */
-public class JMSService extends RepositoryServer {
+public class JMSService extends RepositoryServer implements RepositoryObservable {
 
     private final String storagePath;
     private final String metadataStoragePath;

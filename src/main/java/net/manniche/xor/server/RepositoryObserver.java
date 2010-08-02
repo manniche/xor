@@ -35,5 +35,5 @@ import net.manniche.xor.types.RepositoryAction;
  * @author Steen Manniche
  */
 public interface RepositoryObserver {
-    public void notifyMe(  ObjectIdentifier identifier, DigitalObject object, RepositoryAction action, ObjectRepositoryContentType contentType );
+    public void notifyMe( ObjectIdentifier identifier, DigitalObject object, RepositoryAction action, ObjectRepositoryContentType contentType );
 }
