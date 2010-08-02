@@ -70,7 +70,7 @@ public class RMIServer {
         {
             Log.log( Level.INFO, "trying to export server" );
 
-            StorageProvider store = new FileStorage();
+            StorageProvider store = new FileStorage( storagePath );
             manager = new RMIRepositoryServer( store, storagePath, metadataStoragePath );
 
             SearchProvider search = getSearchProvider();

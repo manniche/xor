@@ -27,8 +27,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URI;
-import java.util.HashSet;
-import java.util.Set;
 import net.manniche.xor.utils.RepositoryUtilities;
 
 
@@ -41,81 +39,52 @@ public class FileStorage implements StorageProvider
 
     private static final Logger Log = Logger.getLogger( FileStorage.class.getName() );
 
-    private final Set<String> storagePaths;
+    private final String storagePath;
 
-    public FileStorage()
+    public FileStorage( String storagePath )
     {
-        this.storagePaths = new HashSet<String>( 2 );
-    }
-
-
-    //TODO: this should be wrapped in a private static class instead. Or
-    // something that prohibits the rest of the members in observing this.storagePath
-    private synchronized String setCacheOrCheckStoragePath( String storagePath )
-    {
-        if( !this.storagePaths.contains( storagePath ) )
-        {
-            // ensure that the folder exists:
-            File storage_dir = new File( storagePath );
-
-            if( !storage_dir.exists() )
-            {
-                Log.info( String.format( "%s does not exist, creating it", storagePath ) );
-                boolean could_create_dirs = storage_dir.mkdirs();
-                if( !could_create_dirs )
-                {
-                    String error = String.format( "Could not create dir: %s, Please check permissions and disk space", storagePath );
-                    Log.severe( error );
-                    throw new IllegalStateException( error );
-                }
-            }
-            this.storagePaths.add( storagePath );
-            Log.info( String.format( "Storing files at %s", storagePath ) );
-        }
-        return storagePath;
+        this.storagePath = storagePath;
     }
 
 
     @Override
-    public URI save( byte[] object, String storagePath ) throws IOException
+    public URI save( byte[] object ) throws IOException
     {
-        String storagePath_cached = this.setCacheOrCheckStoragePath( storagePath );
-        return this.saveObject( object, null, storagePath_cached );
+        return this.saveObject( object, null );
     }
 
 
     @Override
-    public void save(  byte[] object, URI uri, String storagePath) throws IOException
+    public void save(  byte[] object, URI uri ) throws IOException
     {
-        String storagePath_cached = this.setCacheOrCheckStoragePath( storagePath );
-        URI returnedURL = this.saveObject( object, uri, storagePath_cached );
+        URI returnedURL = this.saveObject( object, uri );
         assert returnedURL.equals( uri );
     }
 
-    private URI saveObject( byte[] object, URI url, final String storagePath ) throws IOException
+    private URI saveObject( byte[] object, URI uri ) throws IOException
     {
         final String hash = Integer.toString( object.hashCode() );
 
 
         URI id = null;
 
-        if( null == url )
+        if( null == uri )
         {
             try
             {
-                id = RepositoryUtilities.generateURI( "file", storagePath, hash );
+                id = RepositoryUtilities.generateURI( "file", this.storagePath, hash );
                 Log.info( String.format( "URI for object was null, generated %s", id ) );
             }
             catch( URISyntaxException ex )
             {
-                String error = String.format( "Could not construct storage location from %s: %s", url, ex.getMessage() );
+                String error = String.format( "Could not construct storage location from %s: %s", uri, ex.getMessage() );
                 Log.log( Level.SEVERE, error, ex );
                 throw new IOException( error, ex );
             }
         }
         else
         {
-            id = url;
+            id = uri;
             Log.info( String.format( "Using path '%s' for object", id.getPath() ) );
         }
 
@@ -137,7 +106,7 @@ public class FileStorage implements StorageProvider
              */
             String warn = String.format( "The file %s was not written to disk, and I have no further information on it's whereabouts", objectFile.getAbsolutePath() );
             Log.warning( warn );
-            id = url;
+            id = uri;
         }
 
         return id;

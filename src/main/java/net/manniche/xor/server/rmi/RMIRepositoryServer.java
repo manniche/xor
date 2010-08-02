@@ -209,7 +209,7 @@ public final class RMIRepositoryServer extends RepositoryServer implements RMIOb
 
         Log.info( "Storing object" );
         ObjectIdentifier oIdentifier = null;
-        oIdentifier = super.storeObject( data.getBytes(), this.storagePath, identifier , logmessage);
+        oIdentifier = super.storeObject( data.getBytes(), identifier , logmessage);
 
         Log.info( String.format( "Stored object with uri %s", oIdentifier.getURI() ) );
 
@@ -230,7 +230,7 @@ public final class RMIRepositoryServer extends RepositoryServer implements RMIOb
             String objectName = identifier.getName();
             URI contentURI = RepositoryUtilities.generateURI( "file", this.metadataStoragePath, objectName );
             ObjectIdentifier contentIdentifier = new DefaultIdentifier( contentURI );
-            super.storeObject( contentType.toString().getBytes(), this.metadataStoragePath, contentIdentifier, "Storing content type" );
+            super.storeObject( contentType.toString().getBytes(), contentIdentifier, "Storing content type" );
             this.notifyObservers( identifier, data, RepositoryAction.ADD, contentType );
         }
         catch( IOException ex )

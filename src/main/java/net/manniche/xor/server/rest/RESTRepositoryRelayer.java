@@ -19,6 +19,8 @@
 package net.manniche.xor.server.rest;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -39,8 +41,10 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import net.manniche.xor.exceptions.RepositoryServiceException;
 import net.manniche.xor.server.RepositoryObservable;
+import net.manniche.xor.types.DefaultIdentifier;
 import net.manniche.xor.types.ObjectRepositoryContentType;
 import net.manniche.xor.types.RepositoryAction;
+import net.manniche.xor.utils.RepositoryUtilities;
 
 /**
  * REST implementation of the ObjectRepository.
@@ -119,7 +123,7 @@ public final class RESTRepositoryRelayer extends RepositoryServer implements RES
         ObjectIdentifier objectid = null;
         try
         {
-            objectid = super.storeObject( object.getBytes(), this.storagePath, logmessage );
+            objectid = super.storeObject( object.getBytes(), logmessage );
         }
         catch( IOException ex )
         {
@@ -138,7 +142,17 @@ public final class RESTRepositoryRelayer extends RepositoryServer implements RES
         //store the contenttype
         try
         {
-            super.storeObject( contentType.toString().getBytes(), this.metadataStoragePath, null, "Storing content type" );
+            URI contentURI = RepositoryUtilities.generateURI( "file", this.metadataStoragePath, objectid.getName() );
+            ObjectIdentifier contentIdentifier = new DefaultIdentifier( contentURI );
+
+            super.storeObject( contentType.toString().getBytes(), contentIdentifier, "Storing content type" );
+        }
+        catch( URISyntaxException ex )
+        {
+            String error = String.format( "Failed to store object content type: %s", ex.getMessage() );
+            Logger.getLogger( RESTRepositoryRelayer.class.getName() ).log( Level.WARNING, error, ex );
+            /** TODO: review exception type and response */
+            throw new WebApplicationException( ex, Response.Status.INTERNAL_SERVER_ERROR );
         }
         catch( IOException ex )
         {

@@ -64,7 +64,6 @@ public class RepositoryServer{
      * {@link StorageProvider storage} implementation.
      *
      * @param data the byte array containing data to be stored
-     * @param storagePath path to which data will be stored
      * @param message an optional logmessage describing the action. If null or
      * the empty string is passed, the implementation can decide what to write
      * in the log system, if any.
@@ -72,9 +71,9 @@ public class RepositoryServer{
      * data for later identification
      * @throws IOException if the object cannot be stored for a given reason
      */
-    protected ObjectIdentifier storeObject( byte[] data, String storagePath, String message ) throws IOException
+    protected ObjectIdentifier storeObject( byte[] data, String message ) throws IOException
     {
-        return this.storeObject( data, storagePath, null, message);
+        return this.storeObject( data, null, message);
     }
 
 
@@ -85,7 +84,6 @@ public class RepositoryServer{
      * as the client provided, when the data is stored, an AssertException should be thrown.
      *
      * @param data the byte array containing data to be stored
-     * @param storagePath path to which data will be stored
      * @param identifier the ObjectIdentifier that the object should be stored with
      * @param message an optional logmessage describing the action. If null or
      * the empty string is passed, the implementation can decide what to write
@@ -94,7 +92,7 @@ public class RepositoryServer{
      * the client
      * @throws IOException if the object cannot be stored for a given reason
      */
-    protected ObjectIdentifier storeObject( byte[] data, String storagePath, ObjectIdentifier identifier, String message ) throws IOException
+    protected ObjectIdentifier storeObject( byte[] data, ObjectIdentifier identifier, String message ) throws IOException
     {
         URI uid = null;
 
@@ -102,12 +100,12 @@ public class RepositoryServer{
 
         if( null == identifier )
         {
-            uid = this.repositoryStorageMechanism.save( data, storagePath );
+            uid = this.repositoryStorageMechanism.save( data );
             objectID = new DefaultIdentifier( uid );
         }
         else
         {
-            this.repositoryStorageMechanism.save( data, identifier.getURI(), storagePath );
+            this.repositoryStorageMechanism.save( data, identifier.getURI() );
             objectID = identifier;
         }
         return objectID;

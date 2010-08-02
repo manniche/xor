@@ -66,10 +66,10 @@ public class RepositoryServerTest {
     {
 
         new NonStrictExpectations(){{
-            mockStorage.save( (byte[]) any, anyString );returns( testURI );
+            mockStorage.save( (byte[]) any );returns( testURI );
         }};
 
-        ObjectIdentifier result = instance.storeObject( data, ".", logMessage );
+        ObjectIdentifier result = instance.storeObject( data, logMessage );
         assertEquals( predefinedId.getURI(), result.getURI() );
     }
 
@@ -77,7 +77,7 @@ public class RepositoryServerTest {
     @Test
     public void storeObjectReturnsPredefinedURI() throws Exception
     {
-        ObjectIdentifier result = instance.storeObject( data, ".", predefinedId, logMessage);
+        ObjectIdentifier result = instance.storeObject( data, predefinedId, logMessage);
         assertEquals( predefinedId.getURI(), result.getURI() );
     }
 
@@ -128,12 +128,12 @@ public class RepositoryServerTest {
     public static class ThrowingStorageProviderStub implements StorageProvider
     {
         @Override
-        public URI save( byte[] object, String storagePath ) throws IOException
+        public URI save( byte[] object ) throws IOException
         { throw new IOException(); }
 
 
         @Override
-        public void save( byte[] object, URI url, String storagePath ) throws IOException
+        public void save( byte[] object, URI url ) throws IOException
         { throw new IOException(); }
 
 

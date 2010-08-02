@@ -44,11 +44,10 @@ public interface StorageProvider extends ObjectRepositoryService{
      * encoding) of the object given.
      * 
      * @param object the object encoded as a byte array
-     * @param storagePath the path to store this object at
      * @return an URI uniquely identifying the object for retrieval
      * @throws IOException if the object cannot be stored
      */
-    public abstract URI save( byte[] object, String storagePath ) throws IOException;
+    public abstract URI save( byte[] object ) throws IOException;
 
     /**
      * Stores an object encoded in a byte array, using the {@code uri}
@@ -65,7 +64,7 @@ public interface StorageProvider extends ObjectRepositoryService{
      * @param uri the URI that the object should be identified with
      * @throws IOException if the object cannot be stored
      */
-    public abstract void save( byte[] object, URI url, String storagePath) throws IOException;
+    public abstract void save( byte[] object, URI url ) throws IOException;
 
 
     /**
