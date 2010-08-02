@@ -20,7 +20,6 @@ package net.manniche.xor.server;
 
 import java.lang.reflect.InvocationTargetException;
 import net.manniche.xor.types.ObjectRepositoryService;
-import net.manniche.xor.types.ObjectRepositoryServiceType;
 
 
 /**
@@ -30,17 +29,26 @@ import net.manniche.xor.types.ObjectRepositoryServiceType;
  *
  * @author Steen Manniche
  */
-public final class ServiceLocator {
+public final class ServiceLocator
+{
 
+    private ServiceLocator()
+    {
+    }
     /**
      * Given the type definition of an Object Repository Service, this method
      * will return an implementation of the Object Repository Service.
-     * @param service the class type of the service (Obtained through the {@link ObjectRepositoryServiceType#getClassofService()})
+     * @param serviceClass the class type of the service (Obtained through the {@link ObjectRepositoryServiceType#getClassofService()})
      * @return the implementation of the service
+     * @throws NoSuchMethodException if no constructor could be found on the service class
+     * @throws InstantiationException if the service class cannot be instantiated
+     * @throws IllegalAccessException if the service class constructor is not accessible
+     * @throws InvocationTargetException if the service class cannot be invoked
+     *
      * @see ObjectRepositoryService
      * @see ObjectRepositoryServiceType
      */
-    public static ObjectRepositoryService getService( Class< ? extends ObjectRepositoryService> serviceClass ) throws NoSuchMethodException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException
+    public static ObjectRepositoryService getService( final Class< ? extends ObjectRepositoryService > serviceClass ) throws NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException
     {
         return serviceClass.getConstructor().newInstance();
     }
