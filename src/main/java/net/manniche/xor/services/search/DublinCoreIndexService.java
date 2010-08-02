@@ -24,9 +24,17 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.io.ByteArrayInputStream;
+import java.util.ArrayList;
+import java.util.EnumMap;
+
 import net.manniche.xor.exceptions.RepositoryServiceException;
+import net.manniche.xor.metadata.DublinCore;
+import net.manniche.xor.metadata.DublinCore.DublinCoreElement;
 import net.manniche.xor.server.RepositoryObserver;
 import net.manniche.xor.types.BasicContentType;
 import net.manniche.xor.types.DigitalObject;
@@ -34,6 +42,13 @@ import net.manniche.xor.types.ObjectIdentifier;
 import net.manniche.xor.types.ObjectRepositoryContentType;
 import net.manniche.xor.types.RepositoryAction;
 
+import javax.xml.stream.XMLEventReader;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamConstants;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.events.Characters;
+import javax.xml.stream.events.StartElement;
+import javax.xml.stream.events.XMLEvent;
 
 /**
  *
@@ -57,23 +72,32 @@ public final class DublinCoreIndexService implements RepositoryObserver, SearchP
                 final FileOutputStream fos;
                 try
                 {
+                    DublinCore dc = new DublinCore( identifier.getId(), parseDCXml( object ) );
                     fos = new FileOutputStream( index, true );
                     fos.write( identifier.getURI().toString().getBytes() );
                     fos.write( " : ".getBytes() );
-                    fos.write( object.getBytes() );
+                    for( String value : dc.getValueForElement( DublinCoreElement.TITLE ) )
+                    {
+                        fos.write( dc.getBytes() );
+                        //fos.write( value.getBytes() );
+                    }
                     fos.write( "\n".getBytes() );
                     fos.flush();
                     fos.close();
-                }
-                catch( RepositoryServiceException ex )
-                {
-                    Log.log( Level.WARNING, String.format( "Could not index object '%s': %s", identifier.getURI(), ex.getMessage() ) );
                 }
                 catch( FileNotFoundException ex )
                 {
                     Log.log( Level.WARNING, String.format( "Could not index object '%s': %s", identifier.getURI(), ex.getMessage() ) );
                 }
                 catch( IOException ex )
+                {
+                    Log.log( Level.WARNING, String.format( "Could not index object '%s': %s", identifier.getURI(), ex.getMessage() ) );
+                }
+                catch( XMLStreamException ex )
+                {
+                    Log.log( Level.WARNING, String.format( "Could not index object '%s': %s", identifier.getURI(), ex.getMessage() ) );
+                }
+                catch( RepositoryServiceException ex )
                 {
                     Log.log( Level.WARNING, String.format( "Could not index object '%s': %s", identifier.getURI(), ex.getMessage() ) );
                 }
@@ -86,6 +110,74 @@ public final class DublinCoreIndexService implements RepositoryObserver, SearchP
             {
             }
         }
+    }
+
+    private Map< DublinCoreElement, List< String > > parseDCXml( DigitalObject object ) throws XMLStreamException, RepositoryServiceException
+    {
+        Map< DublinCoreElement, List< String > > dcvalues = new EnumMap< DublinCoreElement, List< String > >( DublinCoreElement.class );
+        
+        XMLInputFactory infac = XMLInputFactory.newInstance();
+        XMLEventReader eventReader = infac.createXMLEventReader( new ByteArrayInputStream( object.getBytes() ) );
+
+        StartElement element;
+        Characters chars;
+
+        DublinCoreElement elementName = null;
+        XMLEvent event = null;
+        while ( eventReader.hasNext())
+        {
+            try
+            {
+                event = (XMLEvent) eventReader.next();
+            }
+            catch( NoSuchElementException ex )
+            {
+                String error = String.format( "Could not parse incoming data, previously correctly parsed content from stream was: %s", event.toString() );
+                throw new IllegalStateException( error, ex );
+            }
+            
+            switch ( event.getEventType() )
+            {
+                case XMLStreamConstants.START_ELEMENT:
+                    element = event.asStartElement();
+                    // TODO: hardcoded prefix value, fix with value from NamespaceContext enum
+                    if ( element.getName().getPrefix().equals( "dc" ) )
+                    {
+                        if( DublinCoreElement.hasLocalName( element.getName().getLocalPart() ) )
+                        {
+                            elementName = DublinCoreElement.valueOf( element.getName().getLocalPart().toUpperCase() );
+                            Logger.getLogger( DublinCoreIndexService.class.getName() ).log( Level.INFO, element.getName().getPrefix() + elementName );
+                        }
+                    }
+                    break;
+                case XMLStreamConstants.CHARACTERS:
+                    chars = event.asCharacters();
+                    if( ! chars.getData().trim().isEmpty() )
+                    {
+                        List<String> dcelem = null;
+                        if( null != elementName )
+                        {
+                            if( dcvalues.containsKey( elementName ) )
+                            {
+                                dcelem = dcvalues.get( elementName );
+                            }
+                            else
+                            {
+                                dcelem = new ArrayList<String>();
+                            }
+
+                            dcelem.add( chars.getData() );
+                            dcvalues.put( elementName, dcelem );
+                            elementName = null;
+                        }
+                    }
+                    break;
+            }
+        }
+
+        eventReader.close();
+
+        return dcvalues;
     }
 
     @Override

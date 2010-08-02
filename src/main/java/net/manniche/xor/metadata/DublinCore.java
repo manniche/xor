@@ -58,21 +58,21 @@ public class DublinCore implements DigitalObject
     public enum DublinCoreElement
     {
 
-        ELEMENT_TITLE( "title" ),
-        ELEMENT_CREATOR( "creator" ),
-        ELEMENT_SUBJECT( "subject" ),
-        ELEMENT_DESCRIPTION( "description" ),
-        ELEMENT_PUBLISHER( "publisher" ),
-        ELEMENT_CONTRIBUTOR( "contributor" ),
-        ELEMENT_DATE( "date" ),
-        ELEMENT_TYPE( "type" ),
-        ELEMENT_FORMAT( "format" ),
-        ELEMENT_IDENTIFIER( "identifier" ),
-        ELEMENT_SOURCE( "source" ),
-        ELEMENT_LANGUAGE( "language" ),
-        ELEMENT_RELATION( "relation" ),
-        ELEMENT_COVERAGE( "coverage" ),
-        ELEMENT_RIGHTS( "rights" );
+        TITLE( "title" ),
+        CREATOR( "creator" ),
+        SUBJECT( "subject" ),
+        DESCRIPTION( "description" ),
+        PUBLISHER( "publisher" ),
+        CONTRIBUTOR( "contributor" ),
+        DATE( "date" ),
+        TYPE( "type" ),
+        FORMAT( "format" ),
+        IDENTIFIER( "identifier" ),
+        SOURCE( "source" ),
+        LANGUAGE( "language" ),
+        RELATION( "relation" ),
+        COVERAGE( "coverage" ),
+        RIGHTS( "rights" );
         private String localname;
 
         DublinCoreElement( String localName )
@@ -86,7 +86,18 @@ public class DublinCore implements DigitalObject
             return this.localname;
         }
 
-
+        
+        public static boolean hasLocalName( String name )
+        {
+            for( DublinCoreElement dcelem: DublinCoreElement.values() )
+            {
+                if( dcelem.localName().equals( name ) )
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
     }
 
     enum DublinCoreNamespace implements NamespaceContext
@@ -170,7 +181,7 @@ public class DublinCore implements DigitalObject
         List<String> valuelist = new ArrayList<String>();
         dcvalues = new EnumMap<DublinCoreElement, List<String>>( DublinCoreElement.class );
         valuelist.add( identifier );
-        dcvalues.put( DublinCoreElement.ELEMENT_IDENTIFIER, valuelist );
+        dcvalues.put( DublinCoreElement.IDENTIFIER, valuelist );
     }
 
 
@@ -183,9 +194,9 @@ public class DublinCore implements DigitalObject
      */
     public DublinCore( final String identifier, final Map<DublinCoreElement, List<String>> inputValues )
     {
-        if( inputValues.containsKey( DublinCoreElement.ELEMENT_DATE ) )
+        if( inputValues.containsKey( DublinCoreElement.DATE ) )
         {
-            List<String> dates = inputValues.get( DublinCoreElement.ELEMENT_DATE );
+            List<String> dates = inputValues.get( DublinCoreElement.DATE );
             List<String> validatedDates = new ArrayList<String>( dates.size() );
             for( String date: dates )
             {
@@ -200,107 +211,112 @@ public class DublinCore implements DigitalObject
                     throw new IllegalArgumentException( String.format( "The string %s could not be parsed as a Date: %s", date, ex.getMessage() ) );
                 }
             }
-            inputValues.remove( DublinCoreElement.ELEMENT_DATE );
-            inputValues.put( DublinCoreElement.ELEMENT_DATE, validatedDates );
+            inputValues.remove( DublinCoreElement.DATE );
+            inputValues.put( DublinCoreElement.DATE, validatedDates );
         }
         dcvalues = new EnumMap<DublinCoreElement, List<String>>( inputValues );
         List<String> valuelist = new ArrayList<String>();
         valuelist.add( identifier);
 
-        dcvalues.put( DublinCoreElement.ELEMENT_IDENTIFIER, valuelist );
+        dcvalues.put( DublinCoreElement.IDENTIFIER, valuelist );
     }
 
 
     public void putContributor( String contributor )
     {
-        putValueForElement( DublinCoreElement.ELEMENT_CONTRIBUTOR, contributor);
+        putValueForElement( DublinCoreElement.CONTRIBUTOR, contributor);
     }
 
 
     public void putCoverage( String coverage )
     {
-        putValueForElement( DublinCoreElement.ELEMENT_COVERAGE, coverage);
+        putValueForElement( DublinCoreElement.COVERAGE, coverage);
     }
 
 
     public void putCreator( String creator )
     {
-        putValueForElement( DublinCoreElement.ELEMENT_CREATOR, creator);
+        putValueForElement( DublinCoreElement.CREATOR, creator);
     }
 
 
     public void putDate( Date date )
     {
         String stringDate = dateFormat.format( date );
-        putValueForElement( DublinCoreElement.ELEMENT_DATE, stringDate);
+        putValueForElement( DublinCoreElement.DATE, stringDate);
     }
 
 
     public void putDescription( String description )
     {
-        putValueForElement( DublinCoreElement.ELEMENT_DESCRIPTION, description);
+        putValueForElement( DublinCoreElement.DESCRIPTION, description);
     }
 
 
     public void putFormat( String format )
     {
-        putValueForElement( DublinCoreElement.ELEMENT_FORMAT, format);
+        putValueForElement( DublinCoreElement.FORMAT, format);
     }
 
 
     public void putIdentifier( String identifier )
     {
-        putValueForElement( DublinCoreElement.ELEMENT_IDENTIFIER, identifier);
+        putValueForElement( DublinCoreElement.IDENTIFIER, identifier);
     }
 
 
     public void putLanguage( String language )
     {
-        putValueForElement( DublinCoreElement.ELEMENT_LANGUAGE, language);
+        putValueForElement( DublinCoreElement.LANGUAGE, language);
     }
 
 
     public void putPublisher( String publisher )
     {
-        putValueForElement( DublinCoreElement.ELEMENT_PUBLISHER, publisher);
+        putValueForElement( DublinCoreElement.PUBLISHER, publisher);
     }
 
 
     public void putRelation( String relation )
     {
-        putValueForElement( DublinCoreElement.ELEMENT_RELATION, relation );
+        putValueForElement( DublinCoreElement.RELATION, relation );
     }
 
 
     public void putRights( String rights )
     {
-        putValueForElement( DublinCoreElement.ELEMENT_RIGHTS, rights);
+        putValueForElement( DublinCoreElement.RIGHTS, rights);
     }
 
 
     public void putSource( String source )
     {
-        putValueForElement( DublinCoreElement.ELEMENT_SOURCE, source);
+        putValueForElement( DublinCoreElement.SOURCE, source);
     }
 
 
     public void putSubject( String subject )
     {
-        putValueForElement( DublinCoreElement.ELEMENT_SUBJECT, subject);
+        putValueForElement( DublinCoreElement.SUBJECT, subject);
     }
 
 
     public void putTitle( String title )
     {
-        putValueForElement( DublinCoreElement.ELEMENT_TITLE, title);
+        putValueForElement( DublinCoreElement.TITLE, title);
     }
 
 
     public void putType( String type )
     {
-        putValueForElement( DublinCoreElement.ELEMENT_TYPE, type);
+        putValueForElement( DublinCoreElement.TYPE, type);
     }
 
+    public List< String > getValueForElement( DublinCoreElement elem )
+    {
+        List<String> vals = dcvalues.get( elem );
+        return vals != null ? vals : new ArrayList< String >( 0 );
+    }
 
     public int elementCount()
     {
