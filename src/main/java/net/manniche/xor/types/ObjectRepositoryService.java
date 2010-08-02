@@ -24,6 +24,6 @@ package net.manniche.xor.types;
  *
  * @author Steen Manniche
  */
-public interface ObjectRepositoryService {
-
+public interface ObjectRepositoryService
+{
 }
