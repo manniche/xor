@@ -36,34 +36,34 @@ import net.manniche.xor.utils.RepositoryUtilities;
  *
  * @author Steen Manniche
  */
-public class FileStorage implements StorageProvider
+public final class FileStorage implements StorageProvider
 {
 
     private static final Logger Log = Logger.getLogger( FileStorage.class.getName() );
 
     private final String storagePath;
 
-    public FileStorage( String storagePath )
+    public FileStorage( final String storagePath )
     {
         this.storagePath = storagePath;
     }
 
 
     @Override
-    public URI save( byte[] object ) throws StorageProviderException
+    public URI save( final byte[] object ) throws StorageProviderException
     {
         return this.saveObject( object, null );
     }
 
 
     @Override
-    public void save(  byte[] object, URI uri ) throws StorageProviderException
+    public void save(  final byte[] object, final URI uri ) throws StorageProviderException
     {
         URI returnedURL = this.saveObject( object, uri );
         assert returnedURL.equals( uri );
     }
 
-    private URI saveObject( byte[] object, URI uri ) throws StorageProviderException//, IOException
+    private URI saveObject( final byte[] object, final URI uri ) throws StorageProviderException//, IOException
     {
         final String hash = Integer.toString( object.hashCode() );
 
@@ -136,7 +136,7 @@ public class FileStorage implements StorageProvider
 
 
     @Override
-    public byte[] get( URI uri ) throws StorageProviderException
+    public byte[] get( final URI uri ) throws StorageProviderException
     {
         Log.info( String.format( "Getting object identified by %s", uri.getPath() ) );
         File objectFile = null;
@@ -164,9 +164,15 @@ public class FileStorage implements StorageProvider
         }
         catch( FileNotFoundException ex )
         {
+            String error = String.format( "Could not open file %s for reading: %s", uri, ex.getMessage() );
+            Log.severe( error );
+            throw new StorageProviderException( error, ex );
         }
         catch( IOException ex )
         {
+            String error = String.format( "Could not read file %s: %s", uri, ex.getMessage() );
+            Log.severe( error );
+            throw new StorageProviderException( error, ex );
         }
         finally
         {
@@ -193,7 +199,7 @@ public class FileStorage implements StorageProvider
     }
 
     @Override
-    public void delete( URI identifier) throws StorageProviderException
+    public void delete( final URI identifier) throws StorageProviderException
     {
         File deleteFile = null;
         deleteFile = new File( identifier );
@@ -208,7 +214,7 @@ public class FileStorage implements StorageProvider
     }
 
     // following the advice in Java Puzzlers
-    private void closeResource( Closeable c )
+    private void closeResource( final Closeable c )
     {
         try
         {

@@ -25,13 +25,15 @@ package net.manniche.xor.exceptions;
  * 
  * @author Steen Manniche
  */
-public class StorageProviderException extends Exception {
+public class StorageProviderException extends Exception
+{
     static final long serialVersionUID = -2848357502538662396L;
 
     /**
      * Creates a new instance of <code>StorageProviderException</code> without detail message.
      */
-    public StorageProviderException() {
+    public StorageProviderException()
+    {
     }
 
 
@@ -39,8 +41,9 @@ public class StorageProviderException extends Exception {
      * Constructs an instance of <code>StorageProviderException</code> with the specified detail message.
      * @param msg the detail message.
      */
-    public StorageProviderException(String msg) {
-        super(msg);
+    public StorageProviderException( final String msg )
+    {
+        super( msg );
     }
 
     /**
@@ -48,7 +51,7 @@ public class StorageProviderException extends Exception {
      * @param msg the detail message.
      * @param cause the {@link Throwable} that caused this exception.
      */
-    public StorageProviderException( String msg, Throwable cause )
+    public StorageProviderException( final String msg, final Throwable cause )
     {
         super( msg, cause );
     }

@@ -103,18 +103,16 @@ public class RepositoryServer
         ObjectIdentifier objectID = null;
         try
         {
-            if( null == identifier )
+            if ( null == identifier )
             {
                 uid = this.repositoryStorageMechanism.save( data );
                 objectID = new DefaultIdentifier( uid );
-            }
-            else
+            } else
             {
                 this.repositoryStorageMechanism.save( data, identifier.getURI() );
                 objectID = identifier;
             }
-        }
-        catch( StorageProviderException ex )
+        } catch ( StorageProviderException ex )
         {
             String error = String.format( "Could not store object: %s", ex.getMessage() );
             throw new RepositoryServiceException( error );
@@ -133,10 +131,10 @@ public class RepositoryServer
     protected final DigitalObject getObject( final ObjectIdentifier identifier ) throws RepositoryServiceException
     {
         byte[] object = null;
-        try{
+        try
+        {
             object = this.repositoryStorageMechanism.get( identifier.getURI() );
-        }
-        catch( StorageProviderException ex )
+        } catch ( StorageProviderException ex )
         {
             String error = String.format( "Could not retrieve object identified by %s: %s", identifier.getURI(), ex.getMessage() );
             throw new RepositoryServiceException( error );
@@ -158,10 +156,10 @@ public class RepositoryServer
      */
     protected final void deleteObject( final ObjectIdentifier identifier, final String logmessage ) throws RepositoryServiceException
     {
-        try{
+        try
+        {
             this.repositoryStorageMechanism.delete( identifier.getURI() );
-        }
-        catch( StorageProviderException ex )
+        } catch ( StorageProviderException ex )
         {
             String error = String.format( "Could not delete object identified by %s: %s", identifier.getURI(), ex.getMessage() );
             throw new RepositoryServiceException( error );
