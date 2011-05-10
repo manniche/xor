@@ -3,14 +3,13 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>net.manniche.xor</groupId>
+    <groupId>net.manniche</groupId>
     <artifactId>xor</artifactId>
     <version>0.1.0-SNAPSHOT</version>
-    <relativePath>../pom.xml</relativePath>
   </parent>
 
   <artifactId>xor-core</artifactId>
-  <packaging>bundle</packaging>
+  <packaging>jar</packaging>
   <name>eXtensible Object Repository - Core Server</name>
   <url>http://xor.manniche.net</url>
   <properties>
