@@ -5,7 +5,7 @@
   <parent>
     <groupId>net.manniche</groupId>
     <artifactId>xor</artifactId>
-    <version>0.1.0-SNAPSHOT</version>
+    <version>0.1.0</version>
   </parent>
 
   <artifactId>xor-core</artifactId>
@@ -28,10 +28,12 @@
         </configuration>
       </plugin>
       <plugin>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <configuration>
-          <argLine>-javaagent:"${settings.localRepository}"/mockit/jmockit/0.998/jmockit-0.998.jar</argLine>
-        </configuration>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <configuration>
+              <argLine>-javaagent:"${settings.localRepository}"/mockit/jmockit/0.998/jmockit-0.998.jar</argLine>
+            </configuration>
+            <version>2.8</version>
       </plugin>
     </plugins>
   </build>
@@ -40,13 +42,11 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>4.5</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>mockit</groupId>
       <artifactId>jmockit</artifactId>
-      <version>0.998</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
