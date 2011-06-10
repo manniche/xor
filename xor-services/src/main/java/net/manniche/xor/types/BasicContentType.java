@@ -19,6 +19,8 @@
 
 package net.manniche.xor.types;
 
+import net.manniche.xor.types.ObjectRepositoryContentType;
+
 /**
  * Basic content types defined for the object repository. The content types will
  * be communicated to the registered

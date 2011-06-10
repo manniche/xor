@@ -6,8 +6,6 @@
 
 package net.manniche.xor.server;
 
-import net.manniche.xor.exceptions.RepositoryServiceException;
-import net.manniche.xor.types.BasicContentType;
 import java.io.IOException;
 import mockit.NonStrictExpectations;
 import net.manniche.xor.storage.StorageProvider;
@@ -20,20 +18,16 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import mockit.Mocked;
-import net.manniche.xor.exceptions.StorageProviderException;
-import net.manniche.xor.types.DefaultDigitalObject;
 import static org.junit.Assert.*;
 
 /**
  *
- * @author Steen Manniche
  */
 public class RepositoryServerTest {
 
     @Mocked StorageProvider mockStorage;
 
     static byte[] data = "åøæïüßäö".getBytes();
-    static byte[] contentType = BasicContentType.BINARY_CONTENT.toString().getBytes();
     static String logMessage = "test log message";
     static URI testURI;
     static URI testContentURI;
@@ -85,27 +79,12 @@ public class RepositoryServerTest {
 
 
     @Test
-    public void simpleGetObjectPasses() throws Exception
-    {
-        final DigitalObject expDigObj = new DefaultDigitalObject( data, BasicContentType.BINARY_CONTENT );
-
-        new NonStrictExpectations(){{
-           mockStorage.get( testURI );returns( data );
-           mockStorage.get( testContentURI );returns( contentType );
-        }};
-
-        DigitalObject result = instance.getObject( predefinedId );
-        assertEquals( expDigObj.getBytes(), result.getBytes() );
-    }
-
-
-    @Test
     public void naïveDeleteObjectPasses() throws Exception
     {
         instance.deleteObject( predefinedId, logMessage );
     }
 
-    @Test( expected=RepositoryServiceException.class)
+    @Test( expected=IOException.class)
     public void deleteNonExistingObjectFails() throws Exception
     {
         RepositoryServer throwingServer = new MockRepositoryImpl( new ThrowingStorageProviderStub() );
