@@ -90,6 +90,13 @@ public interface StorageProvider extends ObjectRepositoryService{
      */
     public abstract void delete( URI identifier) throws IOException;
 
+
+    /**
+     * Returns the uri scheme for this storage provider
+     *
+     * @return the uri scheme as a string
+     */
+    public String getScheme();
     
     /**
      * Closes the StorageProvider implementation. This gives the implementors

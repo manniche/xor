@@ -16,11 +16,12 @@
  *  along with xor.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.manniche.xor.server.rest;
+package net.manniche.xor.rest.server;
 
 import java.util.List;
 import net.manniche.xor.types.DigitalObject;
 import net.manniche.xor.types.ObjectIdentifier;
+import net.manniche.xor.types.RESTObjectIdentifier;
 import net.manniche.xor.types.ObjectRepositoryContentType;
 
 
@@ -30,8 +31,8 @@ import net.manniche.xor.types.ObjectRepositoryContentType;
  */
 interface RESTObjectManagement {
 
-    public DigitalObject getRepositoryObject( ObjectIdentifier identifier );
-    public List<DigitalObject> queryRepositoryObjects( String query );
+    public DigitalObject getRepositoryObject( RESTObjectIdentifier identifier );
+    // public List<DigitalObject> queryRepositoryObjects( String query );
     public ObjectIdentifier storeRepositoryObject( DigitalObject object, ObjectRepositoryContentType contentType, String logmessage );
     public void deleteRepositoryObject( ObjectIdentifier identifier, String logmessage );
 }

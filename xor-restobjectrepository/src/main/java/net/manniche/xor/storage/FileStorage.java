@@ -39,6 +39,8 @@ import net.manniche.xor.utils.RepositoryUtilities;
 public class FileStorage implements StorageProvider
 {
 
+    private final static String SCHEME = "file";
+
     private static final Logger Log = Logger.getLogger( FileStorage.class.getName() );
 
     private final Set<String> storagePaths;
@@ -91,6 +93,13 @@ public class FileStorage implements StorageProvider
         URI returnedURL = this.saveObject( object, uri, storagePath_cached );
         assert returnedURL.equals( uri );
     }
+
+    @Override
+    public String getScheme()
+    {
+        return SCHEME;
+    }
+
 
     private URI saveObject( byte[] object, URI url, final String storagePath ) throws IOException
     {

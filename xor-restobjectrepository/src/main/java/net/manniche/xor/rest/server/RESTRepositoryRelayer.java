@@ -16,7 +16,7 @@
  *  along with xor.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.manniche.xor.server.rest;
+package net.manniche.xor.rest.server;
 
 import java.io.IOException;
 import java.util.List;
@@ -26,7 +26,9 @@ import net.manniche.xor.server.RepositoryObserver;
 import net.manniche.xor.server.RepositoryServer;
 import net.manniche.xor.storage.StorageProvider;
 import net.manniche.xor.types.DigitalObject;
+import net.manniche.xor.types.RESTDigitalObject;
 import net.manniche.xor.types.ObjectIdentifier;
+import net.manniche.xor.types.RESTObjectIdentifier;
 
 import javax.ws.rs.Path;  
 import javax.ws.rs.WebApplicationException;
@@ -34,6 +36,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.GET;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
@@ -72,6 +75,7 @@ public final class RESTRepositoryRelayer extends RepositoryServer implements RES
     private final StorageProvider storage;
     private final String storagePath;
     private final String metadataStoragePath;
+    private final static Logger Log= Logger.getLogger( RESTRepositoryRelayer.class.getName() );
     
     public RESTRepositoryRelayer( StorageProvider storage, String storagePath, String metadataStoragePath )
     {
@@ -81,16 +85,19 @@ public final class RESTRepositoryRelayer extends RepositoryServer implements RES
         this.metadataStoragePath = metadataStoragePath;
     }
 
-    @Path( "{identifier}" )
+    @Path( "object/{identifier}" )
     @GET
     @Produces( MediaType.APPLICATION_OCTET_STREAM )
     @Override
-    public DigitalObject getRepositoryObject( @PathParam( "identifier" ) ObjectIdentifier identifier )
+    public DigitalObject getRepositoryObject( @PathParam( "identifier" ) RESTObjectIdentifier identifier )
     {
-        DigitalObject digobj = null;
+        String uri = String.format( "%s://%s%s", storage.getScheme(), this.storagePath, identifier.getName() );
+        Log.info( uri );
+        RESTDigitalObject digobj = null;
+        RESTObjectIdentifier id = new RESTObjectIdentifier( uri );
         try
         {
-            digobj = super.getObject( identifier );
+            digobj = ( RESTDigitalObject )super.getObject( id );
         }
         catch( IOException ex )
         {
@@ -103,18 +110,21 @@ public final class RESTRepositoryRelayer extends RepositoryServer implements RES
         return digobj;
     }
 
-    @Path( "{query}" )
-    @Override
-    public List<DigitalObject> queryRepositoryObjects( @PathParam( "query" ) String query )
-    {
-        throw new UnsupportedOperationException( "Not supported yet." );
-    }
+    // @GET
+    // @Path( "objects/{query}" )
+    // @Override
+    // public List<DigitalObject> queryRepositoryObjects( @PathParam( "query" ) String query )
+    // {
+    //     throw new UnsupportedOperationException( "Not supported yet." );
+    // }
 
-    @POST
+    @PUT
+    @Path( "object/" )
     @Override
     public synchronized ObjectIdentifier storeRepositoryObject( DigitalObject object, ObjectRepositoryContentType contentType, String logmessage )
     {
         ObjectIdentifier objectid = null;
+        Log.info( String.format( "Storing object %s at %s", object, this.storagePath ) );
         try
         {
             objectid = super.storeObject( object.getBytes(), this.storagePath, logmessage );

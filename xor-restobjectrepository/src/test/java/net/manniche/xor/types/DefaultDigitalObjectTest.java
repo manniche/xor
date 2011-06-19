@@ -11,7 +11,6 @@ import static org.junit.Assert.*;
 
 /**
  *
- * @author stm
  */
 public class DefaultDigitalObjectTest {
 
@@ -22,7 +21,9 @@ public class DefaultDigitalObjectTest {
     public void testGetBytes() throws Exception
     {
         byte[] input = "test me: æøåïüöäß".getBytes();
-        DigitalObject instance = new DefaultDigitalObject( input, BasicContentType.BINARY_CONTENT );
+        RESTDigitalObject instance = new RESTDigitalObject();
+        instance.setBytes( input );
+        instance.setContentType( BasicContentType.BINARY_CONTENT );
         byte[] expResult = "test me: æøåïüöäß".getBytes();
         byte[] result = instance.getBytes();
         assertTrue( Arrays.equals( expResult, result ) );
@@ -35,7 +36,9 @@ public class DefaultDigitalObjectTest {
     @Test
     public void testGetContentType()
     {
-        DefaultDigitalObject instance = new DefaultDigitalObject( "input".getBytes(), BasicContentType.BINARY_CONTENT );
+        RESTDigitalObject instance = new RESTDigitalObject();
+        instance.setBytes( "input".getBytes() );
+        instance.setContentType( BasicContentType.BINARY_CONTENT );
         ObjectRepositoryContentType expResult = BasicContentType.BINARY_CONTENT;
         ObjectRepositoryContentType result = instance.getContentType();
         assertEquals( expResult, result );

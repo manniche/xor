@@ -19,6 +19,7 @@
 package net.manniche.xor.types;
 
 import java.io.Serializable;
+import javax.xml.bind.annotation.XmlRootElement;
 
 
 /**
@@ -31,19 +32,26 @@ import java.io.Serializable;
  * The DefaultDigitalObject is an immutable type and thereby completely thread-
  * safe.
  * 
- * @author Steen Manniche
  */
-public final class DefaultDigitalObject implements DigitalObject, Serializable{
+@XmlRootElement
+public final class RESTDigitalObject implements DigitalObject, Serializable{
     static final long serialVersionUID = 4558861702889722277L;
 
-    private final byte[] internal_input;
-    private final ObjectRepositoryContentType contentType;
+    private byte[] internal_input;
+    private ObjectRepositoryContentType contentType;
 
-    public DefaultDigitalObject( byte[] input, ObjectRepositoryContentType contentType )
+    
+    public void setBytes( byte[] input )
     {
         this.internal_input = input;
+    }
+    
+    public void setContentType( ObjectRepositoryContentType contentType )
+    {
         this.contentType = contentType;
     }
+    
+    
     @Override
     public byte[] getBytes()
     {

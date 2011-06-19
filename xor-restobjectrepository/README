@@ -1,0 +1,10 @@
+Running embedded demo
+=====================
+
+The rest objectrepository can be started using the command:
+
+  mvn -Pserver
+
+and a test client can then be invoked on the server using
+
+  mvn -Pclient

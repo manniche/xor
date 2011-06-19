@@ -27,13 +27,11 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.Collections;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
 import net.manniche.xor.server.RepositoryObserver;
 import net.manniche.xor.server.ServiceLocator;
-import net.manniche.xor.services.search.DublinCoreIndexService;
 import net.manniche.xor.services.search.SearchProvider;
 import net.manniche.xor.services.search.SearchType;
 import net.manniche.xor.storage.FileStorage;
@@ -51,7 +49,6 @@ import net.manniche.xor.types.ObjectRepositoryService;
 public class RMIServer {
 
     private final static Logger Log= Logger.getLogger( RMIServer.class.getName() );
-//    private static RMIObjectManagement manager;
     private static RMIRepositoryServer manager;
     private static Registry registry;
 
