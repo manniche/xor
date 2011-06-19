@@ -4,3 +4,4 @@ resources/javadoc
 .project
 .settings
 /.gitissues/
+*~
