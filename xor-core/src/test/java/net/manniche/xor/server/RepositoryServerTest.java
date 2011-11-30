@@ -154,5 +154,10 @@ public class RepositoryServerTest {
         @Override
         public void close()
         {}
+
+        @Override
+        public String getScheme() {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
     }
 }

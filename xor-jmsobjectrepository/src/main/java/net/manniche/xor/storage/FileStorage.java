@@ -40,7 +40,7 @@ public class FileStorage implements StorageProvider
 {
 
     private static final Logger Log = Logger.getLogger( FileStorage.class.getName() );
-
+    private static final String scheme = "file";
     private final Set<String> storagePaths;
 
     public FileStorage()
@@ -190,5 +190,10 @@ public class FileStorage implements StorageProvider
             String error = String.format( "The file %s could not be deleted", identifier );
             Log.log( Level.SEVERE, error );
         }
+    }
+
+    @Override
+    public String getScheme() {
+        return scheme;
     }
 }
