@@ -36,6 +36,11 @@
     <url>.git-issues/git-issues</url>
   </issueManagement>
 
+  <modules>
+    <module>xor-core</module>
+    <module>xor-services</module>    
+  </modules>
+
 
   <dependencyManagement>
     <dependencies>
