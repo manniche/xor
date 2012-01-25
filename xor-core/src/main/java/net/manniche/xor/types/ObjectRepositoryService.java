@@ -19,8 +19,8 @@
 package net.manniche.xor.types;
 
 /**
- *Defines the type for services available in the object repository. Implementors
- * of this interface are allowed to be requested within the object repository.
+ * Marker interface that defines the type for services available in the object repository. 
+ * Implementors of this interface are allowed to be requested within the object repository.
  *
  * @author Steen Manniche
  */

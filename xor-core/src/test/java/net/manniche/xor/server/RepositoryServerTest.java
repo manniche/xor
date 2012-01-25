@@ -14,7 +14,7 @@ import net.manniche.xor.types.DefaultIdentifier;
 import net.manniche.xor.types.DigitalObject;
 import net.manniche.xor.types.ObjectIdentifier;
 import net.manniche.xor.types.ObjectRepositoryContentType;
-import net.manniche.xor.types.RepositoryAction;
+import net.manniche.xor.types.CoreRepositoryAction;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -81,7 +81,7 @@ public class RepositoryServerTest {
 
 
     @Test
-    public void naïveDeleteObjectPasses() throws Exception
+    public void naiveDeleteObjectPasses() throws Exception
     {
         instance.deleteObject( predefinedId, logMessage );
     }
@@ -123,7 +123,7 @@ public class RepositoryServerTest {
 
 
         @Override
-        protected void notifyObservers( ObjectIdentifier identifier, DigitalObject object, RepositoryAction action, ObjectRepositoryContentType contentType )
+        protected void notifyObservers( ObjectIdentifier identifier, DigitalObject object, CoreRepositoryAction action, ObjectRepositoryContentType contentType )
         {
             throw new UnsupportedOperationException( "Not supported yet." );
         }

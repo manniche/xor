@@ -27,7 +27,7 @@ import net.manniche.xor.types.DigitalObject;
 import net.manniche.xor.types.ObjectIdentifier;
 import net.manniche.xor.types.InternalDigitalObject;
 import net.manniche.xor.types.ObjectRepositoryContentType;
-import net.manniche.xor.types.RepositoryAction;
+import net.manniche.xor.types.CoreRepositoryAction;
 
 
 /**
@@ -99,13 +99,11 @@ public abstract class RepositoryServer{
      */
     protected ObjectIdentifier storeObject( byte[] data, String storagePath, ObjectIdentifier identifier, String message ) throws IOException
     {
-        URI uid = null;
-
         ObjectIdentifier objectID = null;
 
         if( null == identifier )
         {
-            uid = this.repositoryStorageMechanism.save( data, storagePath );
+            URI uid = this.repositoryStorageMechanism.save( data, storagePath );
             objectID = new DefaultIdentifier( uid );
         }
         else
@@ -177,7 +175,7 @@ public abstract class RepositoryServer{
      * {@code RepositoryServer}. This method notifies all and only the observers
      * registered at the point of calling the method. Any observer added during
      * the execution of this method will not be called until the method is
-     * called again for a subsequent {@link RepositoryAction}
+     * called again for a subsequent {@link CoreRepositoryAction}
      *
      * @param identifier the identifier of the object on which the action was performed
      * @param object the object on which the action was performed (can be null, e.g. if the action is 'deleted')
@@ -186,9 +184,9 @@ public abstract class RepositoryServer{
      *
      * @throws RepositoryServiceException if data cannot be retrieved from the {@link DigitalObject}
      *
-     * @see RepositoryAction
+     * @see CoreRepositoryAction
      * @see ObjectRepositoryContentType
      */
-    protected abstract void notifyObservers( ObjectIdentifier identifier, DigitalObject object, RepositoryAction action, ObjectRepositoryContentType contentType ) throws RepositoryServiceException;
+    protected abstract void notifyObservers( ObjectIdentifier identifier, DigitalObject object, CoreRepositoryAction action, ObjectRepositoryContentType contentType ) throws RepositoryServiceException;
 
 }

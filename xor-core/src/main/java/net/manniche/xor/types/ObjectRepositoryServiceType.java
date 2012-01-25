@@ -22,10 +22,8 @@ package net.manniche.xor.types;
 /**
  * An ObjectRepositoryServiceType is the supertype of all classes that can be
  * used as services in the ObjectRepository. All definitions of types must
- * implement this interface. For an example of implementations of this interface
- * see the {@link net.manniche.xor.storage.StorageType} enum. Implementations
- * describe the services that can be handled by the
- * {@link net.manniche.xor.server.ServiceLocator}
+ * implement this interface. Implementations describe a service that can be 
+ * handled by the {@link net.manniche.xor.server.ServiceLocator}
  *
  * @see ObjectRepositoryService
  * @author Steen Manniche

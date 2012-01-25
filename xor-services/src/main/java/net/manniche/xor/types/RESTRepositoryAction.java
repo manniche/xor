@@ -18,10 +18,10 @@
 package net.manniche.xor.types;
 
 /**
- * Marker interface for specifying an extensible enum pattern, per
- * {@linkplain http://blogs.oracle.com/darcy/entry/enums_and_mixins}
- * 
+ *
  * @author Steen Manniche
  */
-interface RepositoryAction
-{}
+public enum RESTRepositoryAction implements RepositoryAction
+{
+    
+}

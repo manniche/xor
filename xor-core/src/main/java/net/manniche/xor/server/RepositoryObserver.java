@@ -21,7 +21,7 @@ package net.manniche.xor.server;
 import net.manniche.xor.types.DigitalObject;
 import net.manniche.xor.types.ObjectIdentifier;
 import net.manniche.xor.types.ObjectRepositoryContentType;
-import net.manniche.xor.types.RepositoryAction;
+import net.manniche.xor.types.CoreRepositoryAction;
 
 
 /**
@@ -30,10 +30,10 @@ import net.manniche.xor.types.RepositoryAction;
  *
  * Clients should add their RepositoryObserver implementations to the
  * ObjectRepository Server implementation in order to be notified about events,
- * as defined in {@link net.manniche.xor.types.RepositoryAction.Action}
+ * as defined in {@link net.manniche.xor.types.CoreRepositoryAction.Action}
  *
  * @author Steen Manniche
  */
 public interface RepositoryObserver {
-    public void notifyMe(  ObjectIdentifier identifier, DigitalObject object, RepositoryAction action, ObjectRepositoryContentType contentType );
+    public void notifyMe(  ObjectIdentifier identifier, DigitalObject object, CoreRepositoryAction action, ObjectRepositoryContentType contentType );
 }

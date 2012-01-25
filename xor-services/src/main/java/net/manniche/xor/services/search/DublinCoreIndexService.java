@@ -15,8 +15,6 @@
  *  You should have received a copy of the GNU General Public License
  *  along with xor.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-
 package net.manniche.xor.services.search;
 
 import java.io.File;
@@ -32,10 +30,11 @@ import net.manniche.xor.types.BasicContentType;
 import net.manniche.xor.types.DigitalObject;
 import net.manniche.xor.types.ObjectIdentifier;
 import net.manniche.xor.types.ObjectRepositoryContentType;
-import net.manniche.xor.types.RepositoryAction;
+import net.manniche.xor.types.CoreRepositoryAction;
 
 
 /**
+ * Implementation of a search service provider. The DublinCoreIndexService indexes dublin core data.
  *
  * @author Steen Manniche
  */
@@ -48,11 +47,11 @@ public final class DublinCoreIndexService implements RepositoryObserver, SearchP
     }
 
     @Override
-    public void notifyMe( ObjectIdentifier identifier, DigitalObject object, RepositoryAction action, ObjectRepositoryContentType contentType )
+    public void notifyMe( ObjectIdentifier identifier, DigitalObject object, CoreRepositoryAction action, ObjectRepositoryContentType contentType )
     {
         if( contentType.equals( BasicContentType.DUBLIN_CORE ) )
         {
-            if( action.equals( RepositoryAction.ADD ) )
+            if( action.equals( CoreRepositoryAction.ADD ) )
             {
                 final FileOutputStream fos;
                 try
@@ -78,11 +77,11 @@ public final class DublinCoreIndexService implements RepositoryObserver, SearchP
                     Log.log( Level.WARNING, String.format( "Could not index object '%s': %s", identifier.getURI(), ex.getMessage() ) );
                 }
             }
-            else if( action.equals( RepositoryAction.MODIFY ) )
+            else if( action.equals( CoreRepositoryAction.MODIFY ) )
             {
 
             }
-            else if( action.equals( RepositoryAction.DELETE ) )
+            else if( action.equals( CoreRepositoryAction.DELETE ) )
             {
             }
         }
